@@ -1,3 +1,11 @@
-{ "name": "sansai-asset-loan-tests", "private": true, "version": "1.0.0",
+{
+  "name": "sansai-asset-loan-tests",
+  "private": true,
+  "version": "1.0.0",
   "description": "ทดสอบแบบครบวงจรกับ Postgres ในเครื่อง (ไม่ใช่กับระบบจริง)",
-  "dependencies": { "jsdom": "^31.0.1", "pg": "^8.23.1" } }
+  "dependencies": {
+    "jsdom": "^31.0.1",
+    "pg": "^8.23.1",
+    "flatpickr": "^4.6.13"
+  }
+}

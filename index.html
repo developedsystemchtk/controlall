@@ -42,6 +42,8 @@
 
   
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.395.0/dist/umd/lucide.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/l10n/th.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -191,6 +193,7 @@
       .no-print { display: none !important; }
     }
   </style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.css" />
 <style id="design-layer">
 /* ============================================================
    ระบบยืม-คืนครุภัณฑ์ โรงพยาบาลสันทราย — design layer
@@ -545,6 +548,18 @@ html.dark .board-head { border-bottom-color: var(--rule-strong); }
 .tile { width: 28px; height: 28px; }
 button.lg-item { cursor: pointer; width: 100%; }
 
+/* ---------- date picker (flatpickr): dd/mm/yyyy ---------- */
+.flatpickr-calendar { font-family: var(--font); border-radius: 8px; border: 1px solid var(--rule); background: var(--surface); box-shadow: 0 18px 40px -12px rgba(15, 46, 39, .35); z-index: 120 !important; }
+.flatpickr-calendar:before, .flatpickr-calendar:after { display: none; }
+.flatpickr-months .flatpickr-month, .flatpickr-current-month .flatpickr-monthDropdown-months, .flatpickr-current-month input.cur-year, span.flatpickr-weekday { color: var(--text); fill: var(--text); background: transparent; }
+.flatpickr-months .flatpickr-prev-month svg, .flatpickr-months .flatpickr-next-month svg { fill: var(--text); }
+.flatpickr-day { color: var(--text); border-radius: 6px; }
+.flatpickr-day:hover { background: var(--paper-2); border-color: var(--paper-2); }
+.flatpickr-day.today { border-color: var(--signal); }
+.flatpickr-day.selected, .flatpickr-day.selected:hover { background: var(--brand); border-color: var(--brand); color: #fff; }
+.flatpickr-day.flatpickr-disabled, .flatpickr-day.prevMonthDay, .flatpickr-day.nextMonthDay { color: var(--muted); opacity: .55; }
+.flatpickr-current-month .flatpickr-monthDropdown-months option { background: var(--surface); color: var(--text); }
+
 </style>
 </head>
 <body class="antialiased">
@@ -778,7 +793,21 @@ button.lg-item { cursor: pointer; width: 100%; }
       }
     };
 
+    function initDatePickers() {
+      if (typeof flatpickr === 'undefined') return;
+      document.querySelectorAll('input[type="date"]').forEach(el => {
+        if (el._flatpickr) return;
+        flatpickr(el, {
+          altInput: true, altFormat: 'd/m/Y', dateFormat: 'Y-m-d', allowInput: true, disableMobile: true,
+          locale: (flatpickr.l10n && flatpickr.l10n.th) ? flatpickr.l10n.th : 'default',
+          altInputClass: el.className, minDate: el.min || undefined, maxDate: el.max || undefined
+        });
+        if (el._flatpickr && el._flatpickr.altInput) el._flatpickr.altInput.placeholder = 'วว/ดด/ปปปป';
+      });
+    }
+
     function refreshIcons() {
+      try { initDatePickers(); } catch (e) {}
       try {
         if (typeof lucide !== 'undefined' && typeof lucide.createIcons === 'function') {
           lucide.createIcons();
@@ -917,15 +946,26 @@ button.lg-item { cursor: pointer; width: 100%; }
       'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
     ];
 
-    function fmtThaiDate(isoStr) {
-      if (!isoStr) return '-';
-      const m = String(isoStr).match(/^(\d{4})-(\d{2})-(\d{2})/);
-      if (!m) return isoStr;
-      const y = parseInt(m[1], 10) + 543;
-      const month = THAI_MONTHS[parseInt(m[2], 10) - 1] || '';
-      const day = parseInt(m[3], 10);
-      return `${day} ${month} ${y}`;
+    const DATE_BE_UI = false;   // หน้าจอ: true = แสดงเป็น พ.ศ.
+    const DATE_BE_DOC = true;   // เอกสารราชการที่พิมพ์: พ.ศ.
+
+    // 'YYYY-MM-DD' -> 'dd/mm/yyyy'
+    function fmtDate(v, be = DATE_BE_UI) {
+      if (!v) return '-';
+      const m = String(v).match(/^(\d{4})-(\d{2})-(\d{2})/);
+      if (!m) return String(v);
+      return m[3] + '/' + m[2] + '/' + (be ? parseInt(m[1], 10) + 543 : m[1]);
     }
+
+    // 'YYYY-MM-DD HH:MM:SS' -> 'dd/mm/yyyy HH:MM' (24 ชั่วโมง)
+    function fmtDateTime(v, be = DATE_BE_UI) {
+      if (!v) return '-';
+      const m = String(v).match(/^(\d{4})-(\d{2})-(\d{2})(?:[ T](\d{2}):(\d{2}))?/);
+      if (!m) return String(v);
+      return m[3] + '/' + m[2] + '/' + (be ? parseInt(m[1], 10) + 543 : m[1]) + (m[4] ? ' ' + m[4] + ':' + m[5] : '');
+    }
+
+    function fmtThaiDate(isoStr) { return fmtDate(isoStr, DATE_BE_DOC); }
 
     function fmtMoney(n) {
       return Number(n || 0).toLocaleString('th-TH', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
@@ -1586,7 +1626,7 @@ button.lg-item { cursor: pointer; width: 100%; }
           <div class="font-medium text-rose-700 dark:text-rose-300 flex items-center gap-1.5">
             <span class="w-1.5 h-1.5 rounded-full bg-rose-600 shrink-0"></span> เกินกำหนด: ${esc(b.AssetName)}
           </div>
-          <div class="text-[11px] text-rose-600/80 dark:text-rose-400 mt-0.5 pl-3">ผู้ยืม: ${esc(b.BorrowerName)} • กำหนด ${esc(b.DueDate)}</div>
+          <div class="text-[11px] text-rose-600/80 dark:text-rose-400 mt-0.5 pl-3">ผู้ยืม: ${esc(b.BorrowerName)} • กำหนด ${esc(fmtDate(b.DueDate))}</div>
         </div>`);
       });
       pending.forEach(b => {
@@ -1759,7 +1799,7 @@ button.lg-item { cursor: pointer; width: 100%; }
                         <td class="px-4 py-2.5 text-xs font-medium">${esc(b.RequestCode)}</td>
                         <td class="px-4 py-2.5"><div class="font-medium">${esc(b.AssetName)}</div><div class="text-xs" style="color:var(--muted)">${esc(b.AssetCode)}</div></td>
                         <td class="px-4 py-2.5">${esc(b.BorrowerName)}</td>
-                        <td class="px-4 py-2.5 tabular-nums">${esc(b.DueDate)}</td>
+                        <td class="px-4 py-2.5 tabular-nums">${esc(fmtDate(b.DueDate))}</td>
                         <td class="px-4 py-2.5">${statusBadge(b.Status, isOverdue(b))}</td>
                       </tr>`).join('') || '<tr><td colspan="5" class="px-4 py-6 text-center" style="color:var(--muted)">ยังไม่มีรายการยืม</td></tr>'}
                   </tbody>
@@ -1770,7 +1810,7 @@ button.lg-item { cursor: pointer; width: 100%; }
             <section class="board">
               <div class="board-head"><h4 class="sec-title">ความเคลื่อนไหวล่าสุด</h4></div>
               <ul class="feed px-4 py-1 max-h-96 overflow-y-auto">
-                ${state.data.logs.slice(0, 8).map(l => `<li><div>${esc(l.Detail)}<small>${esc(l.UserName)} · ${esc(l.Timestamp)}</small></div></li>`).join('')}
+                ${state.data.logs.slice(0, 8).map(l => `<li><div>${esc(l.Detail)}<small>${esc(l.UserName)} · ${esc(fmtDateTime(l.Timestamp))}</small></div></li>`).join('')}
               </ul>
             </section>` : ''}
           </div>
@@ -1787,7 +1827,7 @@ button.lg-item { cursor: pointer; width: 100%; }
       const a = state.data.assets.find(x => x.AssetID === assetId); if (!a) return;
       const b = state.data.borrows.find(x => x.AssetID === assetId && ['กำลังยืม', 'อนุมัติแล้ว'].includes(x.Status));
       const tip = ensureTileTip();
-      tip.innerHTML = `<b>${esc(a.AssetName)}</b><small>${esc(a.AssetCode)} · ${esc(a.Status)}${b ? ' · ' + esc(b.BorrowerName) + ' (คืน ' + esc(b.DueDate) + ')' : ''}</small>`;
+      tip.innerHTML = `<b>${esc(a.AssetName)}</b><small>${esc(a.AssetCode)} · ${esc(a.Status)}${b ? ' · ' + esc(b.BorrowerName) + ' (คืน ' + esc(fmtDate(b.DueDate)) + ')' : ''}</small>`;
       const r = ev.currentTarget.getBoundingClientRect();
       tip.classList.add('on');
       const w = tip.offsetWidth, h = tip.offsetHeight;
@@ -1899,7 +1939,7 @@ button.lg-item { cursor: pointer; width: 100%; }
               <div><span class="text-zinc-400">Serial No:</span> <span class="font-mono">${esc(a.SerialNo || '-')}</span></div>
               <div><span class="text-zinc-400">หน่วยงานเจ้าของ:</span> ${esc(a.DepartmentName)}</div>
               <div><span class="text-zinc-400">สถานที่จัดเก็บหลัก:</span> ${esc(a.Location || '-')}</div>
-              <div><span class="text-zinc-400">มูลค่า:</span> ฿${fmtMoney(a.Price)} • วันที่ได้มา: ${esc(a.PurchaseDate || '-')}</div>
+              <div><span class="text-zinc-400">มูลค่า:</span> ฿${fmtMoney(a.Price)} • วันที่ได้มา: ${esc(fmtDate(a.PurchaseDate))}</div>
               <div><span class="text-zinc-400">สถิติการยืม:</span> ยืมสะสม <strong>${history.length} ครั้ง</strong> (รวม <strong>${totalDaysAll} วัน</strong>)</div>
               <div><span class="text-zinc-400">หมายเหตุ:</span> ${esc(a.Notes || '-')}</div>
             </div>
@@ -1919,7 +1959,7 @@ button.lg-item { cursor: pointer; width: 100%; }
                     <div class="space-y-0.5">
                       <div class="font-medium text-zinc-900 dark:text-white">${esc(h.BorrowerName)} <span class="text-zinc-400 font-normal">(${esc(h.BorrowerDept)})</span></div>
                       <div class="text-[11px] text-brand-600 dark:text-brand-400 font-medium">นำไปใช้ที่: ${esc(h.LocationUse || '-')} • ภารกิจ: ${esc(h.Purpose || '-')}</div>
-                      <div class="text-[11px] text-zinc-500 tabular-nums">${esc(h.BorrowDate)} ถึง ${esc(h.DueDate)}${h.ReturnDate ? ` (คืนจริง: ${esc(h.ReturnDate)})` : ''} • <strong>ยืม ${m.plannedDays} วัน</strong></div>
+                      <div class="text-[11px] text-zinc-500 tabular-nums">${esc(fmtDate(h.BorrowDate))} ถึง ${esc(fmtDate(h.DueDate))}${h.ReturnDate ? ` (คืนจริง: ${esc(fmtDate(h.ReturnDate))})` : ''} • <strong>ยืม ${m.plannedDays} วัน</strong></div>
                     </div>
                     <div class="shrink-0">${statusBadge(h.Status, isOverdue(h), h)}</div>
                   </div>
@@ -1955,7 +1995,7 @@ button.lg-item { cursor: pointer; width: 100%; }
         out.innerHTML = '<span class="text-rose-600 font-medium">วันกำหนดส่งคืนต้องไม่น้อยกว่าวันที่เริ่มยืม</span>';
       } else {
         const days = Math.max(1, d);
-        out.innerHTML = `ระยะเวลายืมรวม: <strong class="text-brand-600 dark:text-brand-400 text-sm">${days} วัน</strong> (นับจาก ${esc(sEl.value)} ถึง ${esc(dEl.value)})`;
+        out.innerHTML = `ระยะเวลายืมรวม: <strong class="text-brand-600 dark:text-brand-400 text-sm">${days} วัน</strong> (นับจาก ${esc(fmtDate(sEl.value))} ถึง ${esc(fmtDate(dEl.value))})`;
       }
     }
 
@@ -1982,7 +2022,7 @@ button.lg-item { cursor: pointer; width: 100%; }
             </div>
           </div>
           <div id="brw-day-count-preview" class="px-3 py-2 rounded-lg bg-brand-50/70 dark:bg-brand-500/10 border border-brand-200/70 dark:border-brand-500/20 text-xs">
-            ระยะเวลายืมรวม: <strong class="text-brand-600 dark:text-brand-400 text-sm">3 วัน</strong> (นับจาก ${todayStr(0)} ถึง ${todayStr(3)})
+            ระยะเวลายืมรวม: <strong class="text-brand-600 dark:text-brand-400 text-sm">3 วัน</strong> (นับจาก ${fmtDate(todayStr(0))} ถึง ${fmtDate(todayStr(3))})
           </div>
           <div>
             <label class="block font-medium mb-1">วัตถุประสงค์การยืม *</label>
@@ -2337,7 +2377,7 @@ button.lg-item { cursor: pointer; width: 100%; }
           <div class="p-3 rounded-lg bg-zinc-50 dark:bg-zinc-800/50 border hairline space-y-1">
             <div><span class="text-zinc-400">Serial No:</span> <span class="font-mono">${esc(a.SerialNo || '-')}</span></div>
             <div><span class="text-zinc-400">สภาพปัจจุบัน:</span> ${esc(a.Condition)}</div>
-            ${activeBorrow ? `<div class="pt-1 text-sky-600 dark:text-sky-400 font-medium">ผู้ถือครองปัจจุบัน: ${esc(activeBorrow.BorrowerName)} (ครบกำหนด ${esc(activeBorrow.DueDate)})</div>` : ''}
+            ${activeBorrow ? `<div class="pt-1 text-sky-600 dark:text-sky-400 font-medium">ผู้ถือครองปัจจุบัน: ${esc(activeBorrow.BorrowerName)} (ครบกำหนด ${esc(fmtDate(activeBorrow.DueDate))})</div>` : ''}
           </div>
           <div class="flex flex-wrap gap-2">
             ${a.Status === 'พร้อมให้ยืม' ? `<button onclick="openBorrowModal('${esc(a.AssetID)}')" class="${BTN_PRIMARY}">ขอยืมทันที</button>` : ''}
@@ -2388,8 +2428,8 @@ button.lg-item { cursor: pointer; width: 100%; }
                       <div class="text-[11px] text-zinc-400">${esc(b.AssetCode)} • ${esc(b.OwnerDeptName || '')}</div>
                     </td>
                     <td class="px-4 py-3 tabular-nums">
-                      <div>${esc(b.BorrowDate)} → ${esc(b.DueDate)}</div>
-                      ${b.ReturnDate ? `<div class="text-[11px] text-emerald-600">คืนจริง: ${esc(b.ReturnDate)}</div>` : ''}
+                      <div>${esc(fmtDate(b.BorrowDate))} → ${esc(fmtDate(b.DueDate))}</div>
+                      ${b.ReturnDate ? `<div class="text-[11px] text-emerald-600">คืนจริง: ${esc(fmtDate(b.ReturnDate))}</div>` : ''}
                       <div class="mt-0.5">${m.daySummaryHtml}</div>
                     </td>
                     <td class="px-4 py-3">
@@ -2544,13 +2584,13 @@ button.lg-item { cursor: pointer; width: 100%; }
                         <div class="text-[11px] text-zinc-400">${esc(b.BorrowerDept)}</div>
                       </td>
                       <td class="px-4 py-3 tabular-nums">
-                        <div class="font-medium">${esc(b.BorrowDate)} → ${esc(b.DueDate)}</div>
-                        ${b.ReturnDate ? `<div class="text-[11px] text-emerald-600 font-medium">คืนจริง: ${esc(b.ReturnDate)}</div>` : ''}
+                        <div class="font-medium">${esc(fmtDate(b.BorrowDate))} → ${esc(fmtDate(b.DueDate))}</div>
+                        ${b.ReturnDate ? `<div class="text-[11px] text-emerald-600 font-medium">คืนจริง: ${esc(fmtDate(b.ReturnDate))}</div>` : ''}
                         <div class="mt-0.5">${m.daySummaryHtml}</div>
                       </td>
                       <td class="px-4 py-3">
                         ${statusBadge(b.Status, isOverdue(b), b)}
-                        ${b.ApproverName ? `<div class="text-[10px] text-zinc-500 mt-1">อนุมัติโดย: ${esc(b.ApproverName)}${b.ApprovedAt ? ' (' + esc(String(b.ApprovedAt).slice(0, 10)) + ')' : ''}</div>` : ''}
+                        ${b.ApproverName ? `<div class="text-[10px] text-zinc-500 mt-1">อนุมัติโดย: ${esc(b.ApproverName)}${b.ApprovedAt ? ' (' + esc(fmtDate(b.ApprovedAt)) + ')' : ''}</div>` : ''}
                         ${b.ReceiverName ? `<div class="text-[10px] text-emerald-600">ผู้รับคืน: ${esc(b.ReceiverName)}</div>` : ''}
                         ${b.RejectReason ? `<div class="text-[10px] text-rose-600 mt-0.5">เหตุผล: ${esc(b.RejectReason)}</div>` : ''}
                         ${(b.BeforePhotoUrl || b.AfterPhotoUrl) ? `
@@ -2596,7 +2636,7 @@ button.lg-item { cursor: pointer; width: 100%; }
             <div class="font-semibold text-zinc-900 dark:text-white">${esc(b.AssetName)} (${esc(b.AssetCode)})</div>
             <div class="text-zinc-500">ผู้ยืม: ${esc(b.BorrowerName)} (${esc(b.BorrowerDept)})</div>
             <div class="text-zinc-500">สถานที่นำไปใช้: <strong class="text-zinc-800 dark:text-zinc-200">${esc(b.LocationUse || '-')}</strong> • ภารกิจ: ${esc(b.Purpose || '-')}</div>
-            <div class="text-brand-600 dark:text-brand-400 font-medium">ช่วงเวลายืม: ${esc(b.BorrowDate)} ถึง ${esc(b.DueDate)} (รวม ${m.plannedDays} วัน)</div>
+            <div class="text-brand-600 dark:text-brand-400 font-medium">ช่วงเวลายืม: ${esc(fmtDate(b.BorrowDate))} ถึง ${esc(fmtDate(b.DueDate))} (รวม ${m.plannedDays} วัน)</div>
           </div>
           <div>
             <label class="block font-medium mb-1">รูปแบบการอนุมัติ</label>
@@ -2795,8 +2835,8 @@ button.lg-item { cursor: pointer; width: 100%; }
                             <div class="text-[11px] text-zinc-500">${esc(b.Purpose || '-')}</div>
                           </td>
                           <td class="px-4 py-2.5 tabular-nums">
-                            <div>${esc(b.BorrowDate)} → ${esc(b.DueDate)}</div>
-                            ${b.ReturnDate ? `<div class="text-[11px] text-emerald-600">คืนจริง: ${esc(b.ReturnDate)}</div>` : ''}
+                            <div>${esc(fmtDate(b.BorrowDate))} → ${esc(fmtDate(b.DueDate))}</div>
+                            ${b.ReturnDate ? `<div class="text-[11px] text-emerald-600">คืนจริง: ${esc(fmtDate(b.ReturnDate))}</div>` : ''}
                           </td>
                           <td class="px-4 py-2.5">${m.daySummaryHtml}</td>
                           <td class="px-4 py-2.5">
@@ -2867,7 +2907,7 @@ button.lg-item { cursor: pointer; width: 100%; }
                         <span>• ภารกิจ: ${esc(ag.activeBorrow.Purpose || '-')}</span>
                       </div>
                       <div class="flex items-center gap-2">
-                        <span>กำหนดคืน: <strong>${esc(ag.activeBorrow.DueDate)}</strong></span>
+                        <span>กำหนดคืน: <strong>${esc(fmtDate(ag.activeBorrow.DueDate))}</strong></span>
                         ${activeM ? activeM.daySummaryHtml : ''}
                       </div>
                     </div>
@@ -2902,8 +2942,8 @@ button.lg-item { cursor: pointer; width: 100%; }
                                 <div class="text-[11px] text-zinc-500">${esc(b.Purpose || '-')}</div>
                               </td>
                               <td class="px-4 py-2.5 tabular-nums">
-                                <div>${esc(b.BorrowDate)} → ${esc(b.DueDate)}</div>
-                                ${b.ReturnDate ? `<div class="text-[11px] text-emerald-600">คืนจริง: ${esc(b.ReturnDate)}</div>` : ''}
+                                <div>${esc(fmtDate(b.BorrowDate))} → ${esc(fmtDate(b.DueDate))}</div>
+                                ${b.ReturnDate ? `<div class="text-[11px] text-emerald-600">คืนจริง: ${esc(fmtDate(b.ReturnDate))}</div>` : ''}
                               </td>
                               <td class="px-4 py-2.5">${m.daySummaryHtml}</td>
                               <td class="px-4 py-2.5">
@@ -2978,7 +3018,7 @@ button.lg-item { cursor: pointer; width: 100%; }
                         <td class="px-3 py-2.5">${esc(b.OwnerDeptName || b.OwnerDeptID)}</td>
                         <td class="px-3 py-2.5"><div class="font-medium">${esc(b.BorrowerName)}</div><div class="text-[11px] text-zinc-400">${esc(b.BorrowerDept)}</div></td>
                         <td class="px-3 py-2.5"><div class="font-medium text-brand-600 dark:text-brand-400">${esc(b.LocationUse || '-')}</div><div class="text-[11px] text-zinc-400">${esc(b.Purpose || '-')}</div></td>
-                        <td class="px-3 py-2.5 tabular-nums"><div>${esc(b.BorrowDate)} → ${esc(b.DueDate)}</div>${b.ReturnDate ? `<div class="text-[11px] text-emerald-600">คืน: ${esc(b.ReturnDate)}</div>` : ''}</td>
+                        <td class="px-3 py-2.5 tabular-nums"><div>${esc(fmtDate(b.BorrowDate))} → ${esc(fmtDate(b.DueDate))}</div>${b.ReturnDate ? `<div class="text-[11px] text-emerald-600">คืน: ${esc(fmtDate(b.ReturnDate))}</div>` : ''}</td>
                         <td class="px-3 py-2.5">${m.daySummaryHtml}</td>
                         <td class="px-3 py-2.5">
                           <div class="font-medium ${m.isApproved ? 'text-indigo-600 dark:text-indigo-400' : 'text-amber-600'}">${esc(b.ApprovalStatus || m.approvalStatus)}</div>
@@ -3563,7 +3603,7 @@ button.lg-item { cursor: pointer; width: 100%; }
                       <td class="px-4 py-3">${esc(d.Reason)}</td>
                       <td class="px-4 py-3">${esc(d.DisposalMethod)}</td>
                       <td class="px-4 py-3">${esc(d.ApprovedBy)}</td>
-                      <td class="px-4 py-3 tabular-nums">${esc(d.DisposalDate)}</td>
+                      <td class="px-4 py-3 tabular-nums">${esc(fmtDate(d.DisposalDate))}</td>
                     </tr>
                   `).join('')}
                 </tbody>
@@ -3975,7 +4015,7 @@ button.lg-item { cursor: pointer; width: 100%; }
                 </thead>
                 <tbody class="divide-y hairline">
                   ${state.data.logs.slice(0, 40).map(l => `
-                    <tr><td class="px-4 py-2 tabular-nums text-zinc-400">${esc(l.Timestamp)}</td><td class="px-4 py-2 font-medium">${esc(l.UserName)}</td><td class="px-4 py-2 font-mono text-[11px]">${esc(l.Action)}</td><td class="px-4 py-2">${esc(l.Detail)}</td></tr>
+                    <tr><td class="px-4 py-2 tabular-nums text-zinc-400">${esc(fmtDateTime(l.Timestamp))}</td><td class="px-4 py-2 font-medium">${esc(l.UserName)}</td><td class="px-4 py-2 font-mono text-[11px]">${esc(l.Action)}</td><td class="px-4 py-2">${esc(l.Detail)}</td></tr>
                   `).join('')}
                 </tbody>
               </table>
@@ -4085,7 +4125,7 @@ button.lg-item { cursor: pointer; width: 100%; }
                   <td class="border border-zinc-800 px-2 py-1">${esc(b.AssetCode)} ${esc(b.AssetName)}</td>
                   <td class="border border-zinc-800 px-2 py-1">${esc(b.BorrowerName)} (${esc(b.BorrowerDept)})</td>
                   <td class="border border-zinc-800 px-2 py-1">${esc(b.LocationUse || '-')}</td>
-                  <td class="border border-zinc-800 px-2 py-1 text-center tabular-nums">${esc(b.BorrowDate)} ถึง ${esc(b.DueDate)} (${m.plannedDays} วัน)</td>
+                  <td class="border border-zinc-800 px-2 py-1 text-center tabular-nums">${esc(fmtDate(b.BorrowDate))} ถึง ${esc(fmtDate(b.DueDate))} (${m.plannedDays} วัน)</td>
                   <td class="border border-zinc-800 px-2 py-1 text-center">${esc(b.Status)}${m.isApproved ? ' (อนุมัติแล้ว)' : ''}${m.isAnyOverdue ? ' [เกินกำหนด +' + m.overdueDays + ' วัน]' : ''}</td>
                 </tr>
               `;
@@ -4123,7 +4163,7 @@ button.lg-item { cursor: pointer; width: 100%; }
                   <td class="border border-zinc-800 px-2 py-1"><strong>${esc(b.BorrowerName)}</strong><br/>(${esc(b.BorrowerDept)})</td>
                   <td class="border border-zinc-800 px-2 py-1">${esc(b.AssetName)}<br/><span class="font-mono">${esc(b.AssetCode)}</span></td>
                   <td class="border border-zinc-800 px-2 py-1">${esc(b.LocationUse || '-')} (${esc(b.Purpose || '-')})</td>
-                  <td class="border border-zinc-800 px-2 py-1 text-center tabular-nums">${esc(b.BorrowDate)} ถึง ${esc(b.DueDate)}<br/><strong>รวม ${m.plannedDays} วัน</strong></td>
+                  <td class="border border-zinc-800 px-2 py-1 text-center tabular-nums">${esc(fmtDate(b.BorrowDate))} ถึง ${esc(fmtDate(b.DueDate))}<br/><strong>รวม ${m.plannedDays} วัน</strong></td>
                   <td class="border border-zinc-800 px-2 py-1 text-center">${esc(b.Status)}${m.isApproved ? '<br/>อนุมัติเรียบร้อยแล้ว' : ''}${m.isAnyOverdue ? '<br/><strong>เกินกำหนด (+' + m.overdueDays + ' วัน)</strong>' : ''}</td>
                 </tr>
               `;
@@ -4160,7 +4200,7 @@ button.lg-item { cursor: pointer; width: 100%; }
                   <td class="border border-zinc-800 px-2 py-1"><span class="font-mono font-semibold">${esc(b.AssetCode)}</span><br/>${esc(b.AssetName)}</td>
                   <td class="border border-zinc-800 px-2 py-1"><strong>${esc(b.LocationUse || '-')}</strong></td>
                   <td class="border border-zinc-800 px-2 py-1">${esc(b.BorrowerName)} (${esc(b.BorrowerDept)})<br/>ภารกิจ: ${esc(b.Purpose || '-')}</td>
-                  <td class="border border-zinc-800 px-2 py-1 text-center tabular-nums">${esc(b.BorrowDate)} ถึง ${esc(b.DueDate)}${b.ReturnDate ? '<br/>คืนจริง: ' + esc(b.ReturnDate) : ''}<br/><strong>(${m.plannedDays} วัน)</strong></td>
+                  <td class="border border-zinc-800 px-2 py-1 text-center tabular-nums">${esc(fmtDate(b.BorrowDate))} ถึง ${esc(fmtDate(b.DueDate))}${b.ReturnDate ? '<br/>คืนจริง: ' + esc(fmtDate(b.ReturnDate)) : ''}<br/><strong>(${m.plannedDays} วัน)</strong></td>
                   <td class="border border-zinc-800 px-2 py-1 text-center">${esc(b.Status)}${m.isAnyOverdue ? '<br/><strong>เกินกำหนด (+' + m.overdueDays + ' วัน)</strong>' : ''}${b.ApproverName ? '<br/>ผู้อนุมัติ: ' + esc(b.ApproverName) : ''}</td>
                 </tr>
               `;
@@ -4298,6 +4338,19 @@ button.lg-item { cursor: pointer; width: 100%; }
       `);
     }
 
+    function exportRows(rows) {
+      const D = ['BorrowDate', 'DueDate', 'ReturnDate', 'PurchaseDate', 'DisposalDate'];
+      const DT = ['CreatedAt', 'UpdatedAt', 'ApprovedAt', 'ReportedAt', 'CompletedAt', 'Timestamp', 'LastLogin'];
+      const IMG = ['ImageUrl', 'BeforePhotoUrl', 'AfterPhotoUrl', 'AttachmentUrl'];
+      return rows.map(r => {
+        const o = { ...r };
+        D.forEach(k => { if (o[k]) o[k] = fmtDate(o[k]); });
+        DT.forEach(k => { if (o[k]) o[k] = fmtDateTime(o[k]); });
+        IMG.forEach(k => { if (/^data:/i.test(o[k] || '')) o[k] = '(มีรูปภาพแนบในระบบ)'; });
+        return o;
+      });
+    }
+
     function exportWorkbook(target) {
       if (typeof XLSX === 'undefined') return uiAlert('error', 'ไม่พบไลบรารี SheetJS');
       const wb = XLSX.utils.book_new();
@@ -4310,7 +4363,7 @@ button.lg-item { cursor: pointer; width: 100%; }
       };
       const keys = target === 'ALL' ? Object.keys(map) : [target];
       keys.forEach(k => {
-        const ws = XLSX.utils.json_to_sheet(map[k].rows.length ? map[k].rows : [{}]);
+        const ws = XLSX.utils.json_to_sheet(map[k].rows.length ? exportRows(map[k].rows) : [{}]);
         XLSX.utils.book_append_sheet(wb, ws, map[k].name);
       });
       XLSX.writeFile(wb, `Sansai_Asset_Report_${todayStr(0)}.xlsx`);
