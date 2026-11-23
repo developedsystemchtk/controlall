@@ -20,6 +20,14 @@ ok(ev("ycInQuad([0,0,10,0,10,10,0,10],5,5)")&&!ev("ycInQuad([0,0,10,0,10,10,0,10
 const g=!w.document.getElementById('sidebar').classList.contains('w-[72px]');
 w.document.dispatchEvent(new w.KeyboardEvent('keydown',{key:'b',ctrlKey:true,bubbles:true,cancelable:true}));
 ok(w.document.getElementById('sidebar').classList.contains('w-[72px]')===g,'Ctrl+B toggles sidebar (desktop width in jsdom)');
-w.navigate('catalog');await sleep(30);ok(!w.document.querySelector('#sidebar .nav-item .sidebar-label')||true,'re-render ok');
+w.navigate('catalog');await sleep(30);
+const gr=w.document.querySelectorAll('#sidebar .nav-group');ok(gr.length>=1,'nav groups rendered',gr.length);
+const g0=gr[0],hd=g0.querySelector('.nav-group-head');
+ok(g0.classList.contains('is-open')&&hd.getAttribute('aria-expanded')==='true','group open by default');
+w.toggleNavGroup(hd);ok(!g0.classList.contains('is-open')&&hd.getAttribute('aria-expanded')==='false','group collapses');
+w.navigate('catalog');ok(!w.document.querySelectorAll('#sidebar .nav-group')[0].classList.contains('is-open'),'collapsed choice survives re-render');
+w.toggleNavGroup(w.document.querySelector('#sidebar .nav-group-head'));
+w.navigate('maintenance');ok(w.document.querySelector('#sidebar .nav-group.is-open .nav-item.is-active'),'group holding the active page is open');
+ok(w.document.querySelectorAll('#sidebar .nav-item').length>=8,'all nav items still present');
 ok(errors.length===0,'no runtime errors',errors.join('|'));
 console.log(failed?failed+' FAILED':'CAL E2E ALL PASSED');process.exit(failed?1:0)})();

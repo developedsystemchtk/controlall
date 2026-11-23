@@ -577,6 +577,20 @@ button.lg-item { cursor: pointer; width: 100%; }
 .ycal-scale { display: inline-flex; align-items: center; gap: 4px; }
 .ycal-scale i { width: 11px; height: 11px; border-radius: 2px; display: inline-block; }
 .nav-item[title] { position: relative; }
+
+/* ---------- collapsible nav groups (sub-menus slide open) ---------- */
+.nav-group-head { display: flex; width: 100%; align-items: center; justify-content: space-between; text-align: left; cursor: pointer; border-radius: 6px; }
+.nav-group-head:hover { color: #fff; }
+.nav-group-head:focus-visible { outline: 2px solid var(--signal); outline-offset: -2px; }
+.nav-chev { transition: transform .22s cubic-bezier(.65,0,.35,1); transform: rotate(-90deg); }
+.nav-group.is-open .nav-chev { transform: rotate(0deg); }
+.nav-group-body { display: grid; grid-template-rows: 0fr; visibility: hidden; opacity: 0; transition: grid-template-rows .24s cubic-bezier(.65,0,.35,1), opacity .2s, visibility 0s .24s; }
+.nav-group.is-open .nav-group-body { grid-template-rows: 1fr; visibility: visible; opacity: 1; transition: grid-template-rows .24s cubic-bezier(.65,0,.35,1), opacity .2s .04s, visibility 0s; }
+.nav-group-inner { min-height: 0; overflow: hidden; display: flex; flex-direction: column; gap: 2px; padding-left: .35rem; margin-left: .55rem; border-left: 1px solid rgba(255,255,255,.12); }
+/* แถบไอคอนตอนยุบ: เมนูย่อยแสดงเป็นไอคอนเสมอ เพราะไม่มีหัวข้อให้กดเปิด */
+#sidebar.is-collapsed .nav-group-body { grid-template-rows: 1fr; visibility: visible; opacity: 1; transition: none; }
+#sidebar.is-collapsed .nav-group-inner { border-left: 0; margin-left: 0; padding-left: 0; }
+@media (prefers-reduced-motion: reduce) { .nav-group-body, .nav-chev { transition: none !important; } }
 </style>
 </head>
 <body class="antialiased">
@@ -1553,8 +1567,8 @@ button.lg-item { cursor: pointer; width: 100%; }
       document.body.classList.add('is-authed');
       const nav = document.getElementById('sidebar-nav');
       const items = getNavItems();
-      nav.innerHTML = items.map(item => {
-        if (item.section) return `<div class="rail-section sidebar-label">${esc(item.section)}</div>`;
+      state.navOpen = state.navOpen || {};
+      const navBtn = item => {
         const active = state.route === item.id;
         return `
           <button onclick="navigate('${item.id}')" title="${esc(item.label)}" class="nav-item ${active ? 'is-active' : ''}" ${active ? 'aria-current="page"' : ''}>
@@ -1564,6 +1578,26 @@ button.lg-item { cursor: pointer; width: 100%; }
             </span>
             ${item.badge ? `<span class="sidebar-label nav-badge">${item.badge}</span>` : ''}
           </button>`;
+      };
+      // จัดกลุ่ม: หัวข้อ (section) กลายเป็นเมนูที่พับเก็บ/เลื่อนเปิดเมนูย่อยได้
+      const groups = []; let cur = null;
+      items.forEach(item => {
+        if (item.section) { cur = { label: item.section, kids: [] }; groups.push(cur); }
+        else if (cur) cur.kids.push(item); else groups.push({ solo: item });
+      });
+      nav.innerHTML = groups.map((g, gi) => {
+        if (g.solo) return navBtn(g.solo);
+        if (!g.kids.length) return '';
+        const hasActive = g.kids.some(k => k.id === state.route);
+        if (hasActive) state.navOpen[g.label] = true;
+        const open = state.navOpen[g.label] !== false;
+        return `
+          <div class="nav-group ${open ? 'is-open' : ''}" data-g="${esc(g.label)}">
+            <button type="button" class="rail-section sidebar-label nav-group-head" aria-expanded="${open}" aria-controls="ng-${gi}" onclick="toggleNavGroup(this)">
+              <span>${esc(g.label)}</span><i data-lucide="chevron-down" class="nav-chev w-3.5 h-3.5"></i>
+            </button>
+            <div class="nav-group-body" id="ng-${gi}"><div class="nav-group-inner">${g.kids.map(navBtn).join('')}</div></div>
+          </div>`;
       }).join('');
       if (state.sidebarCollapsed) document.getElementById('sidebar').querySelectorAll('.sidebar-label').forEach(el => el.classList.add('hidden'));
       renderBottomNav();
@@ -1620,9 +1654,18 @@ button.lg-item { cursor: pointer; width: 100%; }
       }
     });
 
+    function toggleNavGroup(btn) {
+      const g = btn.closest('.nav-group'); if (!g) return;
+      const open = !g.classList.contains('is-open');
+      g.classList.toggle('is-open', open);
+      btn.setAttribute('aria-expanded', open);
+      (state.navOpen = state.navOpen || {})[g.dataset.g] = open;
+    }
+
     function toggleSidebarCollapse() {
       const sb = document.getElementById('sidebar');
       state.sidebarCollapsed = !state.sidebarCollapsed;
+      sb.classList.toggle('is-collapsed', state.sidebarCollapsed);
       sb.classList.toggle('w-64', !state.sidebarCollapsed);
       sb.classList.toggle('w-[72px]', state.sidebarCollapsed);
       sb.querySelectorAll('.sidebar-label').forEach(el => el.classList.toggle('hidden', state.sidebarCollapsed));
