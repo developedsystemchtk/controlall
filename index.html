@@ -11,7 +11,7 @@
   
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Prompt:wght@300;400;500;600;700&amp;family=Sarabun:wght@400;500;600;700&amp;display=swap" rel="stylesheet" />
 
   
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
@@ -21,19 +21,17 @@
       theme: {
         extend: {
           fontFamily: {
-            sans: ['"IBM Plex Sans Thai"', '"Noto Sans Thai"', 'Sarabun', 'system-ui', 'sans-serif'],
-            sarabun: ['Sarabun', '"IBM Plex Sans Thai"', 'sans-serif']
+            sans: ['Prompt', 'Inter', 'system-ui', '-apple-system', 'sans-serif'],
+            sarabun: ['Sarabun', 'Prompt', 'sans-serif']
           },
-          borderRadius: { md: '4px', lg: '6px', xl: '8px', '2xl': '10px' },
           colors: {
-            white: '#FFFEFA',
-            brand: { 50: '#EAF3EE', 100: '#D3E6DB', 200: '#A9CDB9', 300: '#7CB095', 400: '#4F9272', 500: '#2F7857', 600: '#1F5F44', 700: '#17493A', 800: '#103A2C', 900: '#0B2A20' },
-            zinc: { 50: '#F7F5F0', 100: '#EFEBE3', 200: '#E2DDD2', 300: '#CFC9BC', 400: '#A39D90', 500: '#7A756A', 600: '#5C584F', 700: '#433F38', 800: '#2B2824', 900: '#1D1B18', 950: '#131210' },
-            emerald: { 50: '#EAF4EE', 100: '#D5EADD', 200: '#B0D5C0', 300: '#82BB9C', 400: '#52A07A', 500: '#2E8B5E', 600: '#247550', 700: '#1D5F42', 800: '#174C35', 900: '#113828' },
-            rose: { 50: '#FCEEE9', 100: '#F9DCD2', 200: '#F2B8A5', 300: '#E88F73', 400: '#DE6742', 500: '#D4441C', 600: '#B93915', 700: '#962E12', 800: '#7A2711', 900: '#5E1F0E' },
-            amber: { 50: '#FBF3E0', 100: '#F6E5BC', 200: '#EDCB7E', 300: '#E2AF45', 400: '#D49A22', 500: '#B7791F', 600: '#9A6418', 700: '#7D5114', 800: '#634013', 900: '#4A300F' },
-            sky: { 50: '#EDF1F9', 100: '#DCE4F3', 200: '#BAC9E6', 300: '#8EA6D3', 400: '#6483BD', 500: '#3B5FA3', 600: '#304F8A', 700: '#274071', 800: '#1F345C', 900: '#182848' },
-            indigo: { 50: '#F3EFF8', 100: '#E6DDF1', 200: '#CDBBE3', 300: '#AE92CF', 400: '#906FB8', 500: '#7A5BA6', 600: '#664A8D', 700: '#523B72', 800: '#412F5B', 900: '#312344' }
+            brand: {
+              50: '#EEF2FF',
+              100: '#E0E7FF',
+              500: '#6366F1',
+              600: '#4F46E5',
+              700: '#4338CA'
+            }
           }
         }
       }
@@ -44,7 +42,9 @@
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.395.0/dist/umd/lucide.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/l10n/th.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.css" />
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
@@ -193,428 +193,74 @@
       .no-print { display: none !important; }
     }
   </style>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.css" />
-<style id="design-layer">
-/* ============================================================
-   ระบบยืม-คืนครุภัณฑ์ โรงพยาบาลสันทราย — design layer
-   โลกการออกแบบ: "ห้องคลังที่มีกระดานสถานะ"
-   หมึกเขียวเข้ม + กระดาษอุ่น + สีสัญญาณส้มแดง ใช้เฉพาะเรื่องที่ต้องลงมือ
-   ============================================================ */
-:root {
-  --paper: #F6F3EC;
-  --paper-2: #ECE7DA;
-  --surface: #FFFEFA;
-  --ink: #0F2E27;
-  --ink-2: #17403A;
-  --ink-3: #21534A;
-  --on-ink: #E4EEE8;
-  --on-ink-dim: #8FB5A4;
-  --rule: #DCD5C5;
-  --rule-strong: #B9B09C;
-  --text: #1C2824;
-  --muted: #667269;
-  --brand: #1F5F44;
-  --brand-ring: rgba(31, 95, 68, .28);
-  --signal: #D4441C;
-  --st-ok: #2E8B5E;
-  --st-busy: #3B5FA3;
-  --st-res: #7A5BA6;
-  --st-wait: #B7791F;
-  --st-bad: #D4441C;
-  --st-off: #98998F;
-  --font: 'IBM Plex Sans Thai', 'Noto Sans Thai', 'Sarabun', system-ui, sans-serif;
-  --ease: cubic-bezier(.16, 1, .3, 1);
-}
-html.dark {
-  --paper: #0E1613;
-  --paper-2: #16211D;
-  --surface: #131D19;
-  --rule: #263530;
-  --rule-strong: #3A4C45;
-  --text: #E3ECE6;
-  --muted: #8DA096;
-  --brand: #5DB68A;
-  --brand-ring: rgba(93, 182, 138, .35);
-}
 
-/* ---------- base ---------- */
-html { font-size: 17px; -webkit-text-size-adjust: 100%; accent-color: var(--brand); }
-body {
-  font-family: var(--font) !important;
-  font-feature-settings: normal !important;
-  background: var(--paper);
-  color: var(--text);
-  line-height: 1.55;
-}
-.tabular-nums, table td, .num { font-variant-numeric: tabular-nums; }
-.text-\[11px\] { font-size: .75rem !important; line-height: 1.35; }
-.text-\[10px\] { font-size: .6875rem !important; line-height: 1.3; }
-::selection { background: #BFE3CF; color: #0B2A20; }
-html.dark ::selection { background: #2E6B4E; color: #fff; }
-input, textarea, select { caret-color: var(--brand); }
-* { scrollbar-width: thin; scrollbar-color: var(--rule-strong) transparent; }
-*::-webkit-scrollbar { width: 10px; height: 10px; }
-*::-webkit-scrollbar-thumb { background: var(--rule-strong); border-radius: 6px; border: 2px solid transparent; background-clip: content-box; }
-a { text-underline-offset: 3px; }
-:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; border-radius: 4px; }
-.hairline { border-color: var(--rule); }
-.dark .hairline { border-color: var(--rule); }
-.bg-grid-pattern { background-image: none; }
-img { max-width: 100%; }
-
-/* inputs */
-input:not([type=checkbox]):not([type=radio]):not([type=file]), select, textarea {
-  border-color: var(--rule-strong) !important;
-  background: var(--surface) !important;
-  color: var(--text);
-  border-radius: 6px !important;
-  transition: border-color .15s, box-shadow .15s;
-}
-input:focus, select:focus, textarea:focus {
-  outline: none !important;
-  border-color: var(--brand) !important;
-  box-shadow: 0 0 0 3px var(--brand-ring) !important;
-}
-::placeholder { color: #9AA39C; }
-@media (pointer: coarse) {
-  input:not([type=checkbox]):not([type=radio]):not([type=file]), select { min-height: 44px; }
-}
-
-/* buttons */
-.btn {
-  display: inline-flex; align-items: center; justify-content: center; gap: .4rem;
-  min-height: 40px; padding: 0 1rem; border-radius: 6px; border: 1px solid transparent;
-  font-size: .8125rem; font-weight: 500; line-height: 1; cursor: pointer; white-space: nowrap;
-  transition: background-color .15s, border-color .15s, transform .15s var(--ease), box-shadow .15s;
-}
-.btn:active { transform: translateY(1px); }
-.btn[disabled] { opacity: .5; cursor: not-allowed; }
-.btn-primary { background: var(--brand); color: #fff; box-shadow: 0 1px 0 rgba(0,0,0,.18); }
-.btn-primary:hover { background: #17493A; }
-html.dark .btn-primary { background: #2F7857; }
-.btn-secondary { background: var(--surface); color: var(--text); border-color: var(--rule-strong); }
-.btn-secondary:hover { background: var(--paper-2); }
-.btn-danger { background: var(--signal); color: #fff; box-shadow: 0 1px 0 rgba(0,0,0,.18); }
-.btn-danger:hover { background: #B93915; }
-.btn-success { background: var(--st-ok); color: #fff; box-shadow: 0 1px 0 rgba(0,0,0,.18); }
-.btn-success:hover { background: #247550; }
-@media (pointer: coarse) { .btn { min-height: 44px; } }
-
-/* status tag (replaces pill badges) */
-.st {
-  display: inline-flex; align-items: center; gap: .4rem; padding: .18rem .55rem .18rem .45rem;
-  border-radius: 4px; font-size: .75rem; font-weight: 500; line-height: 1.3;
-  background: color-mix(in srgb, var(--c) 12%, var(--surface)); color: color-mix(in srgb, var(--c) 78%, #000);
-  white-space: nowrap;
-}
-.st::before { content: ''; width: .5rem; height: .5rem; border-radius: 2px; background: var(--c); flex: none; }
-html.dark .st { color: color-mix(in srgb, var(--c) 55%, #fff); background: color-mix(in srgb, var(--c) 22%, transparent); }
-.st-ok { --c: var(--st-ok); } .st-busy { --c: var(--st-busy); } .st-res { --c: var(--st-res); }
-.st-wait { --c: var(--st-wait); } .st-bad { --c: var(--st-bad); } .st-off { --c: var(--st-off); }
-.st-late { --c: var(--st-bad); font-weight: 600; }
-
-/* panels & tables */
-main .rounded-xl.border, main .rounded-lg.border { border-radius: 6px; }
-main .rounded-xl.border:not(.border-dashed) { box-shadow: 0 1px 0 rgba(28, 40, 36, .04); }
-table thead th, table thead td {
-  font-weight: 600; color: var(--muted); font-size: .75rem; letter-spacing: .01em;
-  background: transparent !important; border-bottom: 1.5px solid var(--ink) !important;
-}
-html.dark table thead th { border-bottom-color: var(--rule-strong) !important; }
-table tbody tr { transition: background-color .12s; }
-table tbody tr:hover { background: color-mix(in srgb, var(--paper-2) 70%, transparent) !important; }
-.divide-y.hairline > * + * { border-color: var(--rule); }
-
-/* ---------- shell: rail ---------- */
-#app-shell { background: var(--paper); }
-.rail {
-  background: var(--ink); color: var(--on-ink);
-  border-right: 0 !important;
-}
-.rail-head { height: 64px; padding: 0 1rem; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,.08); }
-.rail-logo {
-  width: 36px; height: 36px; border-radius: 6px; background: var(--ink-3); color: #fff;
-  display: flex; align-items: center; justify-content: center; overflow: hidden; flex: none;
-}
-.rail-title { font-weight: 600; font-size: .95rem; color: #F4F8F4; line-height: 1.2; }
-.rail-org { font-size: .72rem; color: var(--on-ink-dim); }
-.rail-collapse { color: var(--on-ink-dim); padding: .4rem; border-radius: 6px; }
-.rail-collapse:hover { background: rgba(255,255,255,.08); color: #fff; }
-.rail-nav { padding: .75rem .65rem; display: flex; flex-direction: column; gap: 2px; }
-.rail-section { padding: 1.1rem .75rem .35rem; font-size: .68rem; font-weight: 600; letter-spacing: .06em; color: var(--on-ink-dim); text-transform: none; }
-.nav-item {
-  width: 100%; display: flex; align-items: center; justify-content: space-between; gap: .5rem;
-  min-height: 42px; padding: 0 .75rem; border-radius: 6px; text-align: left;
-  color: #C5D8CE; font-size: .84rem; transition: background-color .15s, color .15s;
-}
-.nav-item:hover { background: rgba(255,255,255,.08); color: #fff; }
-.nav-item.is-active { background: #F6F3EC; color: #0F2E27; font-weight: 600; }
-.nav-item.is-active i, .nav-item.is-active svg { color: #1F5F44; }
-.nav-badge { min-width: 1.35rem; height: 1.35rem; padding: 0 .35rem; border-radius: 4px; background: var(--signal); color: #fff; font-size: .72rem; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; }
-.rail-user { margin: .75rem; padding: .6rem; border-radius: 8px; background: rgba(255,255,255,.06); display: flex; align-items: center; gap: .6rem; }
-.rail-avatar { width: 34px; height: 34px; border-radius: 6px; background: #2F7857; color: #fff; font-weight: 600; display: flex; align-items: center; justify-content: center; flex: none; }
-.rail-user .name { font-size: .8rem; font-weight: 500; color: #F4F8F4; }
-.rail-user .role { font-size: .7rem; color: var(--on-ink-dim); }
-.rail-logout { padding: .45rem; border-radius: 6px; color: var(--on-ink-dim); }
-.rail-logout:hover { background: rgba(255,255,255,.1); color: #fff; }
-
-/* ---------- shell: top bar ---------- */
-.topbar {
-  position: sticky; top: 0; z-index: 20; height: 60px; padding: 0 1rem;
-  display: flex; align-items: center; justify-content: space-between; gap: .75rem;
-  background: color-mix(in srgb, var(--paper) 92%, transparent); backdrop-filter: blur(8px);
-  border-bottom: 1px solid var(--rule);
-}
-@media (min-width: 640px) { .topbar { padding: 0 1.5rem; } }
-.page-title { font-size: 1.15rem; font-weight: 600; letter-spacing: -.005em; color: var(--text); }
-.icon-btn {
-  width: 38px; height: 38px; display: inline-flex; align-items: center; justify-content: center;
-  border-radius: 6px; border: 1px solid var(--rule-strong); background: var(--surface); color: var(--text);
-  transition: background-color .15s; position: relative;
-}
-.icon-btn:hover { background: var(--paper-2); }
-.search-box { position: relative; display: none; align-items: center; }
-@media (min-width: 768px) { .search-box { display: flex; } }
-.search-box input { width: 16rem; padding: .5rem .75rem .5rem 2.1rem; font-size: .82rem; }
-.chip-demo { display: none; align-items: center; gap: .35rem; padding: .15rem .55rem; border-radius: 4px; background: #FBE9C8; color: #6B4A0B; font-size: .72rem; font-weight: 600; }
-body.is-demo .chip-demo { display: inline-flex; }
-.demo-bar {
-  display: none; align-items: center; justify-content: space-between; gap: .75rem; flex-wrap: wrap;
-  padding: .5rem 1rem; background: #FBE9C8; color: #4F3608; font-size: .78rem; border-bottom: 1px solid #E8CD92;
-}
-body.is-demo .demo-bar { display: flex; }
-.demo-bar button { font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
-
-/* ---------- bottom nav (phones) ---------- */
-.bottom-nav {
-  position: fixed; left: 0; right: 0; bottom: 0; z-index: 35; display: none;
-  background: var(--ink); padding: .35rem .5rem calc(.35rem + env(safe-area-inset-bottom));
-  grid-template-columns: repeat(5, 1fr); align-items: end; border-top: 1px solid rgba(255,255,255,.08);
-}
-body.is-authed .bottom-nav { display: grid; }
-@media (min-width: 1024px) { body.is-authed .bottom-nav { display: none; } }
-.bn-item { display: flex; flex-direction: column; align-items: center; gap: .15rem; padding: .35rem 0; color: var(--on-ink-dim); font-size: .68rem; min-height: 48px; justify-content: center; border-radius: 6px; position: relative; }
-.bn-item.is-active { color: #fff; font-weight: 600; }
-.bn-item.is-active::after { content: ''; position: absolute; top: -.35rem; width: 28px; height: 3px; border-radius: 0 0 3px 3px; background: #7FD1A6; }
-.bn-scan { transform: translateY(-14px); }
-.bn-scan span.cap { width: 54px; height: 54px; border-radius: 12px; background: var(--signal); color: #fff; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 14px rgba(0,0,0,.35); }
-.bn-scan small { color: #fff; margin-top: .15rem; }
-@media (max-width: 1023px) {
-  #main-content { padding-bottom: 6.5rem !important; }
-  #notif-popover { position: fixed !important; left: .75rem; right: .75rem; top: 64px; width: auto !important; }
-}
-
-/* ---------- modal (bottom sheet on phones) ---------- */
-#modal-root { background: rgba(15, 46, 39, .55) !important; backdrop-filter: none !important; }
-#modal-panel { border-radius: 10px !important; background: var(--surface) !important; box-shadow: 0 24px 60px -12px rgba(15, 46, 39, .45) !important; }
-@media (max-width: 639px) {
-  #modal-root { align-items: flex-end !important; padding: 0 !important; }
-  #modal-panel { max-width: none !important; border-bottom-left-radius: 0 !important; border-bottom-right-radius: 0 !important; max-height: 92vh !important; animation: sheet-up .28s var(--ease); }
-}
-@keyframes sheet-up { from { transform: translateY(24px); opacity: .6; } to { transform: none; opacity: 1; } }
-
-/* ---------- dashboard: tasks / stock bar / board ---------- */
-.dash { display: flex; flex-direction: column; gap: 1.75rem; }
-.dash-hello { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 1rem; }
-.dash-hello h3 { font-size: 1.5rem; font-weight: 600; letter-spacing: -.01em; line-height: 1.25; text-wrap: balance; }
-.dash-hello p { color: var(--muted); font-size: .85rem; margin-top: .2rem; }
-.sec-title { font-size: .95rem; font-weight: 600; }
-.sec-sub { font-size: .78rem; color: var(--muted); }
-
-.tasks { border: 1px solid var(--rule); background: var(--surface); border-radius: 8px; overflow: hidden; }
-.task { display: flex; align-items: center; gap: .85rem; padding: .85rem 1rem; width: 100%; text-align: left; transition: background-color .12s; }
-.task + .task { border-top: 1px solid var(--rule); }
-.task:hover { background: var(--paper-2); }
-.task-ic { width: 38px; height: 38px; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #fff; flex: none; }
-.task-ic.bad { background: var(--st-bad); } .task-ic.wait { background: var(--st-wait); } .task-ic.busy { background: var(--st-busy); }
-.task b { font-weight: 600; font-size: .9rem; }
-.task small { display: block; color: var(--muted); font-size: .76rem; }
-.task .go { margin-left: auto; color: var(--muted); flex: none; }
-.tasks-empty { display: flex; align-items: center; gap: .75rem; padding: 1rem; color: var(--muted); font-size: .85rem; }
-
-.stock { display: flex; flex-direction: column; gap: .75rem; }
-.stock-total { display: flex; align-items: baseline; gap: .5rem; }
-.stock-total .n { color: var(--text); font-size: 2.6rem; font-weight: 600; line-height: 1; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
-.stock-total span { color: var(--muted); font-size: .85rem; }
-.stock-bar { display: flex; height: 18px; border-radius: 4px; overflow: hidden; gap: 2px; background: var(--paper-2); }
-.stock-bar i { display: block; height: 100%; min-width: 3px; transition: flex-grow .6s var(--ease); }
-.stock-legend { display: grid; grid-template-columns: repeat(2, 1fr); gap: .5rem .75rem; }
-@media (min-width: 640px) { .stock-legend { grid-template-columns: repeat(5, 1fr); } }
-.lg-item { display: flex; align-items: center; gap: .55rem; padding: .5rem .6rem; border-radius: 6px; border: 1px solid var(--rule); background: var(--surface); text-align: left; transition: border-color .15s, background-color .15s; }
-.lg-item:hover { border-color: var(--rule-strong); background: var(--paper-2); }
-.lg-item .sw { width: 12px; height: 12px; border-radius: 3px; flex: none; }
-.lg-item b { font-size: 1.15rem; font-weight: 600; line-height: 1; font-variant-numeric: tabular-nums; }
-.lg-item span { font-size: .74rem; color: var(--muted); display: block; line-height: 1.2; }
-
-.board { border: 1px solid var(--rule); background: var(--surface); border-radius: 8px; }
-.board-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .5rem 1rem; padding: .9rem 1rem; border-bottom: 1.5px solid var(--ink); }
-html.dark .board-head { border-bottom-color: var(--rule-strong); }
-.board-key { display: flex; flex-wrap: wrap; gap: .35rem 1rem; font-size: .74rem; color: var(--muted); }
-.board-key i { display: inline-block; width: 11px; height: 11px; border-radius: 3px; margin-right: .35rem; vertical-align: -1px; }
-.board-row { display: grid; grid-template-columns: 1fr; gap: .55rem; padding: .85rem 1rem; }
-@media (min-width: 768px) { .board-row { grid-template-columns: 15rem 1fr; gap: 1.25rem; align-items: start; } }
-.board-row + .board-row { border-top: 1px solid var(--rule); }
-.board-dept b { display: block; font-size: .88rem; font-weight: 600; line-height: 1.3; }
-.board-dept span { font-size: .74rem; color: var(--muted); }
-.board-tiles { display: flex; flex-wrap: wrap; gap: 5px; }
-.tile {
-  width: 26px; height: 26px; border-radius: 4px; background: var(--c); border: 0; cursor: pointer; position: relative;
-  transition: transform .15s var(--ease), box-shadow .15s;
-}
-@media (pointer: coarse) { .tile { width: 30px; height: 30px; } }
-.tile:hover, .tile:focus-visible { transform: translateY(-2px) scale(1.08); box-shadow: 0 4px 10px rgba(15, 46, 39, .3); z-index: 2; }
-.tile.t-ok { --c: var(--st-ok); } .tile.t-busy { --c: var(--st-busy); } .tile.t-res { --c: var(--st-res); }
-.tile.t-wait { --c: var(--st-wait); } .tile.t-bad { --c: var(--st-bad); } .tile.t-off { --c: var(--st-off); opacity: .55; }
-.tile.is-late::after { content: ''; position: absolute; right: -3px; top: -3px; width: 9px; height: 9px; border-radius: 50%; background: #fff; border: 2.5px solid var(--st-bad); }
-.tile-tip { position: fixed; z-index: 80; pointer-events: none; background: var(--ink); color: #F4F8F4; padding: .45rem .65rem; border-radius: 6px; font-size: .76rem; line-height: 1.35; max-width: 16rem; box-shadow: 0 10px 24px rgba(0,0,0,.3); opacity: 0; transition: opacity .1s; }
-.tile-tip.on { opacity: 1; }
-.tile-tip small { color: var(--on-ink-dim); display: block; }
-
-.kpi { border-top: 1.5px solid var(--ink); padding: .6rem .1rem 0; }
-.kpi-l { display: block; font-size: .78rem; color: var(--muted); }
-.kpi-n { display: block; font-size: 1.9rem; font-weight: 600; line-height: 1.15; letter-spacing: -.01em; font-variant-numeric: tabular-nums; }
-.kpi small { font-size: .74rem; color: var(--muted); }
-.dash-cols { display: grid; grid-template-columns: 1fr; gap: 1.25rem; }
-@media (min-width: 1024px) { .dash-cols { grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); } }
-.feed li { display: grid; grid-template-columns: 8px 1fr; gap: .6rem; padding: .6rem 0; font-size: .8rem; }
-.feed li + li { border-top: 1px solid var(--rule); }
-.feed li::before { content: ''; width: 8px; height: 8px; border-radius: 2px; background: var(--brand); margin-top: .4rem; }
-.feed small { color: var(--muted); font-size: .72rem; display: block; }
-
-/* ---------- auth ---------- */
-.auth-shell { min-height: 100vh; min-height: 100dvh; display: grid; grid-template-columns: 1fr; background: var(--paper); }
-@media (min-width: 1024px) { .auth-shell { grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); } }
-.auth-side { background: var(--ink); color: var(--on-ink); padding: 1.25rem 1.25rem 1.5rem; display: flex; flex-direction: column; gap: 1.25rem; position: relative; overflow: hidden; }
-@media (min-width: 1024px) { .auth-side { padding: 3rem 3.5rem; justify-content: space-between; } }
-.auth-brand { display: flex; align-items: center; gap: .85rem; min-width: 0; }
-.auth-logo { width: 48px; height: 48px; border-radius: 8px; background: var(--ink-3); display: flex; align-items: center; justify-content: center; overflow: hidden; flex: none; color: #fff; }
-.auth-brand h1 { font-size: 1.15rem; font-weight: 600; color: #F4F8F4; line-height: 1.2; }
-.auth-brand p { font-size: .82rem; color: var(--on-ink-dim); }
-.auth-claim { display: none; }
-@media (min-width: 1024px) {
-  .auth-claim { display: block; max-width: 30rem; }
-  .auth-claim h2 { font-size: 2.35rem; font-weight: 600; line-height: 1.2; letter-spacing: -.01em; color: #F4F8F4; text-wrap: balance; }
-  .auth-claim p { margin-top: .9rem; color: #B7CFC3; font-size: 1rem; max-width: 26rem; }
-}
-.auth-tiles { display: none; }
-@media (min-width: 1024px) {
-  .auth-tiles { display: grid; grid-template-columns: repeat(18, 1fr); gap: 6px; max-width: 34rem; }
-  .auth-tiles i { aspect-ratio: 1; border-radius: 3px; background: var(--c); opacity: .9; }
-}
-.auth-main { display: flex; align-items: center; justify-content: center; padding: 1.5rem 1.25rem 2.5rem; }
-.auth-card { width: 100%; max-width: 26rem; }
-.auth-card h2.auth-h { font-size: 1.5rem; font-weight: 600; margin-bottom: .25rem; }
-.auth-or { display: flex; align-items: center; gap: .75rem; margin: 1.25rem 0 .9rem; color: var(--muted); font-size: .78rem; }
-.auth-or::before, .auth-or::after { content: ''; height: 1px; background: var(--rule); flex: 1; }
-.demo-cta { width: 100%; text-align: left; display: flex; align-items: center; gap: .8rem; padding: .8rem .9rem; border-radius: 8px; border: 1.5px dashed var(--rule-strong); background: transparent; transition: background-color .15s, border-color .15s; }
-.demo-cta:hover { background: var(--paper-2); border-color: var(--brand); }
-.demo-cta .ic { width: 38px; height: 38px; border-radius: 6px; background: #FBE9C8; color: #6B4A0B; display: flex; align-items: center; justify-content: center; flex: none; }
-.demo-cta b { display: block; font-size: .9rem; font-weight: 600; }
-.demo-cta small { color: var(--muted); font-size: .76rem; }
-.role-pick { display: grid; gap: .6rem; }
-.role-pick button { text-align: left; padding: .8rem .9rem; border: 1px solid var(--rule-strong); border-radius: 8px; background: var(--surface); display: flex; gap: .8rem; align-items: center; transition: background-color .15s, border-color .15s; }
-.role-pick button:hover { background: var(--paper-2); border-color: var(--brand); }
-.role-pick .ic { width: 40px; height: 40px; border-radius: 6px; background: var(--ink); color: #fff; display: flex; align-items: center; justify-content: center; flex: none; }
-.role-pick b { display: block; font-size: .92rem; }
-.role-pick small { color: var(--muted); font-size: .78rem; line-height: 1.35; display: block; }
-
-/* ---------- sweetalert + misc ---------- */
-.swal2-popup { background: var(--surface) !important; color: var(--text) !important; border: 1px solid var(--rule) !important; border-radius: 10px !important; font-family: var(--font) !important; }
-.swal2-title { font-size: 1.1rem !important; font-weight: 600 !important; }
-
-/* ---------- motion: one authored moment (page enter) ---------- */
-@keyframes page-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
-#main-content > * { animation: page-in .35s var(--ease) both; }
-@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
-
-/* ---------- catalog list ---------- */
-.cat-list { border: 1px solid var(--rule); background: var(--surface); border-radius: 8px; overflow: hidden; }
-.cat-row { display: grid; grid-template-columns: 56px minmax(0, 1fr); grid-template-areas: "thumb main" "state act"; gap: .6rem .85rem; padding: .8rem .9rem; align-items: center; transition: background-color .12s; }
-.cat-row:hover { background: color-mix(in srgb, var(--paper-2) 60%, transparent); }
-.cat-row + .cat-row { border-top: 1px solid var(--rule); }
-.cat-thumb { grid-area: thumb; width: 56px; height: 56px; border-radius: 6px; background: var(--paper-2); display: flex; align-items: center; justify-content: center; overflow: hidden; color: #A39D90; }
-.cat-thumb img { width: 100%; height: 100%; object-fit: cover; }
-.cat-main { grid-area: main; min-width: 0; }
-.cat-main h4 { font-weight: 600; font-size: .93rem; line-height: 1.35; }
-.cat-main p { font-size: .78rem; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.cat-meta { display: flex; gap: .6rem; font-size: .72rem; color: var(--muted); }
-.cat-meta span:first-child { color: var(--brand); font-weight: 600; }
-.cat-state { grid-area: state; }
-.cat-act { grid-area: act; display: flex; gap: .5rem; justify-content: flex-end; }
-@media (min-width: 900px) {
-  .cat-row { grid-template-columns: 56px minmax(0, 1fr) 10rem 15rem; grid-template-areas: "thumb main state act"; }
-}
-@media (max-width: 639px) { .chip-demo { display: none !important; } }
-.tile { width: 28px; height: 28px; }
-button.lg-item { cursor: pointer; width: 100%; }
-
-/* ---------- date picker (flatpickr): dd/mm/yyyy ---------- */
-.flatpickr-calendar { font-family: var(--font); border-radius: 8px; border: 1px solid var(--rule); background: var(--surface); box-shadow: 0 18px 40px -12px rgba(15, 46, 39, .35); z-index: 120 !important; }
-.flatpickr-calendar:before, .flatpickr-calendar:after { display: none; }
-.flatpickr-months .flatpickr-month, .flatpickr-current-month .flatpickr-monthDropdown-months, .flatpickr-current-month input.cur-year, span.flatpickr-weekday { color: var(--text); fill: var(--text); background: transparent; }
-.flatpickr-months .flatpickr-prev-month svg, .flatpickr-months .flatpickr-next-month svg { fill: var(--text); }
-.flatpickr-day { color: var(--text); border-radius: 6px; }
-.flatpickr-day:hover { background: var(--paper-2); border-color: var(--paper-2); }
-.flatpickr-day.today { border-color: var(--signal); }
-.flatpickr-day.selected, .flatpickr-day.selected:hover { background: var(--brand); border-color: var(--brand); color: #fff; }
-.flatpickr-day.flatpickr-disabled, .flatpickr-day.prevMonthDay, .flatpickr-day.nextMonthDay { color: var(--muted); opacity: .55; }
-.flatpickr-current-month .flatpickr-monthDropdown-months option { background: var(--surface); color: var(--text); }
-
-
-/* ---------- year calendar (flat heat map <-> 3D skyline) ---------- */
-.ycal { border: 1px solid var(--rule); background: var(--surface); border-radius: 8px; padding: 14px 16px 12px; }
-.ycal-head { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
-.ycal-seg { display: inline-flex; border: 1px solid var(--rule); border-radius: 6px; padding: 2px; }
-.ycal-seg button { font-size: .75rem; font-weight: 600; padding: 4px 12px; border-radius: 4px; color: var(--muted); }
-.ycal-seg button.on { background: var(--brand); color: #fff; }
-.ycal-stage { position: relative; width: 100%; }
-.ycal-stage canvas { display: block; width: 100%; touch-action: pan-y; }
-.ycal-tip { position: absolute; pointer-events: none; z-index: 5; background: var(--text); color: var(--surface); font-size: 12px; padding: 5px 9px; border-radius: 6px; white-space: nowrap; opacity: 0; transition: opacity .12s; transform: translate(-50%, -100%); }
-.ycal-tip.on { opacity: 1; }
-.ycal-foot { display: flex; flex-wrap: wrap; gap: 6px 18px; justify-content: space-between; align-items: center; margin-top: 6px; font-size: .75rem; color: var(--muted); }
-.ycal-stats { display: flex; flex-wrap: wrap; gap: 4px 18px; }
-.ycal-stats b { color: var(--text); font-variant-numeric: tabular-nums; }
-.ycal-scale { display: inline-flex; align-items: center; gap: 4px; }
-.ycal-scale i { width: 11px; height: 11px; border-radius: 2px; display: inline-block; }
-.nav-item[title] { position: relative; }
-
-/* ---------- collapsible nav groups (sub-menus slide open) ---------- */
-.nav-group-head { display: flex; width: 100%; align-items: center; justify-content: space-between; text-align: left; cursor: pointer; border-radius: 6px; }
-.nav-group-head:hover { color: #fff; }
-.nav-group-head:focus-visible { outline: 2px solid var(--signal); outline-offset: -2px; }
-.nav-chev { transition: transform .22s cubic-bezier(.65,0,.35,1); transform: rotate(-90deg); }
-.nav-group.is-open .nav-chev { transform: rotate(0deg); }
-.nav-group-body { display: grid; grid-template-rows: 0fr; visibility: hidden; opacity: 0; transition: grid-template-rows .24s cubic-bezier(.65,0,.35,1), opacity .2s, visibility 0s .24s; }
-.nav-group.is-open .nav-group-body { grid-template-rows: 1fr; visibility: visible; opacity: 1; transition: grid-template-rows .24s cubic-bezier(.65,0,.35,1), opacity .2s .04s, visibility 0s; }
-.nav-group-inner { min-height: 0; overflow: hidden; display: flex; flex-direction: column; gap: 2px; padding-left: .35rem; margin-left: .55rem; border-left: 1px solid rgba(255,255,255,.12); }
-/* แถบไอคอนตอนยุบ: เมนูย่อยแสดงเป็นไอคอนเสมอ เพราะไม่มีหัวข้อให้กดเปิด */
-#sidebar.is-collapsed .nav-group-body { grid-template-rows: 1fr; visibility: visible; opacity: 1; transition: none; }
-#sidebar.is-collapsed .nav-group-inner { border-left: 0; margin-left: 0; padding-left: 0; }
-@media (prefers-reduced-motion: reduce) { .nav-group-body, .nav-chev { transition: none !important; } }
-</style>
+  <style id="extras">
+    /* ฟีเจอร์เสริม (โหมดจำลอง ปฏิทินรอบปี เมนูย่อย ตัวเลือกวันที่) ใช้โทนเดิมของต้นแบบ */
+    :root { --surface:#ffffff; --rule:#e4e4e7; --text:#18181b; --muted:#71717a; --brand:#4F46E5; }
+    html.dark { --surface:#18181b; --rule:#3f3f46; --text:#f4f4f5; --muted:#a1a1aa; --brand:#818cf8; }
+    .demo-bar { display: none; }
+    body.is-demo .demo-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 16px; padding: 6px 16px; background: #fef3c7; color: #78350f; font-size: 12px; border-bottom: 1px solid #fcd34d; }
+    html.dark body.is-demo .demo-bar { background: rgba(245,158,11,.15); color: #fcd34d; border-bottom-color: rgba(245,158,11,.3); }
+    .demo-bar button { text-decoration: underline; font-weight: 500; }
+    /* year calendar */
+    .ycal { border: 1px solid var(--rule); background: var(--surface); border-radius: 12px; padding: 16px 20px 12px; }
+    .ycal-head { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
+    .ycal-seg { display: inline-flex; border: 1px solid var(--rule); border-radius: 8px; padding: 2px; }
+    .ycal-seg button { font-size: 12px; font-weight: 500; padding: 4px 12px; border-radius: 6px; color: var(--muted); }
+    .ycal-seg button.on { background: var(--brand); color: #fff; }
+    html.dark .ycal-seg button.on { color: #18181b; }
+    .ycal-stage { position: relative; width: 100%; }
+    .ycal-stage canvas { display: block; width: 100%; touch-action: pan-y; }
+    .ycal-tip { position: absolute; pointer-events: none; z-index: 5; background: var(--text); color: var(--surface); font-size: 12px; padding: 5px 9px; border-radius: 6px; white-space: nowrap; opacity: 0; transition: opacity .12s; transform: translate(-50%, -100%); }
+    .ycal-tip.on { opacity: 1; }
+    .ycal-foot { display: flex; flex-wrap: wrap; gap: 6px 18px; justify-content: space-between; align-items: center; margin-top: 6px; font-size: 12px; color: var(--muted); }
+    .ycal-stats { display: flex; flex-wrap: wrap; gap: 4px 18px; }
+    .ycal-stats b { color: var(--text); font-variant-numeric: tabular-nums; }
+    .ycal-scale { display: inline-flex; align-items: center; gap: 4px; }
+    .ycal-scale i { width: 11px; height: 11px; border-radius: 2px; display: inline-block; }
+    /* collapsible nav groups */
+    .nav-group-head { display: flex; width: 100%; align-items: center; justify-content: space-between; text-align: left; cursor: pointer; border-radius: 6px; }
+    .nav-group-head:hover { color: var(--text); }
+    .nav-chev { transition: transform .22s cubic-bezier(.65,0,.35,1); transform: rotate(-90deg); }
+    .nav-group.is-open .nav-chev { transform: rotate(0deg); }
+    .nav-group-body { display: grid; grid-template-rows: 0fr; visibility: hidden; opacity: 0; transition: grid-template-rows .24s cubic-bezier(.65,0,.35,1), opacity .2s, visibility 0s .24s; }
+    .nav-group.is-open .nav-group-body { grid-template-rows: 1fr; visibility: visible; opacity: 1; transition: grid-template-rows .24s cubic-bezier(.65,0,.35,1), opacity .2s .04s, visibility 0s; }
+    .nav-group-inner { min-height: 0; overflow: hidden; display: flex; flex-direction: column; gap: 4px; }
+    #sidebar.is-collapsed .nav-group-body { grid-template-rows: 1fr; visibility: visible; opacity: 1; transition: none; }
+    @media (prefers-reduced-motion: reduce) { .nav-group-body, .nav-chev, .ycal-tip { transition: none !important; } }
+    /* flatpickr */
+    .flatpickr-calendar { font-family: inherit; border-radius: 10px; border: 1px solid var(--rule); background: var(--surface); box-shadow: 0 12px 32px -8px rgba(0,0,0,.25); z-index: 120 !important; }
+    .flatpickr-calendar:before, .flatpickr-calendar:after { display: none; }
+    .flatpickr-months .flatpickr-month, .flatpickr-current-month .flatpickr-monthDropdown-months, .flatpickr-current-month input.cur-year, span.flatpickr-weekday { color: var(--text); fill: var(--text); background: transparent; }
+    .flatpickr-months .flatpickr-prev-month svg, .flatpickr-months .flatpickr-next-month svg { fill: var(--text); }
+    .flatpickr-day { color: var(--text); border-radius: 8px; }
+    .flatpickr-day:hover { background: var(--rule); border-color: var(--rule); }
+    .flatpickr-day.today { border-color: var(--brand); }
+    .flatpickr-day.selected, .flatpickr-day.selected:hover { background: var(--brand); border-color: var(--brand); color: #fff; }
+    .flatpickr-day.flatpickr-disabled, .flatpickr-day.prevMonthDay, .flatpickr-day.nextMonthDay { color: var(--muted); opacity: .55; }
+    .flatpickr-current-month .flatpickr-monthDropdown-months option { background: var(--surface); color: var(--text); }
+  </style>
 </head>
-<body class="antialiased">
+<body class="bg-zinc-50 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100 antialiased selection:bg-brand-100 selection:text-brand-700">
 
   
   
   
-  <div id="auth-screen" class="auth-shell">
-    <aside class="auth-side">
-      <div class="auth-brand">
-        <div id="auth-logo-box" class="auth-logo"><svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg></div>
-        <div class="min-w-0"><h1 id="auth-app-title" class="truncate">ระบบยืม-คืนครุภัณฑ์</h1><p id="auth-app-subtitle" class="truncate">โรงพยาบาลสันทราย</p></div>
+  <div id="auth-screen" class="min-h-screen flex items-center justify-center p-4 bg-grid-pattern relative overflow-hidden">
+    <div class="w-full max-w-md bg-white dark:bg-zinc-900 border hairline rounded-xl shadow-sm p-7 sm:p-8 relative z-10">
+      
+      <div class="flex items-center gap-3 mb-6">
+        <div id="auth-logo-box" class="w-11 h-11 rounded-lg bg-brand-600 text-white flex items-center justify-center shadow-sm overflow-hidden shrink-0">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+        </div>
+        <div class="min-w-0">
+          <h1 id="auth-app-title" class="text-lg font-semibold tracking-tight text-zinc-900 dark:text-white truncate">ระบบยืม-คืนครุภัณฑ์</h1>
+          <p id="auth-app-subtitle" class="text-xs text-zinc-500 dark:text-zinc-400 truncate">โรงพยาบาลสันทราย</p>
+        </div>
       </div>
-      <div class="auth-claim">
-        <h2>รู้ทันทีว่าครุภัณฑ์อยู่ที่ไหน ใครยืมอยู่ และต้องคืนเมื่อไร</h2>
-        <p>ขอยืม อนุมัติ ส่งมอบ และรับคืน ได้ในที่เดียว พร้อมแจ้งซ่อมและรายงานสำหรับผู้บริหาร</p>
-      </div>
-      <div class="auth-tiles" aria-hidden="true"><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-busy)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-res)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-busy)"></i><i style="--c:var(--st-bad)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-off)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-res)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-res)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-busy)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-busy)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-busy)"></i><i style="--c:var(--st-busy)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-wait)"></i><i style="--c:var(--st-busy)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-off)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-busy)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-busy)"></i><i style="--c:var(--st-busy)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-wait)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-busy)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-res)"></i><i style="--c:var(--st-bad)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-busy)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-busy)"></i><i style="--c:var(--st-busy)"></i><i style="--c:var(--st-off)"></i><i style="--c:var(--st-res)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-busy)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-busy)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-wait)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-wait)"></i><i style="--c:var(--st-res)"></i><i style="--c:var(--st-wait)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-wait)"></i><i style="--c:var(--st-bad)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-ok)"></i><i style="--c:var(--st-ok)"></i></div>
-    </aside>
-    <section class="auth-main">
-      <div class="auth-card">
-        <h2 class="auth-h">เข้าสู่ระบบ</h2>
-        <p class="text-sm mb-6" style="color:var(--muted)">สำหรับบุคลากรโรงพยาบาลสันทราย</p>
-        <div class="grid grid-cols-2 p-1 bg-zinc-100 dark:bg-zinc-800/80 rounded-lg mb-6 text-sm font-medium">
+
+      
+      <div class="grid grid-cols-2 p-1 bg-zinc-100 dark:bg-zinc-800/80 rounded-lg mb-6 text-sm font-medium">
         <button id="tab-login-btn" type="button" onclick="switchAuthTab('login')" class="py-1.5 rounded-md bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white shadow-xs transition">เข้าสู่ระบบ</button>
         <button id="tab-reg-btn" type="button" onclick="switchAuthTab('register')" class="py-1.5 rounded-md text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200 transition">ลงทะเบียนผู้ยืม</button>
       </div>
@@ -644,7 +290,7 @@ button.lg-item { cursor: pointer; width: 100%; }
             จดจำการเข้าสู่ระบบ
           </label>
         </div>
-        <button id="login-submit-btn" type="submit" class="btn btn-primary w-full" style="min-height:46px;font-size:.9rem">
+        <button id="login-submit-btn" type="submit" class="w-full py-2.5 px-4 bg-brand-600 hover:bg-brand-700 text-white text-sm font-medium rounded-lg transition flex items-center justify-center gap-2">
           <span>เข้าสู่ระบบ</span>
           <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
         </button>
@@ -680,17 +326,17 @@ button.lg-item { cursor: pointer; width: 100%; }
             <input id="reg-phone" type="text" placeholder="08x-xxx-xxxx" class="w-full px-3 py-2 text-sm bg-white dark:bg-zinc-950 border hairline rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500/25 focus:border-brand-600" />
           </div>
         </div>
-        <button type="submit" class="btn btn-primary w-full" style="min-height:46px;font-size:.9rem">
+        <button type="submit" class="w-full py-2.5 px-4 bg-brand-600 hover:bg-brand-700 text-white text-sm font-medium rounded-lg transition">
           สมัครสมาชิกและเข้าใช้งาน
         </button>
       </form>
-        <div class="auth-or">หรือ</div>
-        <button type="button" class="demo-cta" onclick="openDemoPicker()">
-          <span class="ic"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h20"/><path d="M21 3v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V3"/><path d="m7 21 5-5 5 5"/></svg></span>
-          <span><b>ทดลองโหมดจำลองข้อมูล</b><small>สำหรับนำเสนอ ใช้ข้อมูลสมมติ ไม่เชื่อมฐานข้อมูลจริง</small></span>
-        </button>
-      </div>
-    </section>
+
+      <div class="flex items-center gap-3 my-5 text-[11px] text-zinc-400"><span class="flex-1 h-px bg-zinc-200 dark:bg-zinc-800"></span>หรือ<span class="flex-1 h-px bg-zinc-200 dark:bg-zinc-800"></span></div>
+      <button type="button" onclick="openDemoPicker()" class="demo-cta w-full py-2.5 px-4 border hairline rounded-lg text-sm font-medium text-zinc-700 dark:text-zinc-200 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition flex items-center justify-center gap-2">
+        <i data-lucide="presentation" class="w-4 h-4 text-brand-600"></i> ทดลองโหมดจำลองข้อมูล
+        <span class="text-[11px] font-normal text-zinc-400">(สำหรับนำเสนอ)</span>
+      </button>
+    </div>
   </div>
 
   
@@ -702,28 +348,42 @@ button.lg-item { cursor: pointer; width: 100%; }
     <div id="sidebar-backdrop" onclick="toggleMobileSidebar(false)" class="fixed inset-0 bg-zinc-950/40 z-30 hidden lg:hidden"></div>
 
     
-    <aside id="sidebar" class="rail fixed lg:sticky top-0 left-0 z-40 h-screen w-64 flex flex-col transition-all duration-200 -translate-x-full lg:translate-x-0">
-      <div class="rail-head">
+    <aside id="sidebar" class="fixed lg:sticky top-0 left-0 z-40 h-screen w-64 bg-white dark:bg-zinc-900 border-r hairline flex flex-col transition-all duration-200 -translate-x-full lg:translate-x-0">
+      
+      <div class="h-14 px-4 border-b hairline flex items-center justify-between shrink-0">
         <div class="flex items-center gap-2.5 overflow-hidden">
-          <div id="sidebar-logo-box" class="rail-logo"><i data-lucide="boxes" class="w-4 h-4"></i></div>
-          <div class="sidebar-label min-w-0">
-            <div id="sidebar-app-title" class="rail-title truncate">ระบบยืม-คืนครุภัณฑ์</div>
-            <div id="sidebar-org-name" class="rail-org truncate">โรงพยาบาลสันทราย</div>
+          <div id="sidebar-logo-box" class="w-8 h-8 rounded-lg bg-brand-600 text-white flex items-center justify-center shrink-0 overflow-hidden">
+            <i data-lucide="boxes" class="w-4 h-4"></i>
+          </div>
+          <div class="sidebar-label truncate">
+            <div id="sidebar-app-title" class="text-sm font-semibold tracking-tight text-zinc-900 dark:text-white leading-tight truncate">ระบบยืม-คืนครุภัณฑ์</div>
+            <div id="sidebar-org-name" class="text-[10px] text-zinc-500 truncate">โรงพยาบาลสันทราย</div>
           </div>
         </div>
-        <button onclick="toggleSidebarCollapse()" class="rail-collapse hidden lg:flex" title="ย่อ/ขยายเมนู (Ctrl+B)"><i data-lucide="panel-left-close" class="w-4 h-4"></i></button>
+        <button onclick="toggleSidebarCollapse()" class="hidden lg:flex p-1.5 rounded-md text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800" title="ย่อ/ขยายเมนู">
+          <i data-lucide="panel-left-close" class="w-4 h-4"></i>
+        </button>
       </div>
-      <nav id="sidebar-nav" class="rail-nav flex-1 overflow-y-auto"></nav>
-      <div class="rail-user">
-        <div id="user-avatar" class="rail-avatar">U</div>
-        <div class="sidebar-label min-w-0 flex-1">
-          <div id="user-fullname" class="name truncate">-</div>
-          <div id="user-role-dept" class="role truncate">-</div>
+
+      
+      <nav id="sidebar-nav" class="flex-1 overflow-y-auto p-3 space-y-1 text-sm"></nav>
+
+      
+      <div class="p-3 border-t hairline shrink-0">
+        <div class="flex items-center gap-2.5 p-2 rounded-lg bg-zinc-50 dark:bg-zinc-800/60 border hairline">
+          <div id="user-avatar" class="w-8 h-8 rounded-full bg-brand-600 text-white text-xs font-semibold flex items-center justify-center shrink-0">U</div>
+          <div class="sidebar-label min-w-0 flex-1">
+            <div id="user-fullname" class="text-xs font-medium text-zinc-900 dark:text-white truncate">-</div>
+            <div id="user-role-dept" class="text-[10px] text-zinc-500 truncate">-</div>
+          </div>
+          <button onclick="handleLogout()" class="p-1.5 text-zinc-400 hover:text-rose-600 rounded-md hover:bg-rose-50 dark:hover:bg-rose-500/10 transition" title="ออกจากระบบ">
+            <i data-lucide="log-out" class="w-4 h-4"></i>
+          </button>
         </div>
-        <button onclick="handleLogout()" class="rail-logout" title="ออกจากระบบ"><i data-lucide="log-out" class="w-4 h-4"></i></button>
       </div>
     </aside>
 
+    
     <div class="flex-1 min-w-0 flex flex-col">
       <div class="demo-bar">
         <span><b>โหมดจำลองข้อมูล</b> — ข้อมูลทั้งหมดเป็นข้อมูลสมมติ ไม่เชื่อมฐานข้อมูลจริง</span>
@@ -733,38 +393,61 @@ button.lg-item { cursor: pointer; width: 100%; }
           <button type="button" onclick="exitDemo()">ออกจากโหมดจำลอง</button>
         </span>
       </div>
-      <header class="topbar">
+      
+      <header class="sticky top-0 z-20 h-14 bg-white/85 dark:bg-zinc-900/85 backdrop-blur-md border-b hairline px-4 sm:px-6 flex items-center justify-between gap-3">
         <div class="flex items-center gap-3 min-w-0">
-          <button onclick="toggleMobileSidebar(true)" class="lg:hidden icon-btn" aria-label="เปิดเมนู"><i data-lucide="menu" class="w-5 h-5"></i></button>
-          <h2 id="page-title" class="page-title truncate">แดชบอร์ดภาพรวม</h2>
-          <span class="chip-demo">โหมดจำลอง</span>
-        </div>
-        <div class="flex items-center gap-2">
-          <div class="search-box">
-            <i data-lucide="search" class="w-4 h-4 absolute left-3" style="color:var(--muted)"></i>
-            <input id="global-search-input" type="text" oninput="handleGlobalSearch(this.value)" placeholder="ค้นหารหัส/ชื่อครุภัณฑ์" class="border" />
+          <button onclick="toggleMobileSidebar(true)" class="lg:hidden p-1.5 rounded-md border hairline text-zinc-600 dark:text-zinc-300">
+            <i data-lucide="menu" class="w-5 h-5"></i>
+          </button>
+          <div class="min-w-0">
+            <h2 id="page-title" class="text-sm sm:text-base font-semibold tracking-tight text-zinc-900 dark:text-white truncate">แดชบอร์ดภาพรวม</h2>
           </div>
-          <button onclick="navigate('scanner')" class="btn btn-secondary hidden md:inline-flex"><i data-lucide="qr-code" class="w-4 h-4"></i> สแกน QR</button>
-          <button onclick="reloadAllData(true)" class="icon-btn" title="รีเฟรชข้อมูล" aria-label="รีเฟรชข้อมูล"><i data-lucide="refresh-cw" class="w-4 h-4"></i></button>
+        </div>
+
+        <div class="flex items-center gap-2">
+          
+          <div class="hidden md:flex items-center relative">
+            <i data-lucide="search" class="w-3.5 h-3.5 text-zinc-400 absolute left-2.5"></i>
+            <input id="global-search-input" type="text" oninput="handleGlobalSearch(this.value)" placeholder="ค้นหารหัส/ชื่อครุภัณฑ์..." class="w-52 lg:w-64 pl-8 pr-3 py-1.5 text-xs bg-zinc-100/80 dark:bg-zinc-800 border border-transparent focus:border-brand-500 focus:bg-white dark:focus:bg-zinc-950 rounded-lg outline-none transition" />
+          </div>
+
+          
+          <button onclick="navigate('scanner')" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border hairline text-xs font-medium text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition">
+            <i data-lucide="qr-code" class="w-3.5 h-3.5 text-brand-600"></i>
+            <span class="hidden sm:inline">สแกน QR</span>
+          </button>
+
+          
+          <button onclick="reloadAllData(true)" class="p-1.5 rounded-lg border hairline text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition" title="รีเฟรชข้อมูล">
+            <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+          </button>
+
+          
           <div class="relative">
-            <button onclick="toggleNotificationPopover()" class="icon-btn" title="การแจ้งเตือน" aria-label="การแจ้งเตือน">
+            <button onclick="toggleNotificationPopover()" class="p-1.5 rounded-lg border hairline text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition relative" title="การแจ้งเตือน">
               <i data-lucide="bell" class="w-4 h-4"></i>
-              <span id="notif-dot" class="hidden nav-badge" style="position:absolute;top:-6px;right:-6px">0</span>
+              <span id="notif-dot" class="hidden absolute -top-1 -right-1 w-4 h-4 rounded-full bg-rose-600 text-white text-[10px] font-bold flex items-center justify-center">0</span>
             </button>
-            <div id="notif-popover" class="hidden absolute right-0 mt-2 w-80 border hairline rounded-xl shadow-lg p-3 z-50" style="background:var(--surface)">
+            <div id="notif-popover" class="hidden absolute right-0 mt-2 w-80 bg-white dark:bg-zinc-900 border hairline rounded-xl shadow-lg p-3 z-50">
               <div class="flex items-center justify-between pb-2 mb-2 border-b hairline">
-                <span class="text-sm font-semibold">แจ้งเตือนระบบ</span>
-                <button onclick="toggleNotificationPopover(false)" class="text-xs" style="color:var(--muted)">ปิด</button>
+                <span class="text-xs font-semibold flex items-center gap-1.5">
+                  <i data-lucide="bell-ring" class="w-3.5 h-3.5 text-brand-600"></i> แจ้งเตือนระบบ
+                </span>
+                <button onclick="toggleNotificationPopover(false)" class="text-xs text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200">ปิด</button>
               </div>
               <div id="notif-list" class="space-y-2 max-h-64 overflow-y-auto text-xs"></div>
             </div>
           </div>
-          <button onclick="toggleTheme()" class="icon-btn" title="สลับโหมดสี" aria-label="สลับโหมดสี"><i id="theme-icon" data-lucide="moon" class="w-4 h-4"></i></button>
+
+          
+          <button onclick="toggleTheme()" class="p-1.5 rounded-lg border hairline text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition" title="สลับโหมดสี">
+            <i id="theme-icon" data-lucide="moon" class="w-4 h-4"></i>
+          </button>
         </div>
       </header>
 
+      
       <main id="main-content" class="flex-1 p-4 sm:p-6 max-w-[1440px] w-full mx-auto"></main>
-      <nav id="bottom-nav" class="bottom-nav" aria-label="เมนูหลัก"></nav>
     </div>
   </div>
 
@@ -793,10 +476,10 @@ button.lg-item { cursor: pointer; width: 100%; }
   
   <script>
     
-    const BTN_PRIMARY = 'btn btn-primary';
-    const BTN_DANGER = 'btn btn-danger';
-    const BTN_SUCCESS = 'btn btn-success';
-    const BTN_SECONDARY = 'btn btn-secondary';
+    const BTN_PRIMARY = 'inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg bg-brand-600 hover:bg-brand-700 text-white text-xs font-medium transition focus:outline-none focus:ring-2 focus:ring-brand-500/30';
+    const BTN_DANGER = 'inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-xs font-medium transition focus:outline-none focus:ring-2 focus:ring-rose-500/30';
+    const BTN_SUCCESS = 'inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium transition focus:outline-none focus:ring-2 focus:ring-emerald-500/30';
+    const BTN_SECONDARY = 'inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-lg border hairline bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-200 hover:bg-zinc-50 dark:hover:bg-zinc-800 text-xs font-medium transition';
 
     const _memStore = new Map();
     const safeStorage = {
@@ -1571,15 +1254,19 @@ button.lg-item { cursor: pointer; width: 100%; }
       const navBtn = item => {
         const active = state.route === item.id;
         return `
-          <button onclick="navigate('${item.id}')" title="${esc(item.label)}" class="nav-item ${active ? 'is-active' : ''}" ${active ? 'aria-current="page"' : ''}>
+          <button onclick="navigate('${item.id}')" title="${esc(item.label)}" class="nav-item ${active ? 'is-active' : ''} w-full flex items-center justify-between px-3 py-2 rounded-lg text-left transition ${
+            active
+              ? 'bg-brand-50 text-brand-700 font-medium dark:bg-brand-500/15 dark:text-brand-100'
+              : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800/70 hover:text-zinc-900 dark:hover:text-zinc-100'
+          }" ${active ? 'aria-current="page"' : ''}>
             <span class="flex items-center gap-2.5 min-w-0">
-              <i data-lucide="${item.icon}" class="w-[18px] h-[18px] shrink-0"></i>
+              <i data-lucide="${item.icon}" class="w-4 h-4 shrink-0 ${active ? 'text-brand-600 dark:text-brand-400' : ''}"></i>
               <span class="sidebar-label truncate">${esc(item.label)}</span>
             </span>
-            ${item.badge ? `<span class="sidebar-label nav-badge">${item.badge}</span>` : ''}
+            ${item.badge ? `<span class="sidebar-label px-1.5 py-0.5 text-[10px] font-semibold rounded-full bg-rose-100 text-rose-700 dark:bg-rose-500/20 dark:text-rose-300">${item.badge}</span>` : ''}
           </button>`;
       };
-      // จัดกลุ่ม: หัวข้อ (section) กลายเป็นเมนูที่พับเก็บ/เลื่อนเปิดเมนูย่อยได้
+      // หัวข้อ (section) เป็นกลุ่มที่พับเก็บ/เลื่อนเปิดเมนูย่อยได้
       const groups = []; let cur = null;
       items.forEach(item => {
         if (item.section) { cur = { label: item.section, kids: [] }; groups.push(cur); }
@@ -1588,36 +1275,21 @@ button.lg-item { cursor: pointer; width: 100%; }
       nav.innerHTML = groups.map((g, gi) => {
         if (g.solo) return navBtn(g.solo);
         if (!g.kids.length) return '';
-        const hasActive = g.kids.some(k => k.id === state.route);
-        if (hasActive) state.navOpen[g.label] = true;
+        if (g.kids.some(k => k.id === state.route)) state.navOpen[g.label] = true;
         const open = state.navOpen[g.label] !== false;
         return `
           <div class="nav-group ${open ? 'is-open' : ''}" data-g="${esc(g.label)}">
-            <button type="button" class="rail-section sidebar-label nav-group-head" aria-expanded="${open}" aria-controls="ng-${gi}" onclick="toggleNavGroup(this)">
-              <span>${esc(g.label)}</span><i data-lucide="chevron-down" class="nav-chev w-3.5 h-3.5"></i>
+            <button type="button" class="nav-group-head sidebar-label px-3 pt-4 pb-1 text-[10px] font-semibold uppercase tracking-wider text-zinc-400" aria-expanded="${open}" aria-controls="ng-${gi}" onclick="toggleNavGroup(this)">
+              <span>${esc(g.label)}</span><i data-lucide="chevron-down" class="nav-chev w-3 h-3"></i>
             </button>
             <div class="nav-group-body" id="ng-${gi}"><div class="nav-group-inner">${g.kids.map(navBtn).join('')}</div></div>
           </div>`;
       }).join('');
       if (state.sidebarCollapsed) document.getElementById('sidebar').querySelectorAll('.sidebar-label').forEach(el => el.classList.add('hidden'));
-      renderBottomNav();
       refreshIcons();
     }
 
-    function renderBottomNav() {
-      const el = document.getElementById('bottom-nav');
-      if (!el) return;
-      const pend = scopedBorrows().filter(b => b.Status === 'รออนุมัติ' || isOutstandingOverdue(b)).length;
-      const tab = (route, icon, label, extra = '') => `<button type="button" class="bn-item ${state.route === route ? 'is-active' : ''}" onclick="navigate('${route}')" ${state.route === route ? 'aria-current="page"' : ''}><i data-lucide="${icon}" class="w-[22px] h-[22px]"></i><small>${label}</small>${extra}</button>`;
-      const approver = canApproveOrReturn();
-      el.innerHTML =
-        tab('dashboard', 'layout-dashboard', 'ภาพรวม') +
-        tab('catalog', 'package-search', 'คลัง') +
-        `<button type="button" class="bn-item bn-scan" onclick="navigate('scanner')" aria-label="สแกน QR"><span class="cap"><i data-lucide="scan-line" class="w-6 h-6"></i></span><small>สแกน</small></button>` +
-        (approver ? tab('approvals', 'check-square', 'อนุมัติ', pend ? `<span class="nav-badge" style="position:absolute;top:2px;right:18%;min-width:1.1rem;height:1.1rem;font-size:.65rem">${pend}</span>` : '')
-                  : tab('my_borrows', 'clipboard-list', 'ของฉัน')) +
-        `<button type="button" class="bn-item" onclick="toggleMobileSidebar(true)"><i data-lucide="menu" class="w-[22px] h-[22px]"></i><small>เมนู</small></button>`;
-    }
+
 
     function navigate(routeId) {
       if (state.route === 'scanner' && routeId !== 'scanner') {
@@ -1725,15 +1397,42 @@ button.lg-item { cursor: pointer; width: 100%; }
     };
 
     function statusBadge(status, overdueFlag = false, borrowObj = null) {
-      const tone = ST_TONE[status] || 'off';
-      const main = `<span class="st st-${tone}">${esc(status)}</span>`;
-      if (!borrowObj && !overdueFlag) return main;
+      const map = {
+        'พร้อมให้ยืม': 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-500/15 dark:text-emerald-300 dark:border-emerald-500/20',
+        'Active': 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-500/15 dark:text-emerald-300 dark:border-emerald-500/20',
+        'คืนแล้ว': 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-500/15 dark:text-emerald-300 dark:border-emerald-500/20',
+        'ซ่อมเสร็จ': 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-500/15 dark:text-emerald-300 dark:border-emerald-500/20',
+        'ถูกยืม': 'bg-sky-50 text-sky-700 border-sky-200 dark:bg-sky-500/15 dark:text-sky-300 dark:border-sky-500/20',
+        'กำลังยืม': 'bg-sky-50 text-sky-700 border-sky-200 dark:bg-sky-500/15 dark:text-sky-300 dark:border-sky-500/20',
+        'จองแล้ว': 'bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-500/15 dark:text-indigo-300 dark:border-indigo-500/20',
+        'อนุมัติแล้ว': 'bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-500/15 dark:text-indigo-300 dark:border-indigo-500/20',
+        'รออนุมัติ': 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-500/15 dark:text-amber-300 dark:border-amber-500/20',
+        'แจ้งซ่อม': 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-500/15 dark:text-amber-300 dark:border-amber-500/20',
+        'กำลังซ่อม': 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-500/15 dark:text-amber-300 dark:border-amber-500/20',
+        'ส่งซ่อม': 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-500/15 dark:text-amber-300 dark:border-amber-500/20',
+        'ปฏิเสธ': 'bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-500/15 dark:text-rose-300 dark:border-rose-500/20',
+        'ตัดจำหน่าย': 'bg-zinc-100 text-zinc-600 border-zinc-200 dark:bg-zinc-800 dark:text-zinc-400 dark:border-zinc-700',
+        'รอตัดจำหน่าย': 'bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-500/15 dark:text-rose-300 dark:border-rose-500/20',
+        'ซ่อมไม่ได้-รอตัดจำหน่าย': 'bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-500/15 dark:text-rose-300 dark:border-rose-500/20',
+        'ยกเลิก': 'bg-zinc-100 text-zinc-500 border-zinc-200 dark:bg-zinc-800 dark:text-zinc-400 dark:border-zinc-700',
+        'Inactive': 'bg-zinc-100 text-zinc-500 border-zinc-200 dark:bg-zinc-800 dark:text-zinc-400 dark:border-zinc-700'
+      };
+      const cls = map[status] || 'bg-zinc-100 text-zinc-700 border-zinc-200';
+      const mainBadge = `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium border ${cls}">${esc(status)}</span>`;
+
+      if (!borrowObj && !overdueFlag) return mainBadge;
+
       const m = borrowObj ? calcBorrowMetrics(borrowObj) : null;
       const isOvr = overdueFlag || (m && m.isAnyOverdue);
       const ovrDays = m ? m.overdueDays : 0;
-      const badges = [main];
-      if (m && m.isApproved && status !== 'อนุมัติแล้ว') badges.push('<span class="st st-res">อนุมัติเรียบร้อยแล้ว</span>');
-      if (isOvr) badges.push(`<span class="st st-late">เกินกำหนด${ovrDays > 0 ? ' +' + ovrDays + ' วัน' : ''}</span>`);
+      const badges = [mainBadge];
+
+      if (m && m.isApproved && status !== 'อนุมัติแล้ว') {
+        badges.push(`<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-indigo-50 text-indigo-700 border border-indigo-200 dark:bg-indigo-500/15 dark:text-indigo-300 dark:border-indigo-500/20">อนุมัติเรียบร้อยแล้ว</span>`);
+      }
+      if (isOvr) {
+        badges.push(`<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-rose-50 text-rose-700 border border-rose-200 dark:bg-rose-500/15 dark:text-rose-300 dark:border-rose-500/25"><span class="w-1.5 h-1.5 rounded-full bg-rose-600"></span>เกินกำหนด${ovrDays > 0 ? ' (+' + ovrDays + ' วัน)' : ''}</span>`);
+      }
       return `<div class="flex flex-wrap items-center gap-1">${badges.join('')}</div>`;
     }
 
@@ -1758,163 +1457,163 @@ button.lg-item { cursor: pointer; width: 100%; }
       refreshIcons();
     }
 
-    
-    const BOARD_TONE = { 'พร้อมให้ยืม': 'ok', 'ถูกยืม': 'busy', 'จองแล้ว': 'res', 'ส่งซ่อม': 'wait', 'รอตัดจำหน่าย': 'bad', 'ตัดจำหน่าย': 'off' };
-
     function renderDashboard(el) {
       const assets = state.data.assets;
       const borrows = state.data.borrows;
-      const live = assets.filter(a => a.Status !== 'ตัดจำหน่าย');
-      const cnt = (k) => assets.filter(a => a.Status === k).length;
-      const allOverdue = borrows.filter(b => isOutstandingOverdue(b));
-      const lateAssetIds = new Set(allOverdue.map(b => b.AssetID));
-      const overdueList = (canApproveOrReturn() || canManageAssets()) ? allOverdue : allOverdue.filter(b => b.BorrowerID === state.user.UserID);
+      const available = assets.filter(a => a.Status === 'พร้อมให้ยืม').length;
+      const borrowed = assets.filter(a => a.Status === 'ถูกยืม' || a.Status === 'จองแล้ว').length;
+      const repairing = assets.filter(a => a.Status === 'ส่งซ่อม').length;
+      const overdueList = borrows.filter(b => isOutstandingOverdue(b));
       const pendingList = scopedBorrows().filter(b => b.Status === 'รออนุมัติ');
-      const repairing = cnt('ส่งซ่อม');
-      const mine = borrows.filter(b => b.BorrowerID === state.user.UserID && ['รออนุมัติ', 'อนุมัติแล้ว', 'กำลังยืม'].includes(b.Status));
-      const staff = canApproveOrReturn() || canManageAssets();
-      const goOverdue = canApproveOrReturn() ? 'approvals' : 'my_borrows';
 
-      const segs = [
-        ['พร้อมให้ยืม', 'ok', 'ว่าง พร้อมใช้งาน'], ['ถูกยืม', 'busy', 'กำลังถูกยืม'], ['จองแล้ว', 'res', 'อนุมัติแล้ว รอรับ'],
-        ['ส่งซ่อม', 'wait', 'อยู่ระหว่างซ่อม'], ['รอตัดจำหน่าย', 'bad', 'รอตัดจำหน่าย']
-      ].map(([k, tone, label]) => ({ k, tone, label, n: cnt(k) }));
-
-      const tasks = [];
-      if (overdueList.length) tasks.push({ tone: 'bad', icon: 'alarm-clock', route: goOverdue, title: `เกินกำหนดคืน ${overdueList.length} รายการ`, sub: `${overdueList[0].AssetName} — ${overdueList[0].BorrowerName}` + (overdueList.length > 1 ? ` และอีก ${overdueList.length - 1} รายการ` : '') });
-      if (canApproveOrReturn() && pendingList.length) tasks.push({ tone: 'wait', icon: 'clock', route: 'approvals', title: `คำขอยืมรออนุมัติ ${pendingList.length} รายการ`, sub: `ล่าสุด ${pendingList[0].RequestCode} — ${pendingList[0].BorrowerName} ขอยืม ${pendingList[0].AssetName}` });
-      if (staff && repairing) tasks.push({ tone: 'wait', icon: 'wrench', route: 'maintenance', title: `อยู่ระหว่างซ่อม ${repairing} รายการ`, sub: 'ติดตามความคืบหน้างานซ่อมและกำหนดกลับเข้าคลัง' });
-      if (mine.length) tasks.push({ tone: 'busy', icon: 'clipboard-list', route: 'my_borrows', title: `รายการยืมของคุณ ${mine.length} รายการ`, sub: mine.slice(0, 2).map(b => b.AssetName).join(', ') + (mine.length > 2 ? ' ...' : '') });
-
-      // กระดานสถานะรายหน่วยงาน
-      const depts = state.data.departments.map(d => ({ d, items: live.filter(a => a.DepartmentID === d.DeptID) })).filter(x => x.items.length);
-      const board = depts.map(({ d, items }) => {
-        const free = items.filter(a => a.Status === 'พร้อมให้ยืม').length;
-        return `
-          <div class="board-row">
-            <div class="board-dept"><b>${esc(d.DeptName)}</b><span>${items.length} รายการ · ว่าง ${free}</span></div>
-            <div class="board-tiles">
-              ${items.map(a => `<button type="button" class="tile t-${BOARD_TONE[a.Status] || 'off'} ${lateAssetIds.has(a.AssetID) ? 'is-late' : ''}"
-                  aria-label="${esc(a.AssetName)} ${esc(a.Status)}"
-                  onclick="hideTileTip(); openAssetDetailModal('${esc(a.AssetID)}')"
-                  onmouseenter="showTileTip(event, '${esc(a.AssetID)}')" onmouseleave="hideTileTip()"
-                  onfocus="showTileTip(event, '${esc(a.AssetID)}')" onblur="hideTileTip()"></button>`).join('')}
-            </div>
-          </div>`;
-      }).join('');
-
-      const recent = borrows.slice(0, 6);
       el.innerHTML = `
-        <div class="dash">
-          <div class="dash-hello">
+        <div class="space-y-6">
+          
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-zinc-900 border hairline rounded-xl p-5">
             <div>
-              <h3>สวัสดี คุณ${esc(state.user.FullName)}</h3>
-              <p>${esc(state.user.DepartmentName)} · ${esc(ROLE_LABELS[state.user.Role] || state.user.Role)}</p>
+              <div class="text-xs font-medium text-brand-600 dark:text-brand-400 mb-1">${esc(state.data.settings?.OrgName || 'โรงพยาบาลสันทราย')}</div>
+              <h3 class="text-lg font-semibold text-zinc-900 dark:text-white">สวัสดีคุณ ${esc(state.user.FullName)}</h3>
+              <p class="text-xs text-zinc-500 mt-0.5">หน่วยงาน: ${esc(state.user.DepartmentName)} • สิทธิ์: ${esc(ROLE_LABELS[state.user.Role] || state.user.Role)}</p>
             </div>
             <div class="flex flex-wrap gap-2">
-              <button onclick="navigate('catalog')" class="${BTN_PRIMARY}"><i data-lucide="plus" class="w-4 h-4"></i> ยืมครุภัณฑ์</button>
-              <button onclick="navigate('scanner')" class="${BTN_SECONDARY}"><i data-lucide="scan-line" class="w-4 h-4"></i> สแกน QR</button>
+              <button onclick="navigate('catalog')" class="${BTN_PRIMARY}">
+                <i data-lucide="plus-circle" class="w-4 h-4"></i> ยืมครุภัณฑ์
+              </button>
+              <button onclick="navigate('scanner')" class="${BTN_SECONDARY}">
+                <i data-lucide="scan-line" class="w-4 h-4 text-brand-600"></i> สแกน QR ด่วน
+              </button>
             </div>
           </div>
 
-          <section>
-            <h4 class="sec-title mb-2">ต้องดำเนินการ</h4>
-            <div class="tasks">
-              ${tasks.length ? tasks.map(t => `
-                <button type="button" class="task" onclick="navigate('${t.route}')">
-                  <span class="task-ic ${t.tone}"><i data-lucide="${t.icon}" class="w-5 h-5"></i></span>
-                  <span class="min-w-0"><b>${esc(t.title)}</b><small class="truncate">${esc(t.sub)}</small></span>
-                  <i data-lucide="chevron-right" class="go w-5 h-5"></i>
-                </button>`).join('') : `<div class="tasks-empty"><i data-lucide="check-circle-2" class="w-5 h-5" style="color:var(--st-ok)"></i> ไม่มีงานค้าง ทุกอย่างเรียบร้อย</div>`}
+          
+          ${(overdueList.length > 0 || (canApproveOrReturn() && pendingList.length > 0)) ? `
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+              ${overdueList.length > 0 ? `
+                <div class="flex items-center justify-between p-3.5 rounded-xl bg-rose-50/80 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/20">
+                  <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-lg bg-rose-600 text-white flex items-center justify-center shrink-0"><i data-lucide="alert-triangle" class="w-4 h-4"></i></div>
+                    <div>
+                      <div class="text-xs font-semibold text-rose-800 dark:text-rose-200">พบครุภัณฑ์เกินกำหนดคืน ${overdueList.length} รายการ</div>
+                      <div class="text-[11px] text-rose-600 dark:text-rose-300">ล่าสุด: ${esc(overdueList[0].AssetName)} (${esc(overdueList[0].BorrowerName)})</div>
+                    </div>
+                  </div>
+                  <button onclick="navigate('${canApproveOrReturn() ? 'approvals' : 'my_borrows'}')" class="${BTN_SECONDARY}">ตรวจสอบ</button>
+                </div>
+              ` : ''}
+              ${(canApproveOrReturn() && pendingList.length > 0) ? `
+                <div class="flex items-center justify-between p-3.5 rounded-xl bg-amber-50/80 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20">
+                  <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-lg bg-amber-500 text-white flex items-center justify-center shrink-0"><i data-lucide="clock" class="w-4 h-4"></i></div>
+                    <div>
+                      <div class="text-xs font-semibold text-amber-900 dark:text-amber-200">มีคำขอยืมรออนุมัติ ${pendingList.length} รายการ</div>
+                      <div class="text-[11px] text-amber-700 dark:text-amber-300">คำขอล่าสุด: ${esc(pendingList[0].RequestCode)}</div>
+                    </div>
+                  </div>
+                  <button onclick="navigate('approvals')" class="${BTN_SECONDARY}">อนุมัติ</button>
+                </div>
+              ` : ''}
             </div>
-          </section>
+          ` : ''}
 
-          <section class="stock">
-            <div class="stock-total"><span class="n">${live.length}</span><span>รายการครุภัณฑ์ที่ใช้งานอยู่ในระบบ</span></div>
-            <div class="stock-bar" role="img" aria-label="สัดส่วนสถานะครุภัณฑ์">
-              ${segs.filter(x => x.n > 0).map(x => `<i style="flex-grow:${x.n};background:var(--st-${x.tone})" title="${esc(x.k)} ${x.n}"></i>`).join('')}
+          
+          <div class="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
+            ${kpiCard('ครุภัณฑ์ทั้งหมด', assets.length, 'รายการในระบบ', 'boxes', 'text-zinc-700 dark:text-zinc-200')}
+            ${kpiCard('พร้อมให้ยืม', available, 'ว่างพร้อมใช้งาน', 'check-circle-2', 'text-emerald-600')}
+            ${kpiCard('กำลังถูกยืม/จอง', borrowed, 'ใช้งานนอกคลัง', 'arrow-up-right', 'text-sky-600')}
+            ${kpiCard('เกินกำหนดคืน', overdueList.length, 'ต้องติดตามคืน', 'alarm-clock', 'text-rose-600')}
+            ${kpiCard('อยู่ระหว่างซ่อม', repairing, 'ส่งซ่อม/ตรวจสอบ', 'wrench', 'text-amber-600')}
+          </div>
+
+          
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <div class="lg:col-span-2 bg-white dark:bg-zinc-900 border hairline rounded-xl p-5">
+              <div class="mb-4">
+                <h4 class="text-sm font-semibold">ครุภัณฑ์และสถิติการยืมแยกตามหน่วยงาน</h4>
+                <p class="text-xs text-zinc-500">เปรียบเทียบจำนวนครุภัณฑ์ทั้งหมดกับรายการที่กำลังถูกยืม</p>
+              </div>
+              <div class="h-64"><canvas id="chart-dept"></canvas></div>
             </div>
-            <div class="stock-legend">
-              ${segs.map(x => `<button type="button" class="lg-item" onclick="state.filters.catalogStatus='${x.k}';navigate('catalog')"><span class="sw" style="background:var(--st-${x.tone})"></span><div><b>${x.n}</b><span>${esc(x.label)}</span></div></button>`).join('')}
+            <div class="bg-white dark:bg-zinc-900 border hairline rounded-xl p-5">
+              <h4 class="text-sm font-semibold mb-1">สัดส่วนสถานะครุภัณฑ์</h4>
+              <p class="text-xs text-zinc-500 mb-4">ภาพรวมความพร้อมใช้งานปัจจุบัน</p>
+              <div class="h-64 flex items-center justify-center"><canvas id="chart-status"></canvas></div>
             </div>
-          </section>
+          </div>
 
           ${yearCalHtml()}
 
-          <section class="board">
-            <div class="board-head">
-              <div><h4 class="sec-title">กระดานสถานะครุภัณฑ์รายหน่วยงาน</h4><p class="sec-sub">1 ช่อง = 1 ชิ้น แตะเพื่อดูรายละเอียดและประวัติการยืม</p></div>
-              <div class="board-key">
-                <span><i style="background:var(--st-ok)"></i>ว่าง</span><span><i style="background:var(--st-busy)"></i>ถูกยืม</span><span><i style="background:var(--st-res)"></i>จอง</span>
-                <span><i style="background:var(--st-wait)"></i>ซ่อม</span><span><i style="background:var(--st-bad)"></i>รอจำหน่าย</span>
-                <span><i style="background:#fff;border:2.5px solid var(--st-bad);border-radius:50%"></i>เกินกำหนดคืน</span>
-              </div>
-            </div>
-            ${board || '<div class="tasks-empty">ยังไม่มีครุภัณฑ์ในระบบ</div>'}
-          </section>
-
-          <div class="${state.data.logs.length ? 'dash-cols' : ''}">
-            <section class="board">
-              <div class="board-head">
-                <h4 class="sec-title">รายการยืม-คืนล่าสุด</h4>
-                <button onclick="navigate('${canApproveOrReturn() ? 'approvals' : 'my_borrows'}')" class="text-sm font-medium" style="color:var(--brand)">ดูทั้งหมด</button>
+          
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <div class="lg:col-span-2 bg-white dark:bg-zinc-900 border hairline rounded-xl overflow-hidden">
+              <div class="px-5 py-3.5 border-b hairline flex items-center justify-between">
+                <h4 class="text-sm font-semibold">รายการยืม-คืนล่าสุด</h4>
+                <button onclick="navigate('${canApproveOrReturn() ? 'approvals' : 'my_borrows'}')" class="text-xs text-brand-600 hover:underline">ดูทั้งหมด</button>
               </div>
               <div class="overflow-x-auto">
-                <table class="w-full text-sm text-left">
-                  <thead><tr>
-                    <th class="px-4 py-2.5">เลขที่คำขอ</th><th class="px-4 py-2.5">ครุภัณฑ์</th><th class="px-4 py-2.5">ผู้ยืม</th><th class="px-4 py-2.5">กำหนดคืน</th><th class="px-4 py-2.5">สถานะ</th>
-                  </tr></thead>
+                <table class="w-full text-xs text-left">
+                  <thead class="bg-zinc-50 dark:bg-zinc-800/50 text-zinc-500 border-b hairline">
+                    <tr>
+                      <th class="px-4 py-2.5 font-medium">เลขที่คำขอ</th>
+                      <th class="px-4 py-2.5 font-medium">ครุภัณฑ์</th>
+                      <th class="px-4 py-2.5 font-medium">ผู้ยืม</th>
+                      <th class="px-4 py-2.5 font-medium">กำหนดคืน</th>
+                      <th class="px-4 py-2.5 font-medium">สถานะ</th>
+                    </tr>
+                  </thead>
                   <tbody class="divide-y hairline">
-                    ${recent.map(b => `
-                      <tr>
-                        <td class="px-4 py-2.5 text-xs font-medium">${esc(b.RequestCode)}</td>
-                        <td class="px-4 py-2.5"><div class="font-medium">${esc(b.AssetName)}</div><div class="text-xs" style="color:var(--muted)">${esc(b.AssetCode)}</div></td>
+                    ${borrows.slice(0, 6).map(b => `
+                      <tr class="hover:bg-zinc-50/70 dark:hover:bg-zinc-800/40">
+                        <td class="px-4 py-2.5 font-mono text-[11px] font-medium">${esc(b.RequestCode)}</td>
+                        <td class="px-4 py-2.5">
+                          <div class="font-medium text-zinc-900 dark:text-zinc-100">${esc(b.AssetName)}</div>
+                          <div class="text-[11px] text-zinc-400">${esc(b.AssetCode)}</div>
+                        </td>
                         <td class="px-4 py-2.5">${esc(b.BorrowerName)}</td>
                         <td class="px-4 py-2.5 tabular-nums">${esc(fmtDate(b.DueDate))}</td>
                         <td class="px-4 py-2.5">${statusBadge(b.Status, isOverdue(b))}</td>
-                      </tr>`).join('') || '<tr><td colspan="5" class="px-4 py-6 text-center" style="color:var(--muted)">ยังไม่มีรายการยืม</td></tr>'}
+                      </tr>
+                    `).join('')}
                   </tbody>
                 </table>
               </div>
-            </section>
-            ${state.data.logs.length ? `
-            <section class="board">
-              <div class="board-head"><h4 class="sec-title">ความเคลื่อนไหวล่าสุด</h4></div>
-              <ul class="feed px-4 py-1 max-h-96 overflow-y-auto">
-                ${state.data.logs.slice(0, 8).map(l => `<li><div>${esc(l.Detail)}<small>${esc(l.UserName)} · ${esc(fmtDateTime(l.Timestamp))}</small></div></li>`).join('')}
-              </ul>
-            </section>` : ''}
+            </div>
+
+            <div class="bg-white dark:bg-zinc-900 border hairline rounded-xl overflow-hidden">
+              <div class="px-5 py-3.5 border-b hairline">
+                <h4 class="text-sm font-semibold">ประวัติการทำงานล่าสุด (Audit Log)</h4>
+              </div>
+              <div class="p-4 space-y-3 max-h-80 overflow-y-auto">
+                ${state.data.logs.slice(0, 8).map(l => `
+                  <div class="flex gap-2.5 text-xs">
+                    <div class="w-1.5 h-1.5 rounded-full bg-brand-500 mt-1.5 shrink-0"></div>
+                    <div class="min-w-0">
+                      <div class="text-zinc-800 dark:text-zinc-200">${esc(l.Detail)}</div>
+                      <div class="text-[11px] text-zinc-400">${esc(l.UserName)} • ${esc(fmtDateTime(l.Timestamp))}</div>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
           </div>
         </div>
       `;
+      renderDashboardCharts();
       initYearCal();
     }
 
-    function ensureTileTip() {
-      let tip = document.getElementById('tile-tip');
-      if (!tip) { tip = document.createElement('div'); tip.id = 'tile-tip'; tip.className = 'tile-tip'; tip.setAttribute('role', 'tooltip'); document.body.appendChild(tip); }
-      return tip;
-    }
-    function showTileTip(ev, assetId) {
-      const a = state.data.assets.find(x => x.AssetID === assetId); if (!a) return;
-      const b = state.data.borrows.find(x => x.AssetID === assetId && ['กำลังยืม', 'อนุมัติแล้ว'].includes(x.Status));
-      const tip = ensureTileTip();
-      tip.innerHTML = `<b>${esc(a.AssetName)}</b><small>${esc(a.AssetCode)} · ${esc(a.Status)}${b ? ' · ' + esc(b.BorrowerName) + ' (คืน ' + esc(fmtDate(b.DueDate)) + ')' : ''}</small>`;
-      const r = ev.currentTarget.getBoundingClientRect();
-      tip.classList.add('on');
-      const w = tip.offsetWidth, h = tip.offsetHeight;
-      let x = Math.min(Math.max(8, r.left + r.width / 2 - w / 2), window.innerWidth - w - 8);
-      let y = r.top - h - 8; if (y < 8) y = r.bottom + 8;
-      tip.style.left = x + 'px'; tip.style.top = y + 'px';
-    }
-    function hideTileTip() { const t = document.getElementById('tile-tip'); if (t) t.classList.remove('on'); }
+
+
+
 
     function kpiCard(title, value, sub, icon, colorCls) {
       return `
-        <div class="kpi">
-          <span class="kpi-l">${esc(title)}</span>
-          <b class="kpi-n ${colorCls}">${value}</b>
-          <small>${esc(sub)}</small>
+        <div class="bg-white dark:bg-zinc-900 border hairline rounded-xl p-4">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs text-zinc-500">${esc(title)}</span>
+            <i data-lucide="${icon}" class="w-4 h-4 ${colorCls}"></i>
+          </div>
+          <div class="text-2xl font-semibold tabular-nums tracking-tight ${colorCls}">${value}</div>
+          <div class="text-[11px] text-zinc-400 mt-0.5">${esc(sub)}</div>
         </div>
       `;
     }
@@ -2096,7 +1795,65 @@ button.lg-item { cursor: pointer; width: 100%; }
       }
     }
 
-    function renderDashboardCharts() { /* แดชบอร์ดใหม่ใช้กระดานสถานะ ไม่ใช้กราฟ Chart.js แล้ว */ }
+    function renderDashboardCharts() {
+      if (typeof Chart === 'undefined') return;
+      const isDark = document.documentElement.classList.contains('dark');
+      const gridColor = isDark ? 'rgba(255,255,255,0.07)' : 'rgba(15,23,42,0.06)';
+      const textColor = isDark ? '#A1A1AA' : '#52525B';
+
+      Object.values(state.charts).forEach(c => c && c.destroy());
+
+      const ctxDept = document.getElementById('chart-dept');
+      if (ctxDept) {
+        const depts = state.data.departments;
+        const labels = depts.map(d => d.DeptCode || d.DeptName);
+        const totalByDept = depts.map(d => state.data.assets.filter(a => a.DepartmentID === d.DeptID).length);
+        const borrowedByDept = depts.map(d => state.data.assets.filter(a => a.DepartmentID === d.DeptID && a.Status === 'ถูกยืม').length);
+
+        state.charts.dept = new Chart(ctxDept, {
+          type: 'bar',
+          data: {
+            labels,
+            datasets: [
+              { label: 'ครุภัณฑ์ทั้งหมด', data: totalByDept, backgroundColor: '#4F46E5', borderRadius: 6 },
+              { label: 'กำลังถูกยืม', data: borrowedByDept, backgroundColor: '#0EA5E9', borderRadius: 6 }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { labels: { color: textColor, font: { family: 'Prompt', size: 11 } } } },
+            scales: {
+              x: { grid: { display: false }, ticks: { color: textColor, font: { family: 'Prompt', size: 11 } } },
+              y: { beginAtZero: true, ticks: { stepSize: 1, color: textColor }, grid: { color: gridColor } }
+            }
+          }
+        });
+      }
+
+      const ctxStatus = document.getElementById('chart-status');
+      if (ctxStatus) {
+        const statuses = ['พร้อมให้ยืม', 'ถูกยืม', 'จองแล้ว', 'ส่งซ่อม', 'ตัดจำหน่าย'];
+        const counts = statuses.map(s => state.data.assets.filter(a => a.Status === s).length);
+        state.charts.status = new Chart(ctxStatus, {
+          type: 'doughnut',
+          data: {
+            labels: statuses,
+            datasets: [{
+              data: counts,
+              backgroundColor: ['#10B981', '#0EA5E9', '#6366F1', '#F59E0B', '#71717A'],
+              borderWidth: 0
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '66%',
+            plugins: { legend: { position: 'bottom', labels: { color: textColor, boxWidth: 10, font: { family: 'Prompt', size: 11 } } } }
+          }
+        });
+      }
+    }
 
     function renderCatalog(el) {
       const assets = state.data.assets.filter(a => a.Status !== 'ตัดจำหน่าย');
@@ -2140,25 +1897,35 @@ button.lg-item { cursor: pointer; width: 100%; }
           ${filtered.length === 0 ? `
             <div class="bg-white dark:bg-zinc-900 border hairline rounded-xl p-12 text-center text-zinc-400 text-sm">ไม่พบครุภัณฑ์ที่ตรงกับเงื่อนไข</div>
           ` : `
-            <div class="cat-list">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               ${filtered.map(a => {
                 const canBorrow = a.Status === 'พร้อมให้ยืม' && (String(state.data.settings?.AllowCrossDeptBorrow || 'true') === 'true' || a.DepartmentID === state.user.DepartmentID);
                 return `
-                  <div class="cat-row">
-                    <button type="button" class="cat-thumb" onclick="openAssetDetailModal('${esc(a.AssetID)}')" aria-label="ดูรายละเอียด ${esc(a.AssetName)}">
-                      ${a.ImageUrl ? `<img src="${esc(a.ImageUrl)}" alt="" />` : `<i data-lucide="package" class="w-6 h-6"></i>`}
-                    </button>
-                    <div class="cat-main">
-                      <div class="cat-meta"><span>${esc(a.AssetCode)}</span><span>${esc(a.Category)}</span></div>
-                      <h4>${esc(a.AssetName)}</h4>
-                      <p>${esc(a.DepartmentName)} · ${esc(a.Location || '-')}</p>
+                  <div class="bg-white dark:bg-zinc-900 border hairline rounded-xl overflow-hidden flex flex-col hover:border-zinc-300 dark:hover:border-zinc-700 transition">
+                    <div class="h-36 bg-zinc-100 dark:bg-zinc-800/70 relative flex items-center justify-center overflow-hidden">
+                      ${a.ImageUrl
+                        ? `<img src="${esc(a.ImageUrl)}" alt="${esc(a.AssetName)}" class="w-full h-full object-cover" />`
+                        : `<i data-lucide="package" class="w-10 h-10 text-zinc-300 dark:text-zinc-600"></i>`}
+                      <div class="absolute top-2.5 left-2.5">${statusBadge(a.Status)}</div>
+                      <button onclick="openAssetDetailModal('${esc(a.AssetID)}')" class="absolute top-2.5 right-2.5 p-1.5 rounded-lg bg-white/90 dark:bg-zinc-900/90 border hairline text-zinc-600 dark:text-zinc-200 hover:text-brand-600" title="ดูรายละเอียด & QR">
+                        <i data-lucide="qr-code" class="w-3.5 h-3.5"></i>
+                      </button>
                     </div>
-                    <div class="cat-state">${statusBadge(a.Status)}</div>
-                    <div class="cat-act">
-                      <button onclick="openAssetDetailModal('${esc(a.AssetID)}')" class="${BTN_SECONDARY}">รายละเอียด</button>
-                      ${canBorrow
-                        ? `<button onclick="openBorrowModal('${esc(a.AssetID)}')" class="${BTN_PRIMARY}">ขอยืม</button>`
-                        : `<button disabled class="btn btn-secondary">${a.Status === 'พร้อมให้ยืม' ? 'เฉพาะหน่วยงานเจ้าของ' : esc(a.Status)}</button>`}
+                    <div class="p-4 flex-1 flex flex-col justify-between gap-3">
+                      <div>
+                        <div class="flex items-center justify-between gap-2 mb-1">
+                          <span class="font-mono text-[11px] font-medium text-brand-600 dark:text-brand-400">${esc(a.AssetCode)}</span>
+                          <span class="text-[11px] text-zinc-400">${esc(a.Category)}</span>
+                        </div>
+                        <h4 class="text-sm font-semibold text-zinc-900 dark:text-white line-clamp-1">${esc(a.AssetName)}</h4>
+                        <p class="text-xs text-zinc-500 mt-1 line-clamp-1">${esc(a.DepartmentName)} • ${esc(a.Location || '-')}</p>
+                      </div>
+                      <div class="pt-3 border-t hairline flex items-center gap-2">
+                        <button onclick="openAssetDetailModal('${esc(a.AssetID)}')" class="${BTN_SECONDARY}">รายละเอียด</button>
+                        ${canBorrow
+                          ? `<button onclick="openBorrowModal('${esc(a.AssetID)}')" class="flex-1 ${BTN_PRIMARY}">ขอยืมครุภัณฑ์</button>`
+                          : `<button disabled class="flex-1 py-2 px-3 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-400 text-xs font-medium cursor-not-allowed">${a.Status === 'พร้อมให้ยืม' ? 'เฉพาะหน่วยงานเจ้าของ' : esc(a.Status)}</button>`}
+                      </div>
                     </div>
                   </div>
                 `;
@@ -5479,12 +5246,12 @@ button.lg-item { cursor: pointer; width: 100%; }
 
     function openDemoPicker() {
       openModal('ทดลองโหมดจำลองข้อมูล', `
-        <p class="text-sm mb-4" style="color:var(--muted)">เลือกมุมมองที่ต้องการนำเสนอ ข้อมูลทั้งหมดเป็นข้อมูลสมมติและไม่เชื่อมฐานข้อมูลจริง สลับมุมมองได้ตลอดจากแถบสีเหลืองด้านบน</p>
-        <div class="role-pick">
+        <p class="text-sm mb-4 text-zinc-500 dark:text-zinc-400">เลือกมุมมองที่ต้องการนำเสนอ ข้อมูลทั้งหมดเป็นข้อมูลสมมติและไม่เชื่อมฐานข้อมูลจริง สลับมุมมองได้ตลอดจากแถบสีเหลืองด้านบน</p>
+        <div class="grid gap-2">
           ${DEMO_ROLES.map(r => `
-            <button type="button" onclick="startDemo('${r.un}')">
-              <span class="ic"><i data-lucide="${r.icon}" class="w-5 h-5"></i></span>
-              <span><b>${r.title}</b><small>${r.desc}</small></span>
+            <button type="button" onclick="startDemo('${r.un}')" class="flex items-center gap-3 p-3 rounded-lg border hairline text-left hover:bg-zinc-50 dark:hover:bg-zinc-800 transition">
+              <span class="w-9 h-9 rounded-lg bg-brand-50 dark:bg-brand-500/15 text-brand-600 dark:text-brand-400 flex items-center justify-center shrink-0"><i data-lucide="${r.icon}" class="w-5 h-5"></i></span>
+              <span class="min-w-0"><b class="block text-sm font-medium">${r.title}</b><small class="block text-xs text-zinc-500">${r.desc}</small></span>
             </button>`).join('')}
         </div>`);
     }

@@ -19,7 +19,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
   const w = dom.window, $ = id => w.document.getElementById(id), ev = c => w.eval(c);
   await sleep(500); netCalls = 0; errors.length = 0; // ignore the branding fetch failure at boot
   ok(w.document.querySelector('.demo-cta'), 'login screen has demo button');
-  w.openDemoPicker(); ok(w.document.querySelectorAll('.role-pick button').length === 4, 'role picker lists 4 views');
+  w.openDemoPicker(); ok(w.document.querySelectorAll('#modal-panel button[onclick^="startDemo"]').length === 4, 'role picker lists 4 views');
 
   for (const [un, role] of [['admin', 'SuperAdmin'], ['phatsadu', 'DeptAdmin'], ['approver', 'Approver'], ['nurse1', 'Borrower']]) {
     await w.startDemo(un); await sleep(200);
@@ -29,11 +29,10 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
     for (const id of routes) { const b = errors.length; w.navigate(id); await sleep(25); ok(errors.length === b, `${role} route ${id}`, errors.slice(b).join(' | ')); }
     if (role === 'SuperAdmin') {
       w.navigate('dashboard'); await sleep(30);
-      const tiles = w.document.querySelectorAll('.tile').length, live = ev("state.data.assets.filter(a=>a.Status!=='ตัดจำหน่าย').length");
-      ok(tiles === live && tiles >= 40, `board has one tile per live asset (${tiles}/${live})`);
-      ok(w.document.querySelectorAll('.tile.is-late').length === 2, 'two overdue tiles flagged');
-      ok(w.document.querySelectorAll('.task').length >= 3, 'task list shows overdue/pending/repair');
-      ok(w.document.querySelectorAll('.board-row').length === 7, 'one board row per department (7)');
+      const od = ev("state.data.borrows.filter(b=>isOutstandingOverdue(b)).length"), txt = $('main-content').textContent;
+      ok(od === 2 && /เกินกำหนดคืน\s*2\s*รายการ/.test(txt), 'overdue alert counts only unreturned items (2)', od);
+      ok(!!$('chart-dept') && !!$('chart-status'), 'original dashboard charts present');
+      ok(!!$('ycal'), 'year calendar present on dashboard');
       ok(!/Chart/.test(w.document.getElementById('main-content').innerHTML), 'no chart canvases');
       ok(ev('state.data.users.length') === 9 && ev('state.data.logs.length') > 5, 'admin gets users + logs');
     }
