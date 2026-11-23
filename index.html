@@ -560,6 +560,23 @@ button.lg-item { cursor: pointer; width: 100%; }
 .flatpickr-day.flatpickr-disabled, .flatpickr-day.prevMonthDay, .flatpickr-day.nextMonthDay { color: var(--muted); opacity: .55; }
 .flatpickr-current-month .flatpickr-monthDropdown-months option { background: var(--surface); color: var(--text); }
 
+
+/* ---------- year calendar (flat heat map <-> 3D skyline) ---------- */
+.ycal { border: 1px solid var(--rule); background: var(--surface); border-radius: 8px; padding: 14px 16px 12px; }
+.ycal-head { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
+.ycal-seg { display: inline-flex; border: 1px solid var(--rule); border-radius: 6px; padding: 2px; }
+.ycal-seg button { font-size: .75rem; font-weight: 600; padding: 4px 12px; border-radius: 4px; color: var(--muted); }
+.ycal-seg button.on { background: var(--brand); color: #fff; }
+.ycal-stage { position: relative; width: 100%; }
+.ycal-stage canvas { display: block; width: 100%; touch-action: pan-y; }
+.ycal-tip { position: absolute; pointer-events: none; z-index: 5; background: var(--text); color: var(--surface); font-size: 12px; padding: 5px 9px; border-radius: 6px; white-space: nowrap; opacity: 0; transition: opacity .12s; transform: translate(-50%, -100%); }
+.ycal-tip.on { opacity: 1; }
+.ycal-foot { display: flex; flex-wrap: wrap; gap: 6px 18px; justify-content: space-between; align-items: center; margin-top: 6px; font-size: .75rem; color: var(--muted); }
+.ycal-stats { display: flex; flex-wrap: wrap; gap: 4px 18px; }
+.ycal-stats b { color: var(--text); font-variant-numeric: tabular-nums; }
+.ycal-scale { display: inline-flex; align-items: center; gap: 4px; }
+.ycal-scale i { width: 11px; height: 11px; border-radius: 2px; display: inline-block; }
+.nav-item[title] { position: relative; }
 </style>
 </head>
 <body class="antialiased">
@@ -680,7 +697,7 @@ button.lg-item { cursor: pointer; width: 100%; }
             <div id="sidebar-org-name" class="rail-org truncate">โรงพยาบาลสันทราย</div>
           </div>
         </div>
-        <button onclick="toggleSidebarCollapse()" class="rail-collapse hidden lg:flex" title="ย่อ/ขยายเมนู"><i data-lucide="panel-left-close" class="w-4 h-4"></i></button>
+        <button onclick="toggleSidebarCollapse()" class="rail-collapse hidden lg:flex" title="ย่อ/ขยายเมนู (Ctrl+B)"><i data-lucide="panel-left-close" class="w-4 h-4"></i></button>
       </div>
       <nav id="sidebar-nav" class="rail-nav flex-1 overflow-y-auto"></nav>
       <div class="rail-user">
@@ -1540,7 +1557,7 @@ button.lg-item { cursor: pointer; width: 100%; }
         if (item.section) return `<div class="rail-section sidebar-label">${esc(item.section)}</div>`;
         const active = state.route === item.id;
         return `
-          <button onclick="navigate('${item.id}')" class="nav-item ${active ? 'is-active' : ''}" ${active ? 'aria-current="page"' : ''}>
+          <button onclick="navigate('${item.id}')" title="${esc(item.label)}" class="nav-item ${active ? 'is-active' : ''}" ${active ? 'aria-current="page"' : ''}>
             <span class="flex items-center gap-2.5 min-w-0">
               <i data-lucide="${item.icon}" class="w-[18px] h-[18px] shrink-0"></i>
               <span class="sidebar-label truncate">${esc(item.label)}</span>
@@ -1548,6 +1565,7 @@ button.lg-item { cursor: pointer; width: 100%; }
             ${item.badge ? `<span class="sidebar-label nav-badge">${item.badge}</span>` : ''}
           </button>`;
       }).join('');
+      if (state.sidebarCollapsed) document.getElementById('sidebar').querySelectorAll('.sidebar-label').forEach(el => el.classList.add('hidden'));
       renderBottomNav();
       refreshIcons();
     }
@@ -1593,6 +1611,14 @@ button.lg-item { cursor: pointer; width: 100%; }
         bd.classList.add('hidden');
       }
     }
+
+    document.addEventListener('keydown', ev => {
+      if ((ev.ctrlKey || ev.metaKey) && ev.key.toLowerCase() === 'b' && document.body.classList.contains('is-authed')) {
+        ev.preventDefault();
+        if (window.innerWidth >= 1024) toggleSidebarCollapse();
+        else toggleMobileSidebar(document.getElementById('sidebar').classList.contains('-translate-x-full'));
+      }
+    });
 
     function toggleSidebarCollapse() {
       const sb = document.getElementById('sidebar');
@@ -1770,6 +1796,8 @@ button.lg-item { cursor: pointer; width: 100%; }
             </div>
           </section>
 
+          ${yearCalHtml()}
+
           <section class="board">
             <div class="board-head">
               <div><h4 class="sec-title">กระดานสถานะครุภัณฑ์รายหน่วยงาน</h4><p class="sec-sub">1 ช่อง = 1 ชิ้น แตะเพื่อดูรายละเอียดและประวัติการยืม</p></div>
@@ -1816,6 +1844,7 @@ button.lg-item { cursor: pointer; width: 100%; }
           </div>
         </div>
       `;
+      initYearCal();
     }
 
     function ensureTileTip() {
@@ -1845,6 +1874,183 @@ button.lg-item { cursor: pointer; width: 100%; }
           <small>${esc(sub)}</small>
         </div>
       `;
+    }
+
+
+    // ---------- ปฏิทินการยืมรอบปี: แบน (heat map) <-> 3 มิติ (skyline) ----------
+    const YC = { view: '3d', t: 0, target: 1, raf: 0, cells: [], weeks: 0, hover: -1, polys: [] };
+    const ycLerp = (a, b, t) => a + (b - a) * t;
+    const ycEase = x => { x = Math.min(1, Math.max(0, x)); return x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; };
+    const ycOut = x => { x = Math.min(1, Math.max(0, x)); return 1 - Math.pow(1 - x, 3); };
+    const ycKey = ms => new Date(ms).toISOString().slice(0, 10);
+
+    function ycBuild() {
+      const DAY = 86400000, m = todayStr(0).match(/(\d+)-(\d+)-(\d+)/);
+      const end = Date.UTC(+m[1], +m[2] - 1, +m[3]);
+      const counts = {};
+      state.data.borrows.forEach(b => { const k = String(b.BorrowDate || '').slice(0, 10); if (k) counts[k] = (counts[k] || 0) + 1; });
+      let start = end - 364 * DAY; start -= new Date(start).getUTCDay() * DAY;
+      let seed = 11; const rnd = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
+      const cells = [];
+      for (let ms = start, i = 0; ms <= end; ms += DAY, i++) {
+        const k = ycKey(ms), dow = new Date(ms).getUTCDay(), wk = dow === 0 || dow === 6;
+        let c = counts[k] || 0;
+        if (state.demo && ms < end - 14 * DAY) { // โหมดจำลอง: เติมประวัติสมมติให้ปฏิทินดูมีชีวิต
+          const season = 0.55 + 0.45 * Math.sin(i / 23);
+          if (rnd() < (wk ? 0.12 : 0.62) * season) c += 1 + Math.floor(rnd() * rnd() * 7);
+        }
+        cells.push({ k, c, week: Math.floor(i / 7), day: i % 7, lv: 0 });
+      }
+      const nz = cells.map(x => x.c).filter(x => x > 0).sort((a, b) => a - b);
+      const busy = nz.length ? nz[Math.floor(0.95 * (nz.length - 1))] : 0;
+      cells.forEach(x => { x.lv = x.c <= 0 ? 0 : busy <= 0 ? 4 : 1 + Math.min(3, Math.floor(x.c / busy * 4)); x.h = x.c > 0 ? 0.4 + Math.pow(x.c / (nz[nz.length - 1] || 1), 0.85) * 6.5 : 0.18; });
+      let total = 0, best = 0, run = 0, longest = 0;
+      cells.forEach(x => { total += x.c; best = Math.max(best, x.c); if (x.c > 0) { run++; longest = Math.max(longest, run); } else run = 0; });
+      YC.cells = cells; YC.weeks = cells[cells.length - 1].week + 1; YC.stats = { total, best, longest };
+    }
+
+    function yearCalHtml() {
+      ycBuild(); const st = YC.stats;
+      return `
+        <section class="ycal" id="ycal">
+          <div class="ycal-head">
+            <div><h4 class="sec-title">ความเคลื่อนไหวการยืมรอบ 1 ปี</h4><p class="sec-sub">1 ช่อง = 1 วัน · ยิ่งเข้มยิ่งมีการยืมมาก · แตะหรือชี้เพื่อดูจำนวน</p></div>
+            <div class="ycal-seg" role="group" aria-label="มุมมอง">
+              <button type="button" data-v="2d" onclick="ycSetView('2d')">แบน</button>
+              <button type="button" data-v="3d" class="on" onclick="ycSetView('3d')">3 มิติ</button>
+            </div>
+          </div>
+          <div class="ycal-stage" id="ycal-stage"><canvas id="ycal-canvas" role="img" aria-label="ปฏิทินการยืมรอบ 1 ปี รวม ${st.total} ครั้ง"></canvas><div class="ycal-tip" id="ycal-tip"></div></div>
+          <div class="ycal-foot">
+            <div class="ycal-stats"><span>รวม <b>${st.total}</b> ครั้ง</span><span>สูงสุดใน 1 วัน <b>${st.best}</b> ครั้ง</span><span>ยืมต่อเนื่องนานสุด <b>${st.longest}</b> วัน</span></div>
+            <div class="ycal-scale">น้อย <i style="background:var(--rule)"></i><i style="background:color-mix(in srgb,var(--brand) 30%,var(--rule))"></i><i style="background:color-mix(in srgb,var(--brand) 55%,var(--rule))"></i><i style="background:color-mix(in srgb,var(--brand) 80%,var(--rule))"></i><i style="background:var(--brand)"></i> มาก</div>
+          </div>
+        </section>`;
+    }
+
+    function ycSetView(v) {
+      YC.view = v; YC.target = v === '3d' ? 1 : 0;
+      document.querySelectorAll('#ycal .ycal-seg button').forEach(b => b.classList.toggle('on', b.dataset.v === v));
+      ycKick();
+    }
+    function ycKick() { if (!YC.raf) { YC.last = performance.now(); YC.raf = requestAnimationFrame(ycTick); } }
+    function ycTick(now) {
+      YC.raf = 0;
+      const cv = document.getElementById('ycal-canvas'); if (!cv || !cv.isConnected) return;
+      const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const dt = Math.min(0.05, (now - YC.last) / 1000); YC.last = now;
+      if (YC.t !== YC.target) {
+        const step = reduce ? 1 : dt / 1.3;
+        YC.t = YC.target > YC.t ? Math.min(YC.target, YC.t + step) : Math.max(YC.target, YC.t - step);
+        ycDraw(); YC.raf = requestAnimationFrame(ycTick);
+      } else ycDraw();
+    }
+
+    function initYearCal() {
+      const stage = document.getElementById('ycal-stage'), cv = document.getElementById('ycal-canvas');
+      if (!stage || !cv) return;
+      YC.t = 0; YC.target = YC.view === '3d' ? 1 : 0; YC.hover = -1;
+      document.querySelectorAll('#ycal .ycal-seg button').forEach(b => b.classList.toggle('on', b.dataset.v === YC.view));
+      const tip = document.getElementById('ycal-tip');
+      const hit = (x, y) => {
+        for (let k = YC.order.length - 1; k >= 0; k--) {
+          const i = YC.order[k], q = YC.polys[i]; if (!q) continue;
+          for (let f = 0; f < q.length; f++) { if (ycInQuad(q[f], x, y)) return i; }
+        }
+        return -1;
+      };
+      const move = ev => {
+        const r = cv.getBoundingClientRect(), x = ev.clientX - r.left, y = ev.clientY - r.top, i = hit(x, y);
+        if (i === YC.hover) return;
+        YC.hover = i;
+        if (i < 0) { tip.classList.remove('on'); } else {
+          const c = YC.cells[i], q = YC.polys[i][0];
+          tip.innerHTML = `<b>${c.c ? c.c + ' ครั้ง' : 'ไม่มีการยืม'}</b> · ${esc(fmtDate(c.k))}`;
+          tip.style.left = Math.min(r.width - 70, Math.max(70, (q[0] + q[4]) / 2)) + 'px'; tip.style.top = Math.min(q[1], q[3], q[5], q[7]) - 6 + 'px';
+          tip.classList.add('on');
+        }
+        ycDraw();
+      };
+      cv.onpointermove = move; cv.onpointerdown = move;
+      cv.onpointerleave = () => { YC.hover = -1; tip.classList.remove('on'); ycDraw(); };
+      if (!YC.ro) { YC.ro = new ResizeObserver(() => { if (document.getElementById('ycal-canvas')) ycDraw(); }); }
+      YC.ro.disconnect(); YC.ro.observe(stage);
+      ycDraw();
+      if (YC.target === 1) { YC.target = 0; setTimeout(() => { YC.target = 1; ycKick(); }, 350); }
+    }
+
+    function ycInQuad(q, x, y) {
+      let sign = 0;
+      for (let k = 0; k < 4; k++) {
+        const ax = q[k * 2], ay = q[k * 2 + 1], bx = q[((k + 1) % 4) * 2], by = q[((k + 1) % 4) * 2 + 1];
+        const cr = (bx - ax) * (y - ay) - (by - ay) * (x - ax); if (Math.abs(cr) < 1e-9) continue;
+        const sg = cr > 0 ? 1 : -1; if (!sign) sign = sg; else if (sg !== sign) return false;
+      }
+      return !!sign;
+    }
+
+    function ycDraw() {
+      const stage = document.getElementById('ycal-stage'), cv = document.getElementById('ycal-canvas');
+      if (!stage || !cv || !YC.cells.length) return;
+      const W = Math.round(stage.clientWidth); if (!W) return;
+      const n = YC.cells.length, weeks = YC.weeks, t = YC.t, e = ycEase(t);
+      const H2 = Math.max(110, Math.round((W - 8) * 7 / weeks) + 22), H3 = Math.min(Math.max(250, W * 0.4), 380);
+      const H = Math.round(ycLerp(H2, H3, e)), dpr = Math.min(2, window.devicePixelRatio || 1);
+      if (cv.width !== Math.round(W * dpr) || cv.height !== Math.round(H * dpr)) { cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); }
+      cv.style.height = H + 'px';
+      const ctx = cv.getContext('2d'); if (!ctx) return; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, W, H);
+
+      const cs = getComputedStyle(document.documentElement), hex = v => { const h = cs.getPropertyValue(v).trim().replace('#', ''); return [0, 2, 4].map(i => parseInt(h.slice(i, i + 2), 16) || 0); };
+      const empty = hex('--rule'), brand = hex('--brand'), fg = hex('--text'), mut = hex('--muted');
+      const mix = (a, b, k) => a.map((v, i) => v + (b[i] - v) * k);
+      const pal = [empty, mix(empty, brand, .3), mix(empty, brand, .55), mix(empty, brand, .8), brand];
+      const rgb = (c, k = 1) => `rgb(${Math.round(c[0] * k)},${Math.round(c[1] * k)},${Math.round(c[2] * k)})`;
+
+      const yaw = ycLerp(0, Math.PI / 4, e), elev = ycLerp(Math.PI / 2, 34 * Math.PI / 180, e);
+      const cy = Math.cos(yaw), sy = Math.sin(yaw), se = Math.sin(elev), ce = Math.cos(elev);
+      const w = ycLerp(.8, .9, e), off = (1 - w) / 2;
+      const zOf = c => { const d = (c.week / Math.max(1, weeks - 1)) * .36 + (c.day / 6) * .06; return ycOut((t - d) / .58) * c.h; };
+      const zs = YC.cells.map(zOf);
+      // extent
+      let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9;
+      const ad = (x, y, z) => { const px = x * cy - y * sy, py = (x * sy + y * cy) * se - z * ce; x0 = Math.min(x0, px); x1 = Math.max(x1, px); y0 = Math.min(y0, py); y1 = Math.max(y1, py); };
+      YC.cells.forEach((c, i) => { ad(c.week, c.day, zs[i]); ad(c.week + 1, c.day, zs[i]); ad(c.week, c.day + 1, zs[i]); ad(c.week + 1, c.day + 1, 0); ad(c.week, c.day + 1, 0); ad(c.week + 1, c.day, 0); });
+      const padT = ycLerp(18, 6, e), padB = ycLerp(4, 6, e), padX = ycLerp(4, 10, e);
+      const aw = W - padX * 2, ah = H - padT - padB, s = Math.min(aw / (x1 - x0), ah / (y1 - y0));
+      const ox = padX + (aw - (x1 - x0) * s) / 2 - x0 * s, oy = padT + (ah - (y1 - y0) * s) / 2 - y0 * s;
+      const PX = (x, y) => ox + (x * cy - y * sy) * s, PY = (x, y, z) => oy + ((x * sy + y * cy) * se - z * ce) * s;
+
+      const order = YC.order && YC.order.length === n ? YC.order : (YC.order = Array.from({ length: n }, (_, i) => i));
+      order.sort((a, b) => (YC.cells[a].week + .5) * sy + (YC.cells[a].day + .5) * cy - ((YC.cells[b].week + .5) * sy + (YC.cells[b].day + .5) * cy));
+      YC.polys = new Array(n);
+      for (let k = 0; k < n; k++) {
+        const i = order[k], c = YC.cells[i], hv = i === YC.hover;
+        const a = c.week + off, b = c.day + off, z = zs[i] + (hv ? .6 * e : 0);
+        const top = [PX(a, b), PY(a, b, z), PX(a + w, b), PY(a + w, b, z), PX(a + w, b + w), PY(a + w, b + w, z), PX(a, b + w), PY(a, b + w, z)];
+        YC.polys[i] = [top];
+        const col = pal[c.lv];
+        if (z * ce * s > .4) {
+          const L = [PX(a, b + w), PY(a, b + w, 0), PX(a + w, b + w), PY(a + w, b + w, 0), top[4], top[5], top[6], top[7]];
+          const R = [PX(a + w, b), PY(a + w, b, 0), L[2], L[3], top[4], top[5], top[2], top[3]];
+          YC.polys[i].push(L, R);
+          ctx.fillStyle = rgb(col, .84); ctx.beginPath(); ctx.moveTo(L[0], L[1]); ctx.lineTo(L[2], L[3]); ctx.lineTo(L[4], L[5]); ctx.lineTo(L[6], L[7]); ctx.closePath(); ctx.fill();
+          ctx.fillStyle = rgb(col, .68); ctx.beginPath(); ctx.moveTo(R[0], R[1]); ctx.lineTo(R[2], R[3]); ctx.lineTo(R[4], R[5]); ctx.lineTo(R[6], R[7]); ctx.closePath(); ctx.fill();
+        }
+        ctx.fillStyle = hv ? rgb(mix(col, fg, .18)) : rgb(col); ctx.beginPath(); ctx.moveTo(top[0], top[1]); ctx.lineTo(top[2], top[3]); ctx.lineTo(top[4], top[5]); ctx.lineTo(top[6], top[7]); ctx.closePath(); ctx.fill();
+        if (hv) { ctx.strokeStyle = rgb(fg); ctx.lineWidth = 1.5; ctx.stroke(); }
+      }
+      // month labels (fade out in 3D)
+      const a2 = 1 - Math.min(1, e / .4);
+      if (a2 > .02) {
+        ctx.fillStyle = `rgba(${mut[0]},${mut[1]},${mut[2]},${a2.toFixed(2)})`; ctx.font = '11px sans-serif'; ctx.textBaseline = 'bottom'; ctx.textAlign = 'left';
+        const M = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+        let prev = -1, edge = -1e9;
+        for (let wk = 0; wk < weeks; wk++) {
+          const c = YC.cells[wk * 7]; if (!c) break; const mo = +c.k.slice(5, 7) - 1;
+          if (mo !== prev) { const x = PX(wk + off, -.3); if (x > edge && x + 26 < W) { ctx.fillText(M[mo], x, PY(wk + off, -.3, 0) - 3); edge = x + 34; } }
+          prev = mo;
+        }
+      }
     }
 
     function renderDashboardCharts() { /* แดชบอร์ดใหม่ใช้กระดานสถานะ ไม่ใช้กราฟ Chart.js แล้ว */ }
