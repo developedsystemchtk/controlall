@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ระบบยืม-คืนครุภัณฑ์ — โรงพยาบาลสันทราย</title>
   <meta name="robots" content="noindex, nofollow" />
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234F46E5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z'/%3E%3Cpath d='m3.3 7 8.7 5 8.7-5'/%3E%3Cpath d='M12 22V12'/%3E%3C/svg%3E" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239333EA' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z'/%3E%3Cpath d='m3.3 7 8.7 5 8.7-5'/%3E%3Cpath d='M12 22V12'/%3E%3C/svg%3E" />
   <script src="config.js"></script>
 
   
@@ -26,11 +26,12 @@
           },
           colors: {
             brand: {
-              50: '#EEF2FF',
-              100: '#E0E7FF',
-              500: '#6366F1',
-              600: '#4F46E5',
-              700: '#4338CA'
+              50: '#FAF5FF',
+              100: '#F3E8FF',
+              400: '#C084FC',
+              500: '#A855F7',
+              600: '#9333EA',
+              700: '#7E22CE'
             }
           }
         }
@@ -61,8 +62,8 @@
     .dark .hairline { border-color: rgba(255, 255, 255, 0.08); }
 
     .bg-grid-pattern {
-      background-image: linear-gradient(to right, rgba(79, 70, 229, 0.045) 1px, transparent 1px),
-                        linear-gradient(to bottom, rgba(79, 70, 229, 0.045) 1px, transparent 1px);
+      background-image: linear-gradient(to right, rgba(147, 51, 234, 0.045) 1px, transparent 1px),
+                        linear-gradient(to bottom, rgba(147, 51, 234, 0.045) 1px, transparent 1px);
       background-size: 32px 32px;
     }
 
@@ -124,8 +125,8 @@
       color: #fafafa !important;
     }
     .swal2-input:focus {
-      border-color: #4f46e5 !important;
-      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15) !important;
+      border-color: #9333ea !important;
+      box-shadow: 0 0 0 3px rgba(147, 51, 234, 0.15) !important;
     }
     .swal2-actions {
       margin-top: 1.25rem !important;
@@ -142,7 +143,7 @@
       box-shadow: none !important;
       transition: all 150ms ease !important;
     }
-    .swal2-styled:focus { box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.22) !important; }
+    .swal2-styled:focus { box-shadow: 0 0 0 3px rgba(147, 51, 234, 0.22) !important; }
     .swal2-toast {
       width: auto !important;
       min-width: 16rem !important;
@@ -156,11 +157,11 @@
       padding: 0 !important;
     }
     .swal2-timer-progress-bar {
-      background: #4f46e5 !important;
+      background: #9333ea !important;
       height: 2px !important;
     }
     .swal2-loader {
-      border-color: #4f46e5 transparent #4f46e5 transparent !important;
+      border-color: #9333ea transparent #9333ea transparent !important;
     }
 
     
@@ -196,8 +197,8 @@
 
   <style id="extras">
     /* ฟีเจอร์เสริม (โหมดจำลอง ปฏิทินรอบปี เมนูย่อย ตัวเลือกวันที่) ใช้โทนเดิมของต้นแบบ */
-    :root { --surface:#ffffff; --rule:#e4e4e7; --text:#18181b; --muted:#71717a; --brand:#4F46E5; }
-    html.dark { --surface:#18181b; --rule:#3f3f46; --text:#f4f4f5; --muted:#a1a1aa; --brand:#818cf8; }
+    :root { --surface:#ffffff; --rule:#e4e4e7; --text:#18181b; --muted:#71717a; --brand:#7E22CE; }
+    html.dark { --surface:#18181b; --rule:#3f3f46; --text:#f4f4f5; --muted:#a1a1aa; --brand:#C084FC; }
     .demo-bar { display: none; }
     body.is-demo .demo-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 16px; padding: 6px 16px; background: #fef3c7; color: #78350f; font-size: 12px; border-bottom: 1px solid #fcd34d; }
     html.dark body.is-demo .demo-bar { background: rgba(245,158,11,.15); color: #fcd34d; border-bottom-color: rgba(245,158,11,.3); }
@@ -239,7 +240,89 @@
     .flatpickr-day.selected, .flatpickr-day.selected:hover { background: var(--brand); border-color: var(--brand); color: #fff; }
     .flatpickr-day.flatpickr-disabled, .flatpickr-day.prevMonthDay, .flatpickr-day.nextMonthDay { color: var(--muted); opacity: .55; }
     .flatpickr-current-month .flatpickr-monthDropdown-months option { background: var(--surface); color: var(--text); }
-  </style>
+  
+    /* ---------- build pipeline (ขั้นตอนการยืม-คืน) ---------- */
+    .build-pipeline { --bp-surface:#fff; --bp-ink:#18181b; --bp-muted:#71717a; --bp-border:#e4e4e7; --bp-hover:#f4f4f5; --bp-subtle:#fafafa; --bp-selected:#7E22CE; --bp-on-selected:#fff; --bp-ground:#f6f1fb; --bp-line:#cfc3de; --bp-green:#2f7a4f; --bp-green-fill:#cee7d7; --bp-blue:#426c9c; --bp-blue-fill:#d7e5f5; --bp-red:#b33f3f; --bp-red-fill:#f0d6d6; --bp-gray-fill:#e8e4ee; background:var(--bp-surface); color:var(--bp-ink); border:1px solid var(--bp-border); border-radius:12px; overflow:hidden; font-size:13px; line-height:1.5; box-sizing:border-box; }
+    html.dark .build-pipeline { --bp-surface:#18181b; --bp-ink:#f4f4f5; --bp-muted:#a1a1aa; --bp-border:#3f3f46; --bp-hover:#27272a; --bp-subtle:#1f1f23; --bp-selected:#C084FC; --bp-on-selected:#18181b; --bp-ground:#1d1527; --bp-line:#4a3b63; --bp-green:#8cd4a7; --bp-green-fill:#365d44; --bp-blue:#9ac2ec; --bp-blue-fill:#334d6e; --bp-red:#eca3a3; --bp-red-fill:#633939; --bp-gray-fill:#2e2838; }
+    .build-pipeline *, .rdf-root * { box-sizing: border-box; }
+    .build-pipeline button, .build-pipeline select { font: inherit; color: inherit; }
+    .build-pipeline button { cursor: pointer; }
+    .bp-header { display:flex; align-items:center; justify-content:space-between; gap:14px; padding:18px 20px 0; flex-wrap:wrap; }
+    .bp-header h4 { font-size:15px; font-weight:600; margin:0; } .bp-header p { font-size:12px; color:var(--bp-muted); margin:2px 0 0; }
+    .bp-tools { display:flex; align-items:center; gap:8px; min-width:0; }
+    .bp-select { position:relative; display:flex; align-items:center; min-width:0; }
+    .bp-select select { appearance:none; background:var(--bp-surface); border:1px solid var(--bp-border); border-radius:7px; height:32px; padding:0 26px 0 9px; font-size:12px; max-width:230px; text-overflow:ellipsis; }
+    .bp-select svg { position:absolute; right:8px; pointer-events:none; color:var(--bp-muted); width:12px; height:12px; }
+    .bp-switch { display:flex; padding:3px; background:var(--bp-subtle); border:1px solid var(--bp-border); border-radius:8px; gap:2px; }
+    .bp-switch button { display:flex; align-items:center; gap:5px; border:0; background:transparent; border-radius:5px; height:25px; padding:0 9px; font-size:12px; color:var(--bp-muted); }
+    .bp-switch button:hover { background:var(--bp-hover); color:var(--bp-ink); }
+    .bp-switch button[aria-pressed=true] { background:var(--bp-selected); color:var(--bp-on-selected); }
+    .bp-stats { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin:20px 20px 16px; }
+    .bp-stats>div+div { padding-left:18px; border-left:1px solid var(--bp-border); }
+    .bp-stats span { color:var(--bp-muted); font-size:12px; display:block; } .bp-stats small { font-size:11px; color:var(--bp-muted); }
+    .bp-stats strong { display:block; font-size:21px; font-weight:600; letter-spacing:-.4px; margin:2px 0; font-variant-numeric:tabular-nums; }
+    .bp-stats em { font-style:normal; font-size:14px; font-weight:400; color:var(--bp-muted); }
+    .bp-sv[data-status=passed] { color:var(--bp-green); } .bp-sv[data-status=running] { color:var(--bp-blue); } .bp-sv[data-status=failed], .bp-sv[data-status=canceled] { color:var(--bp-red); }
+    .bp-context { display:flex; gap:6px; align-items:center; margin:0 20px; padding-top:12px; border-top:1px solid var(--bp-border); font-size:12px; color:var(--bp-muted); flex-wrap:wrap; }
+    .bp-plot { position:relative; margin:0 8px; } .bp-chart { display:block; }
+    .bp-block { --bp-top:var(--bp-gray-fill); transition:transform .2s ease, filter .2s ease; }
+    .bp-block[data-status=passed] { --bp-top:var(--bp-green-fill); } .bp-block[data-status=running] { --bp-top:var(--bp-blue-fill); } .bp-block[data-status=failed], .bp-block[data-status=canceled] { --bp-top:var(--bp-red-fill); }
+    .bp-roof { fill:var(--bp-top); } .bp-left { fill:color-mix(in srgb,var(--bp-top) 89%,var(--bp-ink) 11%); } .bp-right { fill:color-mix(in srgb,var(--bp-top) 75%,var(--bp-ink) 25%); }
+    .bp-station { position:absolute; width:108px; height:104px; border:0; padding:0; background:transparent; text-align:center; display:flex; align-items:center; flex-direction:column; border-radius:7px; }
+    .bp-station:focus-visible, .bp-row:focus-visible { outline:2px solid var(--bp-selected); outline-offset:1px; }
+    .bp-sicon { height:40px; display:flex; align-items:center; justify-content:center; color:var(--bp-muted); transition:transform .18s ease; }
+    .bp-station:hover .bp-sicon { transform:translateY(-2px); }
+    .bp-station[data-status=passed] .bp-sicon { color:var(--bp-green); } .bp-station[data-status=running] .bp-sicon { color:var(--bp-blue); } .bp-station[data-status=failed] .bp-sicon { color:var(--bp-red); }
+    .bp-station>strong { font-size:12px; font-weight:600; margin-top:23px; line-height:18px; }
+    .bp-sstate { display:flex; align-items:center; justify-content:center; gap:4px; color:var(--bp-muted); font-size:11px; line-height:18px; }
+    .bp-sstate svg { width:10px; height:10px; }
+    .bp-list { padding:8px 20px 14px; }
+    .bp-row { display:flex; align-items:center; gap:10px; min-height:50px; padding:8px 7px; width:100%; text-align:left; background:transparent; border:0; border-radius:6px; }
+    .bp-row+.bp-row { border-top:1px solid var(--bp-border); } .bp-row[aria-pressed=true] { background:var(--bp-subtle); } .bp-row:hover { background:var(--bp-hover); }
+    .bp-row>svg { width:16px; height:16px; color:var(--bp-muted); } .bp-row>span:nth-child(2) { flex:1; min-width:0; }
+    .bp-row strong { display:block; font-size:13px; font-weight:600; } .bp-row small { display:block; color:var(--bp-muted); font-size:11px; }
+    .bp-rs { display:flex; align-items:center; gap:5px; font-size:12px; white-space:nowrap; } .bp-rs svg { width:12px; height:12px; }
+    .bp-row[data-status=passed] .bp-rs { color:var(--bp-green); } .bp-row[data-status=running] .bp-rs { color:var(--bp-blue); } .bp-row[data-status=failed] .bp-rs { color:var(--bp-red); }
+    .bp-log { margin:0 20px; border:1px solid var(--bp-border); border-radius:8px; background:var(--bp-subtle); overflow:hidden; }
+    .bp-lh { display:flex; justify-content:space-between; align-items:center; gap:8px; padding:9px 11px; border-bottom:1px solid var(--bp-border); flex-wrap:wrap; }
+    .bp-lh strong { font-size:13px; font-weight:600; margin-right:7px; }
+    .bp-badge { font-size:12px; color:var(--bp-muted); } .bp-badge[data-status=passed] { color:var(--bp-green); } .bp-badge[data-status=running] { color:var(--bp-blue); } .bp-badge[data-status=failed] { color:var(--bp-red); }
+    .bp-lines { padding:8px 11px; } .bp-line { display:flex; gap:10px; padding:3px 0; font-size:12px; line-height:1.6; } .bp-line time { color:var(--bp-muted); font-variant-numeric:tabular-nums; flex:none; min-width:68px; }
+    .bp-line[data-level=error] span { color:var(--bp-red); } .bp-line[data-level=warning] span { color:#b7791f; }
+    .bp-none { margin:2px 0; color:var(--bp-muted); font-size:12px; }
+    .bp-foot { display:flex; justify-content:space-between; flex-wrap:wrap; gap:6px; margin:12px 20px 16px; font-size:12px; color:var(--bp-muted); }
+    .bp-empty { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; min-height:160px; color:var(--bp-muted); padding:20px; }
+    @media (max-width:560px) { .bp-stats>div+div { padding-left:10px; } .bp-stats strong { font-size:18px; } .bp-header, .bp-stats, .bp-context, .bp-log, .bp-foot { margin-left:14px; margin-right:14px; } .bp-header { padding-left:0; padding-right:0; } .bp-list { padding-inline:14px; } }
+    @media (prefers-reduced-motion: reduce) { .build-pipeline * { transition:none !important; } }
+
+    /* ---------- ridgeline footer (ภูเขา dither สีม่วง) ---------- */
+    .rdf-root { --rdf-paper:#f8f4fc; --rdf-ink:#241433; --rdf-muted:#76658a; --rdf-line:#e8dcf3; --rdf-accent:#8a4cc4; --rdf-deep:#5f2b92; --rdf-pad:clamp(20px,3.2vw,30px); position:relative; display:grid; width:100%; overflow:hidden; isolation:isolate; background:var(--rdf-paper); color:var(--rdf-ink); }
+    html.dark .rdf-root { --rdf-paper:#0d0814; --rdf-ink:#ece4f6; --rdf-muted:#9a88b0; --rdf-line:#241838; --rdf-accent:#b48be8; --rdf-deep:#7e4ec0; }
+    @media print { .rdf-root, .demo-bar { display:none !important; } }
+    .rdf-frame { position:relative; display:grid; grid-template-rows:auto auto minmax(230px,1fr); width:100%; max-width:1120px; margin:0 auto; min-height:560px; }
+    .rdf-frame::before, .rdf-frame::after { content:""; position:absolute; top:0; bottom:0; width:1px; z-index:3; pointer-events:none; background:var(--rdf-line); transform:scaleY(0); transform-origin:50% 0; transition:transform 1.4s cubic-bezier(.2,.7,.1,1); }
+    .rdf-frame::before { left:0; } .rdf-frame::after { right:0; transition-delay:.08s; }
+    .rdf-in .rdf-frame::before, .rdf-in .rdf-frame::after { transform:scaleY(1); }
+    .rdf-r { opacity:0; transform:translateY(12px); filter:blur(5px); transition:opacity .9s cubic-bezier(.2,.7,.1,1), transform 1s cubic-bezier(.2,.7,.1,1), filter .9s ease; transition-delay:calc(var(--d,0) * 1ms); }
+    .rdf-in .rdf-r { opacity:1; transform:none; filter:none; }
+    .rdf-top { position:relative; z-index:2; display:grid; grid-template-columns:minmax(0,1.5fr) minmax(0,.9fr) minmax(0,1.7fr) minmax(0,1.1fr); gap:28px; padding:clamp(40px,5vw,64px) var(--rdf-pad) clamp(28px,3.5vw,44px); }
+    .rdf-brand { display:flex; flex-direction:column; align-items:flex-start; gap:16px; }
+    .rdf-logo { display:inline-flex; align-items:center; gap:10px; color:var(--rdf-ink); font-size:19px; font-weight:600; line-height:1.2; }
+    .rdf-mark { width:30px; height:21px; display:block; overflow:visible; flex:none; } .rdf-mark rect { fill:var(--rdf-paper); transition:transform .7s cubic-bezier(.2,.7,.1,1); }
+    .rdf-logo:hover .rdf-ma { transform:translateX(4px); } .rdf-logo:hover .rdf-mb { transform:translateX(-5px); }
+    .rdf-tag { margin:0; max-width:32ch; font-size:13px; line-height:1.6; color:var(--rdf-muted); }
+    .rdf-col h3 { margin:4px 0 14px; font-size:11px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--rdf-muted); }
+    .rdf-col ul { list-style:none; margin:0; padding:0; display:grid; gap:9px; } .rdf-col li { font-size:13px; line-height:1.55; }
+    .rdf-col .rdf-sub { color:var(--rdf-muted); font-size:12px; }
+    .rdf-link { position:relative; display:inline-flex; color:var(--rdf-ink); font-size:13px; text-align:left; transition:color .3s ease, transform .5s cubic-bezier(.2,.7,.1,1); }
+    .rdf-link:hover { color:var(--rdf-accent); transform:translateX(6px); }
+    .rdf-link:focus-visible, .rdf-logo:focus-visible { outline:1px solid var(--rdf-accent); outline-offset:4px; border-radius:3px; }
+    .rdf-bar { position:relative; z-index:2; display:flex; justify-content:space-between; align-items:center; gap:8px 16px; padding:0 var(--rdf-pad); font-size:12px; color:var(--rdf-muted); flex-wrap:wrap; } .rdf-bar p { margin:0; }
+    .rdf-scene { position:relative; z-index:1; margin-top:-56px; overflow:hidden; }
+    .rdf-scene canvas { position:absolute; left:0; bottom:0; display:block; max-width:none; image-rendering:pixelated; image-rendering:crisp-edges; }
+    @media (max-width:860px) { .rdf-top { grid-template-columns:minmax(0,1fr) minmax(0,1fr); row-gap:30px; } .rdf-brand { grid-column:1 / -1; } .rdf-scene { margin-top:-36px; } }
+    @media (prefers-reduced-motion: reduce) { .rdf-r, .rdf-frame::before, .rdf-frame::after, .rdf-link { transition:none; } .rdf-r { filter:none; } }
+</style>
 </head>
 <body class="bg-zinc-50 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100 antialiased selection:bg-brand-100 selection:text-brand-700">
 
@@ -336,6 +419,7 @@
         <i data-lucide="presentation" class="w-4 h-4 text-brand-600"></i> ทดลองโหมดจำลองข้อมูล
         <span class="text-[11px] font-normal text-zinc-400">(สำหรับนำเสนอ)</span>
       </button>
+      <p class="mt-6 text-center text-[11px] leading-relaxed text-zinc-400">พัฒนาโดย นายจันทกรณ์ จีกัน · กลุ่มงานพัฒนาคุณภาพบริการและมาตรฐาน<br/>โรงพยาบาลสันทราย · <a class="underline hover:text-brand-600" href="https://github.com/sireetornwasansai/HRsansaihospital/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a></p>
     </div>
   </div>
 
@@ -448,6 +532,7 @@
 
       
       <main id="main-content" class="flex-1 p-4 sm:p-6 max-w-[1440px] w-full mx-auto"></main>
+    <footer id="app-footer" class="rdf-root"></footer>
     </div>
   </div>
 
@@ -1542,6 +1627,8 @@
 
           ${yearCalHtml()}
 
+          ${plSectionHtml()}
+
           
           <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
             <div class="lg:col-span-2 bg-white dark:bg-zinc-900 border hairline rounded-xl overflow-hidden">
@@ -1599,6 +1686,7 @@
       `;
       renderDashboardCharts();
       initYearCal();
+      initPipeline();
     }
 
 
@@ -1795,6 +1883,262 @@
       }
     }
 
+
+    // ---------- ขั้นตอนการยืม-คืน (pipeline 3D / รายการ) ----------
+    const PL = { runId: null, stage: null, view: '3d', filter: 'all', w: 0 };
+    const PL_LABEL = { queued: 'รอดำเนินการ', running: 'กำลังดำเนินการ', passed: 'เสร็จสิ้น', failed: 'มีปัญหา', skipped: 'ข้ามขั้นตอน', canceled: 'ยกเลิก' };
+    const PL_KIND = { req: 'file-plus', apv: 'badge-check', hnd: 'package-check', ret: 'undo-2' };
+    const PL_SICON = { passed: 'check', failed: 'x', canceled: 'x', running: 'loader-circle', queued: 'circle', skipped: 'circle' };
+
+    function plStages(b) {
+      const st = String(b.Status || ''), m = calcBorrowMetrics(b);
+      const rejected = st === 'ปฏิเสธ', cancelled = st === 'ยกเลิก', pending = st === 'รออนุมัติ';
+      const approved = !pending && !rejected && !cancelled, out = st === 'กำลังยืม', done = st === 'คืนแล้ว';
+      const waitHand = approved && !out && !done, stop = rejected || cancelled, over = out && isOutstandingOverdue(b);
+      const L = (time, message, level) => ({ time: time || '', message, level: level || 'info' });
+      const S = (id, name, status, logs) => ({ id, name, kind: id, status, logs });
+      return [
+        S('req', 'ขอยืม', 'passed', [L(fmtDate(b.BorrowDate), 'ส่งคำขอยืม ' + (b.AssetName || '') + (b.RequestCode ? ' (' + b.RequestCode + ')' : '')), L('', 'ผู้ยืม: ' + (b.BorrowerName || '-')), L('', 'กำหนดคืน ' + fmtDate(b.DueDate) + ' (รวม ' + m.plannedDays + ' วัน)')]),
+        S('apv', 'อนุมัติ', rejected ? 'failed' : cancelled ? 'canceled' : pending ? 'running' : 'passed',
+          rejected ? [L('', 'คำขอถูกปฏิเสธ' + (b.ApproverName ? ' โดย ' + b.ApproverName : ''), 'error')] : cancelled ? [L('', 'คำขอถูกยกเลิก', 'warning')] :
+          pending ? [L('', 'รอผู้อนุมัติพิจารณา')] : [L(b.ApprovedAt ? fmtDate(b.ApprovedAt) : '', 'อนุมัติแล้ว' + (b.ApproverName ? ' โดย ' + b.ApproverName : ''))]),
+        S('hnd', 'ส่งมอบ', stop ? 'skipped' : waitHand ? 'running' : pending ? 'queued' : 'passed',
+          stop ? [] : waitHand ? [L('', 'อนุมัติแล้ว รอส่งมอบครุภัณฑ์')] : pending ? [] : [L(fmtDate(b.BorrowDate), 'ส่งมอบครุภัณฑ์ให้ผู้ยืมแล้ว')]),
+        S('ret', 'รับคืน', stop ? 'skipped' : done ? 'passed' : over ? 'failed' : out ? 'running' : 'queued',
+          stop ? [] : done ? [L(fmtDate(b.ReturnDate), 'รับคืนครุภัณฑ์เรียบร้อย' + (m.isReturnedLate ? ' (คืนช้า ' + m.overdueDays + ' วัน)' : ''), m.isReturnedLate ? 'warning' : 'info')] :
+          over ? [L(fmtDate(b.DueDate), 'เกินกำหนดคืน ' + m.overdueDays + ' วัน', 'error')] : out ? [L('', 'อยู่ระหว่างการยืม ครบกำหนด ' + fmtDate(b.DueDate))] : [])
+      ];
+    }
+    function plRunStatus(st) {
+      return st.some(x => x.status === 'failed') ? 'failed' : st.some(x => x.status === 'canceled') ? 'canceled' : st.some(x => x.status === 'running') ? 'running' :
+        st.some(x => x.status === 'queued') ? 'queued' : st.every(x => x.status === 'skipped') ? 'skipped' : 'passed';
+    }
+    function plScene(count, width) {
+      const columns = Math.max(1, Math.min(count, Math.floor((width - 16) / 120))), rows = Math.ceil(count / columns);
+      return { height: Math.max(142, rows * 128 + 14), nodes: Array.from({ length: count }, (_, i) => {
+        const row = Math.floor(i / columns), col = row % 2 ? columns - 1 - i % columns : i % columns;
+        const x = (col + .5) * width / columns, y = 72 + row * 128;
+        const base = [[x, y - 18], [x + 28, y - 4], [x, y + 10], [x - 28, y - 4]];
+        return { x, y, base, roof: base.map(([px, py]) => [px, py - 24]) };
+      }) };
+    }
+    const plPts = v => v.map(p => p.map(n => n.toFixed(2)).join(',')).join(' ');
+
+    function plSectionHtml() { return '<section id="pl-root" class="build-pipeline" aria-label="ขั้นตอนการยืม-คืน"></section>'; }
+    function initPipeline() {
+      const root = document.getElementById('pl-root'); if (!root) return;
+      if (!root._ro && window.ResizeObserver) {
+        root._ro = new ResizeObserver(() => { const w = Math.round(root.clientWidth); if (w && Math.abs(w - PL.w) > 4) plRender(); });
+        root._ro.observe(root);
+      }
+      plRender();
+    }
+    function plRender() {
+      const root = document.getElementById('pl-root'); if (!root) return;
+      const runs = (scopedBorrows() || []).slice().sort((a, b) => String(b.BorrowDate).localeCompare(String(a.BorrowDate))).slice(0, 12);
+      PL.w = Math.round(root.clientWidth) || 640;
+      const head = `
+        <header class="bp-header">
+          <div><h4>ขั้นตอนการยืม-คืน</h4><p>ติดตามคำขอตั้งแต่ขอยืมจนรับคืน</p></div>
+          <div class="bp-tools">
+            <label class="bp-select"><span class="sr-only">เลือกคำขอยืม</span>
+              <select onchange="plPick(this.value)" ${runs.length ? '' : 'disabled'}>${runs.length ? runs.map(r => `<option value="${esc(r.BorrowID)}" ${r.BorrowID === PL.runId ? 'selected' : ''}>${esc(r.RequestCode || r.BorrowID)} · ${esc(r.AssetName || '')}</option>`).join('') : '<option>ไม่มีคำขอ</option>'}</select>
+              <i data-lucide="chevron-down"></i></label>
+            <div class="bp-switch" role="group" aria-label="มุมมอง">
+              <button type="button" aria-pressed="${PL.view === '3d'}" onclick="plView('3d')"><i data-lucide="box" class="w-3.5 h-3.5"></i>3D</button>
+              <button type="button" aria-pressed="${PL.view === 'list'}" onclick="plView('list')"><i data-lucide="list" class="w-3.5 h-3.5"></i>รายการ</button>
+            </div>
+          </div>
+        </header>`;
+      const run = runs.find(r => r.BorrowID === PL.runId) || runs[0];
+      if (!run) { root.innerHTML = head + '<div class="bp-empty"><i data-lucide="git-branch" class="w-6 h-6"></i><strong>ยังไม่มีคำขอยืม</strong><p>ขั้นตอนจะแสดงเมื่อมีคำขอยืมในระบบ</p></div>'; refreshIcons(); return; }
+      PL.runId = run.BorrowID;
+      const stages = plStages(run), status = plRunStatus(stages), m = calcBorrowMetrics(run), passed = stages.filter(x => x.status === 'passed').length;
+      const sel = stages.find(x => x.id === PL.stage) || stages.find(x => x.status === 'failed' || x.status === 'running') || stages[stages.length - 1];
+      const sIcon = (stt, cls) => `<i data-lucide="${PL_SICON[stt]}" class="${cls || ''}"></i>`;
+      let body;
+      if (PL.view === '3d') {
+        const sc = plScene(stages.length, PL.w - 16), id = 'plarrow';
+        const paths = sc.nodes.slice(0, -1).map((n, i) => {
+          const nx = sc.nodes[i + 1], dir = nx.x > n.x ? 1 : -1, right = n.x > (PL.w - 16) / 2;
+          const d = nx.y === n.y ? `M${n.x + dir * 34},${n.y - 28} L${nx.x - dir * 35},${nx.y - 28}` : `M${n.x + (right ? 34 : -34)},${n.y - 28} H${n.x + (right ? 53 : -53)} V${nx.y - 28} H${nx.x + (right ? 35 : -35)}`;
+          return `<path d="${d}" fill="none" stroke="var(--bp-line)" stroke-width="1.2" ${stages[i].status === 'passed' ? '' : 'stroke-dasharray="3 4"'} marker-end="url(#${id})"/>`;
+        }).join('');
+        const blocks = sc.nodes.map((n, i) => `<g class="bp-block" data-status="${stages[i].status}" style="${sel.id === stages[i].id ? 'transform:translateY(-5px);filter:brightness(1.12) drop-shadow(0 8px 10px rgba(0,0,0,.2))' : ''}"><polygon points="${plPts(n.base.map(([x, y]) => [x, y + 5]))}" fill="var(--bp-ground)"/><polygon class="bp-left" points="${plPts([n.roof[3], n.roof[2], n.base[2], n.base[3]])}"/><polygon class="bp-right" points="${plPts([n.roof[1], n.roof[2], n.base[2], n.base[1]])}"/><polygon class="bp-roof" points="${plPts(n.roof)}"/></g>`).join('');
+        const btns = sc.nodes.map((n, i) => { const x = stages[i]; return `<button type="button" class="bp-station" data-stage="${x.id}" data-status="${x.status}" aria-pressed="${sel.id === x.id}" aria-label="${esc(x.name)} ${PL_LABEL[x.status]} ดูรายละเอียด" style="left:${n.x - 54}px;top:${n.y - 46}px" onclick="plStage('${x.id}')"><span class="bp-sicon"><i data-lucide="${PL_KIND[x.kind]}" class="w-[17px] h-[17px]"></i></span><strong>${esc(x.name)}</strong><span class="bp-sstate">${sIcon(x.status)}${PL_LABEL[x.status]}</span></button>`; }).join('');
+        body = `<div class="bp-plot" style="height:${sc.height}px"><svg class="bp-chart" width="100%" height="${sc.height}" viewBox="0 0 ${PL.w - 16} ${sc.height}" role="img" aria-label="ขั้นตอน: ${stages.map(x => esc(x.name) + ' ' + PL_LABEL[x.status]).join(', ')}"><defs><marker id="${id}" markerWidth="5" markerHeight="5" refX="4" refY="2.5" orient="auto"><path d="M0,0 L5,2.5 L0,5 Z" fill="var(--bp-line)"/></marker></defs>${paths}${blocks}</svg>${btns}</div>`;
+      } else {
+        body = `<div class="bp-list">${stages.map(x => `<button type="button" class="bp-row" data-stage="${x.id}" data-status="${x.status}" aria-pressed="${sel.id === x.id}" onclick="plStage('${x.id}')"><i data-lucide="${PL_KIND[x.kind]}"></i><span><strong>${esc(x.name)}</strong><small>${x.logs.length} รายการบันทึก</small></span><span class="bp-rs">${sIcon(x.status)}${PL_LABEL[x.status]}</span></button>`).join('')}</div>`;
+      }
+      const logs = sel.logs.filter(l => PL.filter === 'all' || l.level !== 'info');
+      const logHtml = `
+        <div class="bp-log"><div class="bp-lh"><div><strong>${esc(sel.name)}</strong><span class="bp-badge" data-status="${sel.status}">${PL_LABEL[sel.status]}</span></div>
+          <label class="bp-select"><span class="sr-only">กรองบันทึก</span><select onchange="plFilter(this.value)"><option value="all" ${PL.filter === 'all' ? 'selected' : ''}>บันทึกทั้งหมด</option><option value="issues" ${PL.filter === 'issues' ? 'selected' : ''}>เฉพาะคำเตือน/ปัญหา</option></select><i data-lucide="chevron-down"></i></label></div>
+          <div class="bp-lines">${logs.length ? logs.map(l => `<div class="bp-line" data-level="${l.level}"><time>${esc(l.time)}</time><span>${esc(l.message)}</span></div>`).join('') : `<p class="bp-none">${PL.filter === 'issues' ? 'ไม่มีคำเตือนหรือปัญหาในขั้นตอนนี้' : sel.status === 'queued' ? 'รอขั้นตอนก่อนหน้า' : 'ยังไม่มีบันทึก'}</p>`}</div></div>`;
+      root.innerHTML = head + `
+        <div class="bp-stats">
+          <div><span>สถานะคำขอ</span><strong class="bp-sv" data-status="${status}" aria-live="polite">${esc(run.Status || '-')}</strong><small>${esc(run.RequestCode || run.BorrowID)}</small></div>
+          <div><span>ระยะเวลายืม</span><strong>${m.plannedDays}<em> วัน</em></strong><small>ครบกำหนด ${esc(fmtDate(run.DueDate))}</small></div>
+          <div><span>ขั้นตอนที่ผ่าน</span><strong>${passed}<em> / ${stages.length}</em></strong><small>ของคำขอนี้</small></div>
+        </div>
+        <div class="bp-context"><i data-lucide="user" class="w-3 h-3"></i>${esc(run.BorrowerName || '-')}<span>·</span>${esc(run.AssetName || '')}</div>
+        ${body}${logHtml}
+        <footer class="bp-foot"><span>ยืมเมื่อ ${esc(fmtDate(run.BorrowDate))}</span><span>${stages.length} ขั้นตอน</span></footer>`;
+      refreshIcons();
+    }
+    function plPick(id) { PL.runId = id; PL.stage = null; PL.filter = 'all'; plRender(); }
+    function plStage(id) { PL.stage = id; PL.filter = 'all'; plRender(); }
+    function plView(v) { PL.view = v; plRender(); }
+    function plFilter(v) { PL.filter = v; plRender(); }
+
+    // ---------- ฟุตเตอร์ภูเขา dither (พอร์ตจาก Ridgeline Dither Footer) ----------
+    const RDF_TONES = {
+      light: ['#f8f4fc', '#eadcf7', '#d2b5ee', '#b07fdf', '#8a4cc4', '#5f2b92', '#331255'],
+      dark: ['#0d0814', '#1a0f2a', '#2b1846', '#412466', '#5c3490', '#7e4ec0', '#a77fe0']
+    };
+    const RDF_BAYER = [0, 32, 8, 40, 2, 34, 10, 42, 48, 16, 56, 24, 50, 18, 58, 26, 12, 44, 4, 36, 14, 46, 6, 38, 60, 28, 52, 20, 62, 30, 54, 22,
+      3, 35, 11, 43, 1, 33, 9, 41, 51, 19, 59, 27, 49, 17, 57, 25, 15, 47, 7, 39, 13, 45, 5, 37, 63, 31, 55, 23, 61, 29, 53, 21].map(v => (v + .5) / 64);
+    function rdfHash(x, y, seed) { let h = Math.imul(x | 0, 374761393) + Math.imul(y | 0, 668265263) + Math.imul(seed | 0, 1442695041); h = Math.imul(h ^ (h >>> 13), 1274126177); h ^= h >>> 16; return (h >>> 0) / 4294967296; }
+    function rdfNoise(x, y, seed) {
+      const xi = Math.floor(x), yi = Math.floor(y), xf = x - xi, yf = y - yi, u = xf * xf * (3 - 2 * xf), v = yf * yf * (3 - 2 * yf);
+      const a = rdfHash(xi, yi, seed), b = rdfHash(xi + 1, yi, seed), c = rdfHash(xi, yi + 1, seed), d = rdfHash(xi + 1, yi + 1, seed);
+      return a + (b - a) * u + (c - a) * v + (a - b - c + d) * u * v;
+    }
+    function rdfFbm(x, y, seed, oct) { let sum = 0, amp = .5, norm = 0; for (let o = 0; o < oct; o++) { sum += rdfNoise(x, y, seed + o * 31) * amp; norm += amp; x *= 2.03; y *= 2.03; amp *= .5; } return norm > 0 ? sum / norm : 0; }
+    function rdfSmooth(e0, e1, x) { const t = e1 === e0 ? (x < e0 ? 0 : 1) : Math.min(1, Math.max(0, (x - e0) / (e1 - e0))); return t * t * (3 - 2 * t); }
+    function rdfEase(t) { const c = t < 0 ? 0 : t > 1 ? 1 : t; return 1 - Math.pow(1 - c, 3); }
+    function rdfDither(tone, n, b) { const t = tone < 0 ? 0 : tone > 1 ? 1 : tone, v = Math.floor(t * (n - 1) + b); return v > n - 1 ? n - 1 : v; }
+    function rdfPack(hex) { const h = hex.replace('#', ''); const r = parseInt(h.slice(0, 2), 16), g = parseInt(h.slice(2, 4), 16), b = parseInt(h.slice(4, 6), 16); return ((255 << 24) | (b << 16) | (g << 8) | r) >>> 0; }
+    function rdfRidgeline(cols, rows, i, layers, seed, margin) {
+      const k = layers > 1 ? i / (layers - 1) : 1, n = cols + margin * 2, out = new Float32Array(n);
+      const base = rows * (.38 + .66 * Math.pow(k, 1.4)), amp = rows * (.2 + .24 * k), freq = 6 - 3.8 * k;
+      const flankL = rows * .5 * k * k * k * (.55 + .6 * rdfHash(i, 11, seed)), flankR = rows * .5 * k * k * k * (.55 + .6 * rdfHash(i, 13, seed));
+      const ceil = rows * .17, tilt = (rdfHash(i, 7, seed) - .5) * rows * .34 * (.4 + k), s = (seed | 0) * 13 + i * 101;
+      for (let x = 0; x < n; x++) {
+        const u = (x - margin) / cols;
+        const r1 = 1 - Math.abs(rdfNoise(u * freq + i * 3.7, .5, s) * 2 - 1), r2 = 1 - Math.abs(rdfNoise(u * freq * 2.3, 3.5, s + 1) * 2 - 1), f = rdfFbm(u * freq * 4.1, 9.5, s + 2, 3);
+        const h = r1 * r1 * .62 + r2 * .24 + f * .14, e = Math.min(1.2, Math.abs(u * 2 - 1));
+        const y = base - h * amp + tilt * (u - .5) * 2 - (u < .5 ? flankL : flankR) * e * e * Math.sqrt(e);
+        out[x] = y < ceil ? ceil - (ceil - y) * .25 : y;
+      }
+      return out;
+    }
+
+    function initRidgeFooter() {
+      const root = document.getElementById('app-footer'); if (!root || root._init) return; root._init = true;
+      root.innerHTML = `
+        <div class="rdf-frame">
+          <div class="rdf-top">
+            <div class="rdf-brand">
+              <a class="rdf-logo rdf-r" style="--d:140" href="#" onclick="navigate('dashboard');return false;">
+                <svg class="rdf-mark" viewBox="0 0 30 21" aria-hidden="true"><path fill="currentColor" d="M0 21 L10.5 3 L16 12.2 L20.5 6.5 L30 21 Z"/><rect class="rdf-ma" x="-2" y="12.6" width="19" height="1.7"/><rect class="rdf-mb" x="13" y="16.4" width="19" height="1.7"/></svg>
+                <span>ระบบยืม-คืนครุภัณฑ์</span>
+              </a>
+              <p class="rdf-tag rdf-r" style="--d:230">โรงพยาบาลสันทราย จังหวัดเชียงใหม่ — รู้ทันทีว่าครุภัณฑ์อยู่ที่ไหน ใครยืมอยู่ และต้องคืนเมื่อไร</p>
+            </div>
+            <nav class="rdf-col" aria-label="เมนูลัด"><h3 class="rdf-r" style="--d:260">เมนูลัด</h3>
+              <ul><li class="rdf-r" style="--d:330"><a class="rdf-link" href="#" onclick="navigate('dashboard');return false;">แดชบอร์ด</a></li><li class="rdf-r" style="--d:385"><a class="rdf-link" href="#" onclick="navigate('catalog');return false;">คลังครุภัณฑ์</a></li></ul></nav>
+            <nav class="rdf-col" aria-label="ผู้พัฒนา"><h3 class="rdf-r" style="--d:370">ผู้พัฒนา</h3>
+              <ul><li class="rdf-r" style="--d:440"><b>นายจันทกรณ์ จีกัน</b> (Chanthakon Chikan)</li>
+                <li class="rdf-r rdf-sub" style="--d:495">นักวิชาการสาธารณสุขชำนาญการ<br/>กลุ่มงานพัฒนาคุณภาพบริการและมาตรฐาน<br/>โรงพยาบาลสันทราย จังหวัดเชียงใหม่</li>
+                <li class="rdf-r" style="--d:550">โทรศัพท์: <a class="rdf-link" href="tel:053921199,168">053-921-199 ต่อ 168</a></li></ul></nav>
+            <nav class="rdf-col" aria-label="ใบอนุญาต"><h3 class="rdf-r" style="--d:480">ใบอนุญาต</h3>
+              <ul><li class="rdf-r" style="--d:550"><a class="rdf-link" href="https://github.com/sireetornwasansai/HRsansaihospital/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a></li>
+                <li class="rdf-r rdf-sub" style="--d:605">Copyright © 2026<br/>Chanthakon Chikan</li></ul></nav>
+          </div>
+          <div class="rdf-bar rdf-r" style="--d:1250"><p>© 2026 Chanthakon Chikan · เผยแพร่ภายใต้ MIT License</p><p>ระบบยืม-คืนครุภัณฑ์ โรงพยาบาลสันทราย</p></div>
+          <div class="rdf-scene"><canvas aria-hidden="true"></canvas></div>
+        </div>`;
+      const scene = root.querySelector('.rdf-scene'), canvas = root.querySelector('canvas'), ctx = canvas.getContext && canvas.getContext('2d');
+      if (!ctx) return;
+      const reduced = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const seed = 7, layers = 6, p = 2, mistK = .8, driftK = 1, radius = 130;
+      let pal = new Uint32Array(0), nT = 7, cols = 1, rows = 1, margin = 2, img = null, buf = new Uint32Array(0), tops = [], pools = [];
+      let colTop, colSlope, colPool, fog, fw = 1, fh = 1, fadeTo = 1, revealAt = null, visible = true, raf = 0, lastDraw = 0, lastTick = performance.now();
+      let tx = 0, ty = 0, ex = 0, ey = 0, inside = false, clear = 0, pt = 0, pe = 0, windV = 0, windX = 0;
+      const setTheme = () => {
+        const t = RDF_TONES[document.documentElement.classList.contains('dark') ? 'dark' : 'light'];
+        pal = Uint32Array.from(t.map(rdfPack)); nT = pal.length; wake();
+      };
+      const layout = () => {
+        const rect = scene.getBoundingClientRect();
+        cols = Math.max(8, Math.ceil(rect.width / p)); rows = Math.max(8, Math.ceil(rect.height / p));
+        canvas.width = cols; canvas.height = rows; canvas.style.width = cols * p + 'px'; canvas.style.height = rows * p + 'px';
+        img = ctx.createImageData(cols, rows); buf = new Uint32Array(img.data.buffer);
+        margin = Math.ceil(cols * .045) + 3; const ceil = Math.max(rows * .17, 92 / p); fadeTo = Math.max(rows * .3, 128 / p);
+        tops = []; pools = [];
+        for (let i = 0; i < layers; i++) {
+          const t = rdfRidgeline(cols, rows, i, layers, seed, margin);
+          for (let x = 0; x < t.length; x++) if (t[x] < ceil) t[x] = ceil - (ceil - t[x]) * .2;
+          const pool = new Float32Array(t.length);
+          for (let x = 0; x < t.length; x++) pool[x] = .45 + 1.1 * rdfFbm(((x - margin) / cols) * 4, i * 5.3, seed + 9, 2);
+          tops.push(t); pools.push(pool);
+        }
+        colTop = new Float32Array(layers * cols); colSlope = new Float32Array(layers * cols); colPool = new Float32Array(layers * cols);
+        fw = (cols >> 1) + 2; fh = (rows >> 1) + 2; fog = new Float32Array(fw * fh);
+      };
+      const draw = now => {
+        if (!img) return;
+        const dt = Math.min(64, now - lastTick); lastTick = now;
+        const age = revealAt === null ? -1 : now - revealAt;
+        const ease = 1 - Math.pow(.82, dt / 16.7), slow = 1 - Math.pow(.93, dt / 16.7);
+        ex += (tx - ex) * ease; ey += (ty - ey) * ease; clear += ((inside && !reduced ? 1 : 0) - clear) * slow; pe += ((reduced ? 0 : pt) - pe) * slow;
+        windV *= Math.pow(.965, dt / 16.7); windX += windV * dt / 1000;
+        const fogT = (reduced ? 0 : now / 1000 * .045 * driftK) + windX, sx = 9 / cols, sy = 4.4 / rows;
+        for (let gy = 0; gy < fh; gy++) { const ny = gy * sy; for (let gx = 0; gx < fw; gx++) { const nx = gx * sx + fogT, warp = rdfNoise(nx * .45 - fogT * .6, ny * .8, 77) * .6; fog[gy * fw + gx] = rdfSmooth(.3, .74, rdfFbm(nx + warp, ny + warp * .4, 31, 3)); } }
+        const rev = new Float32Array(layers), k = new Float32Array(layers), toneBase = new Float32Array(layers);
+        for (let i = 0; i < layers; i++) {
+          k[i] = i / (layers - 1); rev[i] = age < 0 ? 0 : rdfEase((age - 380 - i * 170) / 1300); toneBase[i] = .16 + .76 * Math.pow(k[i], 1.6);
+          const fogDepth = rows * (.08 + .42 * k[i]), rise = (1 - rev[i]) * rows * .09, shift = Math.round(pe * (.25 + k[i]) * .75 * (margin - 3)), t = tops[i], last = t.length - 1;
+          for (let x = 0; x < cols; x++) { const at = x + margin + shift; colTop[i * cols + x] = t[at] + rise; colSlope[i * cols + x] = t[Math.min(last, at + 2)] - t[Math.max(0, at - 2)]; colPool[i * cols + x] = fogDepth * pools[i][at]; }
+        }
+        const lift = age < 0 ? 1 : 1 - rdfEase((age - 900) / 1800), r2 = (radius / p) * (radius / p);
+        for (let y = 0; y < rows; y++) {
+          const fade = rdfSmooth(0, fadeTo, y), frow = (y >> 1) * fw, by = (y & 7) * 8, dyc = (y - ey) * 1.5;
+          for (let x = 0; x < cols; x++) {
+            let L = -1; for (let i = layers - 1; i >= 0; i--) if (y >= colTop[i * cols + x]) { L = i; break; }
+            let tone = 0, mk = .3;
+            if (L >= 0) {
+              const kk = k[L], d = y - colTop[L * cols + x], depth = colPool[L * cols + x];
+              tone = toneBase[L] * (1 - rdfSmooth(0, depth, d) * (.88 - .45 * kk));
+              const sl = colSlope[L * cols + x] * .06; tone += (sl < -.2 ? -.2 : sl > .2 ? .2 : sl) * (1 - rdfSmooth(0, depth * .5, d));
+              tone += (rdfHash(x + Math.round(colTop[L * cols + x] * 7), d | 0, L) - .5) * .07 * kk; tone *= rev[L]; mk = .95 - .5 * kk;
+            } else tone = .05 * rdfSmooth(rows * .15, rows * .6, y);
+            let m = fog[frow + (x >> 1)] * mistK * mk;
+            if (clear > .01) { const dx = x - ex, q = (dx * dx + dyc * dyc) / r2; if (q < 4) { const c = clear * Math.exp(-q); m *= 1 - c * .92; if (L >= 0) tone += c * .16 * rev[L]; } }
+            if (tone > .93) tone = .93; m += lift * .55; if (m > 1) m = 1;
+            tone = (tone * (1 - m) + .09 * m * (1 - lift)) * fade;
+            buf[y * cols + x] = pal[rdfDither(tone, nT, RDF_BAYER[by + (x & 7)])];
+          }
+        }
+        ctx.putImageData(img, 0, 0);
+      };
+      const loop = now => {
+        raf = 0; if (!visible) return;
+        if (revealAt === null) { raf = requestAnimationFrame(loop); return; }
+        const age = now - revealAt;
+        if ((age < 3400 || inside || Math.abs(windV) > .002 || Math.abs(pt - pe) > .001) || now - lastDraw > 32) { draw(now); lastDraw = now; }
+        if (!reduced || age < 3400 || inside) raf = requestAnimationFrame(loop);
+      };
+      function wake() { if (!raf && visible) raf = requestAnimationFrame(loop); }
+      root.addEventListener('pointermove', e => {
+        const b = root.getBoundingClientRect(); pt = b.width > 0 ? ((e.clientX - b.left) / b.width) * 2 - 1 : 0;
+        const sr = scene.getBoundingClientRect(), lx = (e.clientX - sr.left) / p, ly = (e.clientY - sr.top) / p, was = inside;
+        inside = lx >= 0 && ly >= 0 && lx < cols && ly < rows; tx = lx; ty = ly; if (inside && !was) { ex = tx; ey = ty; } wake();
+      });
+      root.addEventListener('pointerleave', () => { pt = 0; inside = false; wake(); });
+      root.addEventListener('pointerdown', e => { if (reduced || !inside || e.target.closest('a,button')) return; windV += tx < cols / 2 ? 1.4 : -1.4; wake(); });
+      if (window.ResizeObserver) new ResizeObserver(() => { if (scene.clientWidth) { layout(); draw(performance.now()); wake(); } }).observe(scene);
+      if (window.IntersectionObserver) {
+        new IntersectionObserver(es => { visible = es[0] ? es[0].isIntersecting : true; if (visible) { lastTick = performance.now(); wake(); } }).observe(root);
+        const io = new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) { if (revealAt === null) revealAt = reduced ? -1e9 : performance.now(); root.classList.add('rdf-in'); io.disconnect(); wake(); } }, { threshold: .2 });
+        io.observe(root);
+      } else { revealAt = reduced ? -1e9 : performance.now(); root.classList.add('rdf-in'); }
+      new MutationObserver(setTheme).observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+      setTheme(); if (scene.clientWidth) { layout(); draw(performance.now()); } wake();
+    }
+    setTimeout(initRidgeFooter, 0);
+
     function renderDashboardCharts() {
       if (typeof Chart === 'undefined') return;
       const isDark = document.documentElement.classList.contains('dark');
@@ -1815,7 +2159,7 @@
           data: {
             labels,
             datasets: [
-              { label: 'ครุภัณฑ์ทั้งหมด', data: totalByDept, backgroundColor: '#4F46E5', borderRadius: 6 },
+              { label: 'ครุภัณฑ์ทั้งหมด', data: totalByDept, backgroundColor: '#9333EA', borderRadius: 6 },
               { label: 'กำลังถูกยืม', data: borrowedByDept, backgroundColor: '#0EA5E9', borderRadius: 6 }
             ]
           },
@@ -1841,7 +2185,7 @@
             labels: statuses,
             datasets: [{
               data: counts,
-              backgroundColor: ['#10B981', '#0EA5E9', '#6366F1', '#F59E0B', '#71717A'],
+              backgroundColor: ['#10B981', '#0EA5E9', '#A855F7', '#F59E0B', '#71717A'],
               borderWidth: 0
             }]
           },
@@ -2244,7 +2588,7 @@
       const htmlParts = [
         '<!DOCTYPE html><html lang="th"><head><meta charset="UTF-8"><title>กล้องสแกน QR — โรงพยาบาลสันทราย</title>',
         '<scr' + 'ipt src="https:' + '/' + '/cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></scr' + 'ipt>',
-        '<style>body{margin:0;background:#09090b;color:#fff;font-family:system-ui,sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:12px;box-sizing:border-box;text-align:center}video{width:100%;max-width:380px;height:300px;object-fit:cover;border-radius:12px;border:2px solid #10b981;background:#000}.msg{font-size:13px;margin:10px 0;color:#d4d4d8}.btn{background:#4f46e5;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:12px;cursor:pointer;margin-top:6px}</style></head><body>',
+        '<style>body{margin:0;background:#09090b;color:#fff;font-family:system-ui,sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:12px;box-sizing:border-box;text-align:center}video{width:100%;max-width:380px;height:300px;object-fit:cover;border-radius:12px;border:2px solid #10b981;background:#000}.msg{font-size:13px;margin:10px 0;color:#d4d4d8}.btn{background:#9333ea;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:12px;cursor:pointer;margin-top:6px}</style></head><body>',
         '<div style="font-weight:600;font-size:14px;margin-bottom:8px">กล้องสแกน QR Code / Barcode (โรงพยาบาลสันทราย)</div>',
         '<video id="v" autoplay playsinline muted></video>',
         '<div id="st" class="msg">กำลังขออนุญาตเปิดกล้อง... กรุณากด "Allow / อนุญาต"</div>',

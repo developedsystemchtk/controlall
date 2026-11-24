@@ -29,5 +29,16 @@ w.navigate('catalog');ok(!w.document.querySelectorAll('#sidebar .nav-group')[0].
 w.toggleNavGroup(w.document.querySelector('#sidebar .nav-group-head'));
 w.navigate('maintenance');ok(w.document.querySelector('#sidebar .nav-group.is-open .nav-item.is-active'),'group holding the active page is open');
 ok(w.document.querySelectorAll('#sidebar .nav-item').length>=8,'all nav items still present');
+w.navigate('dashboard');await sleep(60);
+ok(!!w.document.getElementById('pl-root')&&w.document.querySelectorAll('#pl-root .bp-station').length===4,'pipeline shows 4 stations in 3D');
+w.plView('list');ok(w.document.querySelectorAll('#pl-root .bp-row').length===4,'pipeline list view has 4 rows');
+w.plView('3d');
+const runs=ev("scopedBorrows().map(b=>plRunStatus(plStages(b)))");ok(runs.length>0&&runs.every(x=>['passed','failed','running','queued','canceled','skipped'].includes(x)),'every borrow maps to a valid pipeline status');
+const od=ev("scopedBorrows().filter(b=>isOutstandingOverdue(b)).map(b=>plRunStatus(plStages(b)))");ok(od.every(x=>x==='failed'),'overdue loans show as problem');
+w.plPick(ev("scopedBorrows()[0].BorrowID"));ok(true,'run switch ok');
+const ft=w.document.getElementById('app-footer').textContent;
+ok(/จันทกรณ์ จีกัน/.test(ft)&&/นักวิชาการสาธารณสุขชำนาญการ/.test(ft)&&/053-921-199 ต่อ 168/.test(ft)&&/MIT License/.test(ft)&&/Copyright © 2026/.test(ft),'footer carries full credit and license');
+ok(w.document.querySelector('#app-footer a[href*="HRsansaihospital/blob/main/LICENSE"]'),'license link');
+ok(/#9333EA/i.test(w.document.documentElement.outerHTML)&&!/#4F46E5/i.test(w.document.documentElement.outerHTML),'purple brand, no indigo left');
 ok(errors.length===0,'no runtime errors',errors.join('|'));
 console.log(failed?failed+' FAILED':'CAL E2E ALL PASSED');process.exit(failed?1:0)})();
