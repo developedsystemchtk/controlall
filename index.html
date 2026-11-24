@@ -296,13 +296,11 @@
     @media (prefers-reduced-motion: reduce) { .build-pipeline * { transition:none !important; } }
 
     /* ---------- ridgeline footer (ภูเขา dither สีม่วง) ---------- */
-    .rdf-root { --rdf-paper:#f8f4fc; --rdf-ink:#241433; --rdf-muted:#76658a; --rdf-line:#e8dcf3; --rdf-accent:#8a4cc4; --rdf-deep:#5f2b92; --rdf-pad:clamp(20px,3.2vw,30px); position:relative; display:grid; width:100%; overflow:hidden; isolation:isolate; background:var(--rdf-paper); color:var(--rdf-ink); }
+    .rdf-root { --rdf-paper:#f8f4fc; --rdf-ink:#241433; --rdf-muted:#76658a; --rdf-line:#e8dcf3; --rdf-accent:#8a4cc4; --rdf-deep:#5f2b92; --rdf-pad:16px; position:relative; display:grid; width:100%; overflow:hidden; isolation:isolate; background:var(--rdf-paper); color:var(--rdf-ink); }
     html.dark .rdf-root { --rdf-paper:#0d0814; --rdf-ink:#ece4f6; --rdf-muted:#9a88b0; --rdf-line:#241838; --rdf-accent:#b48be8; --rdf-deep:#7e4ec0; }
     @media print { .rdf-root, .demo-bar { display:none !important; } }
-    .rdf-frame { position:relative; display:grid; grid-template-rows:auto 112px; width:100%; max-width:1120px; margin:0 auto; }
-    .rdf-frame::before, .rdf-frame::after { content:""; position:absolute; top:0; bottom:0; width:1px; z-index:3; pointer-events:none; background:var(--rdf-line); transform:scaleY(0); transform-origin:50% 0; transition:transform 1.4s cubic-bezier(.2,.7,.1,1); }
-    .rdf-frame::before { left:0; } .rdf-frame::after { right:0; transition-delay:.08s; }
-    .rdf-in .rdf-frame::before, .rdf-in .rdf-frame::after { transform:scaleY(1); }
+    .rdf-frame { position:relative; display:grid; grid-template-rows:auto 112px; width:100%; max-width:1440px; margin:0 auto; }
+    @media (min-width:640px) { .rdf-root { --rdf-pad:24px; } }
     .rdf-r { opacity:0; transform:translateY(12px); filter:blur(5px); transition:opacity .9s cubic-bezier(.2,.7,.1,1), transform 1s cubic-bezier(.2,.7,.1,1), filter .9s ease; transition-delay:calc(var(--d,0) * 1ms); }
     .rdf-in .rdf-r { opacity:1; transform:none; filter:none; }
     .rdf-logo { display:inline-flex; align-items:center; gap:10px; color:var(--rdf-ink); font-size:14px; font-weight:600; line-height:1.25; }
@@ -318,7 +316,7 @@
     .rdf-link:focus-visible, .rdf-logo:focus-visible { outline:1px solid var(--rdf-accent); outline-offset:4px; border-radius:3px; }
     .rdf-scene { position:relative; z-index:1; margin-top:-22px; overflow:hidden; }
     .rdf-scene canvas { position:absolute; left:0; bottom:0; display:block; max-width:none; image-rendering:pixelated; image-rendering:crisp-edges; }
-    @media (prefers-reduced-motion: reduce) { .rdf-r, .rdf-frame::before, .rdf-frame::after, .rdf-link { transition:none; } .rdf-r { filter:none; } }
+    @media (prefers-reduced-motion: reduce) { .rdf-r, .rdf-link { transition:none; } .rdf-r { filter:none; } }
 </style>
 </head>
 <body class="bg-zinc-50 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100 antialiased selection:bg-brand-100 selection:text-brand-700">
@@ -423,7 +421,7 @@
   
   
   
-  <div id="app-shell" class="hidden min-h-screen flex bg-zinc-50 dark:bg-zinc-950">
+  <div id="app-shell" class="hidden min-h-screen min-h-[100dvh] flex bg-zinc-50 dark:bg-zinc-950">
 
     
     <div id="sidebar-backdrop" onclick="toggleMobileSidebar(false)" class="fixed inset-0 bg-zinc-950/40 z-30 hidden lg:hidden"></div>
