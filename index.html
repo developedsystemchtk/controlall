@@ -299,28 +299,25 @@
     .rdf-root { --rdf-paper:#f8f4fc; --rdf-ink:#241433; --rdf-muted:#76658a; --rdf-line:#e8dcf3; --rdf-accent:#8a4cc4; --rdf-deep:#5f2b92; --rdf-pad:clamp(20px,3.2vw,30px); position:relative; display:grid; width:100%; overflow:hidden; isolation:isolate; background:var(--rdf-paper); color:var(--rdf-ink); }
     html.dark .rdf-root { --rdf-paper:#0d0814; --rdf-ink:#ece4f6; --rdf-muted:#9a88b0; --rdf-line:#241838; --rdf-accent:#b48be8; --rdf-deep:#7e4ec0; }
     @media print { .rdf-root, .demo-bar { display:none !important; } }
-    .rdf-frame { position:relative; display:grid; grid-template-rows:auto auto minmax(230px,1fr); width:100%; max-width:1120px; margin:0 auto; min-height:560px; }
+    .rdf-frame { position:relative; display:grid; grid-template-rows:auto 112px; width:100%; max-width:1120px; margin:0 auto; }
     .rdf-frame::before, .rdf-frame::after { content:""; position:absolute; top:0; bottom:0; width:1px; z-index:3; pointer-events:none; background:var(--rdf-line); transform:scaleY(0); transform-origin:50% 0; transition:transform 1.4s cubic-bezier(.2,.7,.1,1); }
     .rdf-frame::before { left:0; } .rdf-frame::after { right:0; transition-delay:.08s; }
     .rdf-in .rdf-frame::before, .rdf-in .rdf-frame::after { transform:scaleY(1); }
     .rdf-r { opacity:0; transform:translateY(12px); filter:blur(5px); transition:opacity .9s cubic-bezier(.2,.7,.1,1), transform 1s cubic-bezier(.2,.7,.1,1), filter .9s ease; transition-delay:calc(var(--d,0) * 1ms); }
     .rdf-in .rdf-r { opacity:1; transform:none; filter:none; }
-    .rdf-top { position:relative; z-index:2; display:grid; grid-template-columns:minmax(0,1.5fr) minmax(0,.9fr) minmax(0,1.7fr) minmax(0,1.1fr); gap:28px; padding:clamp(40px,5vw,64px) var(--rdf-pad) clamp(28px,3.5vw,44px); }
-    .rdf-brand { display:flex; flex-direction:column; align-items:flex-start; gap:16px; }
-    .rdf-logo { display:inline-flex; align-items:center; gap:10px; color:var(--rdf-ink); font-size:19px; font-weight:600; line-height:1.2; }
-    .rdf-mark { width:30px; height:21px; display:block; overflow:visible; flex:none; } .rdf-mark rect { fill:var(--rdf-paper); transition:transform .7s cubic-bezier(.2,.7,.1,1); }
+    .rdf-logo { display:inline-flex; align-items:center; gap:10px; color:var(--rdf-ink); font-size:14px; font-weight:600; line-height:1.25; }
+    .rdf-logo small { display:block; font-size:11px; font-weight:400; color:var(--rdf-muted); }
+    .rdf-slim { position:relative; z-index:2; display:grid; grid-template-columns:auto minmax(0,1fr) auto; align-items:center; gap:10px 28px; padding:18px var(--rdf-pad) 0; border-top:1px solid var(--rdf-line); }
+    .rdf-slim p { margin:0; font-size:12px; line-height:1.6; color:var(--rdf-muted); } .rdf-slim b { color:var(--rdf-ink); font-weight:600; } .rdf-lic { text-align:right; }
+    .rdf-slim .rdf-link { font-size:12px; color:var(--rdf-ink); text-decoration:underline; text-decoration-color:color-mix(in srgb,var(--rdf-muted) 50%,transparent); text-underline-offset:3px; }
+    @media (max-width:900px) { .rdf-slim { grid-template-columns:minmax(0,1fr); gap:8px; padding-top:16px; } .rdf-lic { text-align:left; } .rdf-frame { grid-template-rows:auto 96px; } }
+    .rdf-mark { width:26px; height:18px; display:block; overflow:visible; flex:none; } .rdf-mark rect { fill:var(--rdf-paper); transition:transform .7s cubic-bezier(.2,.7,.1,1); }
     .rdf-logo:hover .rdf-ma { transform:translateX(4px); } .rdf-logo:hover .rdf-mb { transform:translateX(-5px); }
-    .rdf-tag { margin:0; max-width:32ch; font-size:13px; line-height:1.6; color:var(--rdf-muted); }
-    .rdf-col h3 { margin:4px 0 14px; font-size:11px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--rdf-muted); }
-    .rdf-col ul { list-style:none; margin:0; padding:0; display:grid; gap:9px; } .rdf-col li { font-size:13px; line-height:1.55; }
-    .rdf-col .rdf-sub { color:var(--rdf-muted); font-size:12px; }
     .rdf-link { position:relative; display:inline-flex; color:var(--rdf-ink); font-size:13px; text-align:left; transition:color .3s ease, transform .5s cubic-bezier(.2,.7,.1,1); }
     .rdf-link:hover { color:var(--rdf-accent); transform:translateX(6px); }
     .rdf-link:focus-visible, .rdf-logo:focus-visible { outline:1px solid var(--rdf-accent); outline-offset:4px; border-radius:3px; }
-    .rdf-bar { position:relative; z-index:2; display:flex; justify-content:space-between; align-items:center; gap:8px 16px; padding:0 var(--rdf-pad); font-size:12px; color:var(--rdf-muted); flex-wrap:wrap; } .rdf-bar p { margin:0; }
-    .rdf-scene { position:relative; z-index:1; margin-top:-56px; overflow:hidden; }
+    .rdf-scene { position:relative; z-index:1; margin-top:-22px; overflow:hidden; }
     .rdf-scene canvas { position:absolute; left:0; bottom:0; display:block; max-width:none; image-rendering:pixelated; image-rendering:crisp-edges; }
-    @media (max-width:860px) { .rdf-top { grid-template-columns:minmax(0,1fr) minmax(0,1fr); row-gap:30px; } .rdf-brand { grid-column:1 / -1; } .rdf-scene { margin-top:-36px; } }
     @media (prefers-reduced-motion: reduce) { .rdf-r, .rdf-frame::before, .rdf-frame::after, .rdf-link { transition:none; } .rdf-r { filter:none; } }
 </style>
 </head>
@@ -2028,25 +2025,14 @@
       const root = document.getElementById('app-footer'); if (!root || root._init) return; root._init = true;
       root.innerHTML = `
         <div class="rdf-frame">
-          <div class="rdf-top">
-            <div class="rdf-brand">
-              <a class="rdf-logo rdf-r" style="--d:140" href="#" onclick="navigate('dashboard');return false;">
-                <svg class="rdf-mark" viewBox="0 0 30 21" aria-hidden="true"><path fill="currentColor" d="M0 21 L10.5 3 L16 12.2 L20.5 6.5 L30 21 Z"/><rect class="rdf-ma" x="-2" y="12.6" width="19" height="1.7"/><rect class="rdf-mb" x="13" y="16.4" width="19" height="1.7"/></svg>
-                <span>ระบบยืม-คืนครุภัณฑ์</span>
-              </a>
-              <p class="rdf-tag rdf-r" style="--d:230">โรงพยาบาลสันทราย จังหวัดเชียงใหม่ — รู้ทันทีว่าครุภัณฑ์อยู่ที่ไหน ใครยืมอยู่ และต้องคืนเมื่อไร</p>
-            </div>
-            <nav class="rdf-col" aria-label="เมนูลัด"><h3 class="rdf-r" style="--d:260">เมนูลัด</h3>
-              <ul><li class="rdf-r" style="--d:330"><a class="rdf-link" href="#" onclick="navigate('dashboard');return false;">แดชบอร์ด</a></li><li class="rdf-r" style="--d:385"><a class="rdf-link" href="#" onclick="navigate('catalog');return false;">คลังครุภัณฑ์</a></li></ul></nav>
-            <nav class="rdf-col" aria-label="ผู้พัฒนา"><h3 class="rdf-r" style="--d:370">ผู้พัฒนา</h3>
-              <ul><li class="rdf-r" style="--d:440"><b>นายจันทกรณ์ จีกัน</b> (Chanthakon Chikan)</li>
-                <li class="rdf-r rdf-sub" style="--d:495">นักวิชาการสาธารณสุขชำนาญการ<br/>กลุ่มงานพัฒนาคุณภาพบริการและมาตรฐาน<br/>โรงพยาบาลสันทราย จังหวัดเชียงใหม่</li>
-                <li class="rdf-r" style="--d:550">โทรศัพท์: <a class="rdf-link" href="tel:053921199,168">053-921-199 ต่อ 168</a></li></ul></nav>
-            <nav class="rdf-col" aria-label="ใบอนุญาต"><h3 class="rdf-r" style="--d:480">ใบอนุญาต</h3>
-              <ul><li class="rdf-r" style="--d:550"><a class="rdf-link" href="https://github.com/sireetornwasansai/HRsansaihospital/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a></li>
-                <li class="rdf-r rdf-sub" style="--d:605">Copyright © 2026<br/>Chanthakon Chikan</li></ul></nav>
+          <div class="rdf-slim">
+            <a class="rdf-logo rdf-r" style="--d:100" href="#" onclick="navigate('dashboard');return false;">
+              <svg class="rdf-mark" viewBox="0 0 30 21" aria-hidden="true"><path fill="currentColor" d="M0 21 L10.5 3 L16 12.2 L20.5 6.5 L30 21 Z"/><rect class="rdf-ma" x="-2" y="12.6" width="19" height="1.7"/><rect class="rdf-mb" x="13" y="16.4" width="19" height="1.7"/></svg>
+              <span>ระบบยืม-คืนครุภัณฑ์ <small>โรงพยาบาลสันทราย</small></span>
+            </a>
+            <p class="rdf-credit rdf-r" style="--d:200">พัฒนาโดย <b>นายจันทกรณ์ จีกัน</b> (Chanthakon Chikan) · นักวิชาการสาธารณสุขชำนาญการ<br/>กลุ่มงานพัฒนาคุณภาพบริการและมาตรฐาน โรงพยาบาลสันทราย จังหวัดเชียงใหม่ · โทรศัพท์ <a class="rdf-link" href="tel:053921199,168">053-921-199 ต่อ 168</a></p>
+            <p class="rdf-lic rdf-r" style="--d:300"><a class="rdf-link" href="https://github.com/sireetornwasansai/HRsansaihospital/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a><br/>Copyright © 2026 Chanthakon Chikan</p>
           </div>
-          <div class="rdf-bar rdf-r" style="--d:1250"><p>© 2026 Chanthakon Chikan · เผยแพร่ภายใต้ MIT License</p><p>ระบบยืม-คืนครุภัณฑ์ โรงพยาบาลสันทราย</p></div>
           <div class="rdf-scene"><canvas aria-hidden="true"></canvas></div>
         </div>`;
       const scene = root.querySelector('.rdf-scene'), canvas = root.querySelector('canvas'), ctx = canvas.getContext && canvas.getContext('2d');
@@ -2065,7 +2051,7 @@
         cols = Math.max(8, Math.ceil(rect.width / p)); rows = Math.max(8, Math.ceil(rect.height / p));
         canvas.width = cols; canvas.height = rows; canvas.style.width = cols * p + 'px'; canvas.style.height = rows * p + 'px';
         img = ctx.createImageData(cols, rows); buf = new Uint32Array(img.data.buffer);
-        margin = Math.ceil(cols * .045) + 3; const ceil = Math.max(rows * .17, 92 / p); fadeTo = Math.max(rows * .3, 128 / p);
+        margin = Math.ceil(cols * .045) + 3; const ceil = rows * .2; fadeTo = rows * .38;
         tops = []; pools = [];
         for (let i = 0; i < layers; i++) {
           const t = rdfRidgeline(cols, rows, i, layers, seed, margin);
