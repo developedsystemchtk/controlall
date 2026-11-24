@@ -317,6 +317,28 @@
     .rdf-scene { position:relative; z-index:1; margin-top:-22px; overflow:hidden; }
     .rdf-scene canvas { position:absolute; left:0; bottom:0; display:block; max-width:none; image-rendering:pixelated; image-rendering:crisp-edges; }
     @media (prefers-reduced-motion: reduce) { .rdf-r, .rdf-link { transition:none; } .rdf-r { filter:none; } }
+
+    /* pipeline: อนิเมชันบอกตำแหน่งปัจจุบัน */
+    @keyframes bp-drop { from { opacity:0; transform:translateY(16px); } }
+    @keyframes bp-rise { from { opacity:0; transform:translateY(10px); } }
+    @keyframes bp-glow { 0%,100% { opacity:.72; } 50% { opacity:1; } }
+    @keyframes bp-flow { to { stroke-dashoffset:-14; } }
+    @keyframes bp-bob { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-4px); } }
+    @keyframes bp-ping { 0% { box-shadow:0 0 0 0 currentColor; } 80%,100% { box-shadow:0 0 0 7px transparent; } }
+    @keyframes bp-spin { to { transform:rotate(360deg); } }
+    .bp-flow { animation:bp-flow .8s linear infinite; }
+    .bp-enter .bp-block { animation:bp-drop .6s cubic-bezier(.2,.7,.1,1) backwards; animation-delay:calc(var(--i) * 140ms); }
+    .bp-enter .bp-station { animation:bp-rise .6s cubic-bezier(.2,.7,.1,1) backwards; animation-delay:calc(var(--i) * 140ms + 80ms); }
+    .bp-block[data-status=running] .bp-roof { animation:bp-glow 1.6s ease-in-out infinite; }
+    .bp-station[data-status=running] .bp-sicon { animation:bp-bob 1.8s ease-in-out infinite; }
+    .bp-station[data-status=running] .bp-sstate svg, .bp-row[data-status=running] .bp-rs svg { animation:bp-spin 1s linear infinite; }
+    .bp-here { position:absolute; width:96px; display:flex; align-items:center; justify-content:center; gap:5px; padding:3px 8px; border-radius:99px; font-size:11px; font-weight:600; line-height:1.4; white-space:nowrap; pointer-events:none; color:var(--bp-blue); background:var(--bp-surface); border:1px solid currentColor; animation:bp-bob 1.8s ease-in-out infinite; z-index:2; }
+    .bp-here[data-status=failed], .bp-here[data-status=canceled] { color:var(--bp-red); } .bp-here[data-status=passed] { color:var(--bp-green); animation:none; }
+    .bp-here i { width:6px; height:6px; border-radius:50%; background:currentColor; color:inherit; animation:bp-ping 1.4s ease-out infinite; }
+    .bp-here[data-status=passed] i { animation:none; }
+    .bp-inline { position:static; width:auto; margin-left:8px; padding:1px 7px; font-style:normal; font-size:10px; vertical-align:middle; animation:none; display:inline-flex; }
+    .bp-row.is-here { box-shadow:inset 3px 0 0 var(--bp-blue); } .bp-row.is-here[data-status=failed] { box-shadow:inset 3px 0 0 var(--bp-red); } .bp-row.is-here[data-status=passed] { box-shadow:inset 3px 0 0 var(--bp-green); }
+    @media (prefers-reduced-motion: reduce) { .bp-flow, .bp-block, .bp-station, .bp-roof, .bp-sicon, .bp-here, .bp-here i, .bp-sstate svg, .bp-rs svg { animation:none !important; } }
 </style>
 </head>
 <body class="bg-zinc-50 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100 antialiased selection:bg-brand-100 selection:text-brand-700">
@@ -1880,7 +1902,8 @@
 
 
     // ---------- ขั้นตอนการยืม-คืน (pipeline 3D / รายการ) ----------
-    const PL = { runId: null, stage: null, view: '3d', filter: 'all', w: 0 };
+    const PL = { runId: null, stage: null, view: '3d', filter: 'all', w: 0, enter: true };
+    const PL_HERE = { running: 'อยู่ที่นี่', failed: 'ติดปัญหาที่นี่', canceled: 'ยกเลิกที่นี่', passed: 'เสร็จสิ้นแล้ว' };
     const PL_LABEL = { queued: 'รอดำเนินการ', running: 'กำลังดำเนินการ', passed: 'เสร็จสิ้น', failed: 'มีปัญหา', skipped: 'ข้ามขั้นตอน', canceled: 'ยกเลิก' };
     const PL_KIND = { req: 'file-plus', apv: 'badge-check', hnd: 'package-check', ret: 'undo-2' };
     const PL_SICON = { passed: 'check', failed: 'x', canceled: 'x', running: 'loader-circle', queued: 'circle', skipped: 'circle' };
@@ -1926,7 +1949,7 @@
         root._ro = new ResizeObserver(() => { const w = Math.round(root.clientWidth); if (w && Math.abs(w - PL.w) > 4) plRender(); });
         root._ro.observe(root);
       }
-      plRender();
+      PL.enter = true; plRender();
     }
     function plRender() {
       const root = document.getElementById('pl-root'); if (!root) return;
@@ -1950,6 +1973,9 @@
       PL.runId = run.BorrowID;
       const stages = plStages(run), status = plRunStatus(stages), m = calcBorrowMetrics(run), passed = stages.filter(x => x.status === 'passed').length;
       const sel = stages.find(x => x.id === PL.stage) || stages.find(x => x.status === 'failed' || x.status === 'running') || stages[stages.length - 1];
+      let cur = stages.findIndex(x => x.status === 'failed' || x.status === 'canceled' || x.status === 'running');
+      if (cur < 0) cur = stages.map(x => x.status).lastIndexOf('passed');
+      const still = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
       const sIcon = (stt, cls) => `<i data-lucide="${PL_SICON[stt]}" class="${cls || ''}"></i>`;
       let body;
       if (PL.view === '3d') {
@@ -1957,13 +1983,16 @@
         const paths = sc.nodes.slice(0, -1).map((n, i) => {
           const nx = sc.nodes[i + 1], dir = nx.x > n.x ? 1 : -1, right = n.x > (PL.w - 16) / 2;
           const d = nx.y === n.y ? `M${n.x + dir * 34},${n.y - 28} L${nx.x - dir * 35},${nx.y - 28}` : `M${n.x + (right ? 34 : -34)},${n.y - 28} H${n.x + (right ? 53 : -53)} V${nx.y - 28} H${nx.x + (right ? 35 : -35)}`;
-          return `<path d="${d}" fill="none" stroke="var(--bp-line)" stroke-width="1.2" ${stages[i].status === 'passed' ? '' : 'stroke-dasharray="3 4"'} marker-end="url(#${id})"/>`;
+          const into = i === cur - 1;   // เส้นที่วิ่งเข้าหาจุดปัจจุบัน
+          return `<path d="${d}" fill="none" stroke="${into ? 'var(--bp-selected)' : 'var(--bp-line)'}" stroke-width="${into ? 1.8 : 1.2}" class="${into && !still ? 'bp-flow' : ''}" ${stages[i].status === 'passed' && !into ? '' : 'stroke-dasharray="3 4"'} marker-end="url(#${id})"/>` +
+            (into && !still ? `<circle r="3.2" fill="var(--bp-selected)"><animateMotion dur="1.5s" repeatCount="indefinite" path="${d}"/></circle>` : '');
         }).join('');
-        const blocks = sc.nodes.map((n, i) => `<g class="bp-block" data-status="${stages[i].status}" style="${sel.id === stages[i].id ? 'transform:translateY(-5px);filter:brightness(1.12) drop-shadow(0 8px 10px rgba(0,0,0,.2))' : ''}"><polygon points="${plPts(n.base.map(([x, y]) => [x, y + 5]))}" fill="var(--bp-ground)"/><polygon class="bp-left" points="${plPts([n.roof[3], n.roof[2], n.base[2], n.base[3]])}"/><polygon class="bp-right" points="${plPts([n.roof[1], n.roof[2], n.base[2], n.base[1]])}"/><polygon class="bp-roof" points="${plPts(n.roof)}"/></g>`).join('');
-        const btns = sc.nodes.map((n, i) => { const x = stages[i]; return `<button type="button" class="bp-station" data-stage="${x.id}" data-status="${x.status}" aria-pressed="${sel.id === x.id}" aria-label="${esc(x.name)} ${PL_LABEL[x.status]} ดูรายละเอียด" style="left:${n.x - 54}px;top:${n.y - 46}px" onclick="plStage('${x.id}')"><span class="bp-sicon"><i data-lucide="${PL_KIND[x.kind]}" class="w-[17px] h-[17px]"></i></span><strong>${esc(x.name)}</strong><span class="bp-sstate">${sIcon(x.status)}${PL_LABEL[x.status]}</span></button>`; }).join('');
-        body = `<div class="bp-plot" style="height:${sc.height}px"><svg class="bp-chart" width="100%" height="${sc.height}" viewBox="0 0 ${PL.w - 16} ${sc.height}" role="img" aria-label="ขั้นตอน: ${stages.map(x => esc(x.name) + ' ' + PL_LABEL[x.status]).join(', ')}"><defs><marker id="${id}" markerWidth="5" markerHeight="5" refX="4" refY="2.5" orient="auto"><path d="M0,0 L5,2.5 L0,5 Z" fill="var(--bp-line)"/></marker></defs>${paths}${blocks}</svg>${btns}</div>`;
+        const blocks = sc.nodes.map((n, i) => `<g class="bp-block" data-status="${stages[i].status}" style="--i:${i};${sel.id === stages[i].id ? 'transform:translateY(-5px);filter:brightness(1.12) drop-shadow(0 8px 10px rgba(0,0,0,.2))' : ''}"><polygon points="${plPts(n.base.map(([x, y]) => [x, y + 5]))}" fill="var(--bp-ground)"/><polygon class="bp-left" points="${plPts([n.roof[3], n.roof[2], n.base[2], n.base[3]])}"/><polygon class="bp-right" points="${plPts([n.roof[1], n.roof[2], n.base[2], n.base[1]])}"/><polygon class="bp-roof" points="${plPts(n.roof)}"/></g>`).join('');
+        const btns = sc.nodes.map((n, i) => { const x = stages[i]; return `<button type="button" class="bp-station" data-stage="${x.id}" data-status="${x.status}" aria-pressed="${sel.id === x.id}" aria-label="${esc(x.name)} ${PL_LABEL[x.status]} ดูรายละเอียด" style="--i:${i};left:${n.x - 54}px;top:${n.y - 46}px" onclick="plStage('${x.id}')"><span class="bp-sicon"><i data-lucide="${PL_KIND[x.kind]}" class="w-[17px] h-[17px]"></i></span><strong>${esc(x.name)}</strong><span class="bp-sstate">${sIcon(x.status)}${PL_LABEL[x.status]}</span></button>`; }).join('');
+        const pin = cur >= 0 ? `<span class="bp-here" data-status="${stages[cur].status}" style="left:${sc.nodes[cur].x - 48}px;top:${sc.nodes[cur].y - 74}px"><i></i>${PL_HERE[stages[cur].status] || ''}</span>` : '';
+        body = `<div class="bp-plot ${PL.enter ? 'bp-enter' : ''}" style="height:${sc.height}px"><svg class="bp-chart" width="100%" height="${sc.height}" viewBox="0 0 ${PL.w - 16} ${sc.height}" role="img" aria-label="ขั้นตอน: ${stages.map(x => esc(x.name) + ' ' + PL_LABEL[x.status]).join(', ')}"><defs><marker id="${id}" markerWidth="5" markerHeight="5" refX="4" refY="2.5" orient="auto"><path d="M0,0 L5,2.5 L0,5 Z" fill="var(--bp-line)"/></marker></defs>${paths}${blocks}</svg>${btns}${pin}</div>`;
       } else {
-        body = `<div class="bp-list">${stages.map(x => `<button type="button" class="bp-row" data-stage="${x.id}" data-status="${x.status}" aria-pressed="${sel.id === x.id}" onclick="plStage('${x.id}')"><i data-lucide="${PL_KIND[x.kind]}"></i><span><strong>${esc(x.name)}</strong><small>${x.logs.length} รายการบันทึก</small></span><span class="bp-rs">${sIcon(x.status)}${PL_LABEL[x.status]}</span></button>`).join('')}</div>`;
+        body = `<div class="bp-list">${stages.map((x, xi) => `<button type="button" class="bp-row ${xi === cur ? 'is-here' : ''}" data-stage="${x.id}" data-status="${x.status}" aria-pressed="${sel.id === x.id}" onclick="plStage('${x.id}')"><i data-lucide="${PL_KIND[x.kind]}"></i><span><strong>${esc(x.name)}${xi === cur ? `<em class="bp-here bp-inline" data-status="${x.status}"><i></i>${PL_HERE[x.status] || ''}</em>` : ''}</strong><small>${x.logs.length} รายการบันทึก</small></span><span class="bp-rs">${sIcon(x.status)}${PL_LABEL[x.status]}</span></button>`).join('')}</div>`;
       }
       const logs = sel.logs.filter(l => PL.filter === 'all' || l.level !== 'info');
       const logHtml = `
@@ -1979,11 +2008,11 @@
         <div class="bp-context"><i data-lucide="user" class="w-3 h-3"></i>${esc(run.BorrowerName || '-')}<span>·</span>${esc(run.AssetName || '')}</div>
         ${body}${logHtml}
         <footer class="bp-foot"><span>ยืมเมื่อ ${esc(fmtDate(run.BorrowDate))}</span><span>${stages.length} ขั้นตอน</span></footer>`;
-      refreshIcons();
+      PL.enter = false; refreshIcons();
     }
-    function plPick(id) { PL.runId = id; PL.stage = null; PL.filter = 'all'; plRender(); }
+    function plPick(id) { PL.runId = id; PL.stage = null; PL.filter = 'all'; PL.enter = true; plRender(); }
     function plStage(id) { PL.stage = id; PL.filter = 'all'; plRender(); }
-    function plView(v) { PL.view = v; plRender(); }
+    function plView(v) { PL.view = v; PL.enter = v === '3d'; plRender(); }
     function plFilter(v) { PL.filter = v; plRender(); }
 
     // ---------- ฟุตเตอร์ภูเขา dither (พอร์ตจาก Ridgeline Dither Footer) ----------
@@ -2138,8 +2167,24 @@
         const totalByDept = depts.map(d => state.data.assets.filter(a => a.DepartmentID === d.DeptID).length);
         const borrowedByDept = depts.map(d => state.data.assets.filter(a => a.DepartmentID === d.DeptID && a.Status === 'ถูกยืม').length);
 
+        // ตัวเลขเหนือแท่ง (วาดเองด้วยปลั๊กอินเล็กๆ ไม่พึ่งไลบรารีเพิ่ม)
+        const valueLabels = {
+          id: 'valueLabels',
+          afterDatasetsDraw(chart) {
+            const c = chart.ctx; c.save();
+            c.font = "600 11px Prompt, sans-serif"; c.textAlign = 'center'; c.textBaseline = 'bottom';
+            chart.data.datasets.forEach((ds, di) => {
+              const meta = chart.getDatasetMeta(di); if (meta.hidden) return;
+              c.fillStyle = isDark ? '#E4E4E7' : '#27272A';
+              meta.data.forEach((bar, i) => c.fillText(String(ds.data[i]), bar.x, bar.y - 4));
+            });
+            c.restore();
+          }
+        };
+        const topVal = Math.max(1, ...totalByDept, ...borrowedByDept);
         state.charts.dept = new Chart(ctxDept, {
           type: 'bar',
+          plugins: [valueLabels],
           data: {
             labels,
             datasets: [
@@ -2153,7 +2198,7 @@
             plugins: { legend: { labels: { color: textColor, font: { family: 'Prompt', size: 11 } } } },
             scales: {
               x: { grid: { display: false }, ticks: { color: textColor, font: { family: 'Prompt', size: 11 } } },
-              y: { beginAtZero: true, ticks: { stepSize: 1, color: textColor }, grid: { color: gridColor } }
+              y: { beginAtZero: true, suggestedMax: Math.ceil(topVal * 1.15), ticks: { stepSize: 1, color: textColor, precision: 0 }, grid: { color: gridColor } }
             }
           }
         });

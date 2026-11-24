@@ -31,7 +31,12 @@ w.navigate('maintenance');ok(w.document.querySelector('#sidebar .nav-group.is-op
 ok(w.document.querySelectorAll('#sidebar .nav-item').length>=8,'all nav items still present');
 w.navigate('dashboard');await sleep(60);
 ok(!!w.document.getElementById('pl-root')&&w.document.querySelectorAll('#pl-root .bp-station').length===4,'pipeline shows 4 stations in 3D');
-w.plView('list');ok(w.document.querySelectorAll('#pl-root .bp-row').length===4,'pipeline list view has 4 rows');
+ok(w.document.querySelectorAll('#pl-root .bp-here').length===1,'exactly one "you are here" marker in 3D');
+ok(w.document.querySelector('#pl-root .bp-plot.bp-enter'),'entrance animation on first render');
+w.plStage('req');ok(!w.document.querySelector('#pl-root .bp-plot.bp-enter')&&w.document.querySelectorAll('#pl-root .bp-here').length===1,'selecting a stage keeps marker and does not replay entrance');
+const hereTxt=ev("(()=>{const r=scopedBorrows().find(b=>isOutstandingOverdue(b));return r?r.BorrowID:null})()");
+if(hereTxt){w.plPick(hereTxt);ok(/ติดปัญหาที่นี่/.test(w.document.getElementById('pl-root').textContent)&&!!w.document.querySelector('#pl-root .bp-flow'),'overdue loan: marker says problem here, flow line animates');}
+w.plView('list');ok(w.document.querySelectorAll('#pl-root .bp-row.is-here').length===1,'list view marks the current row');ok(w.document.querySelectorAll('#pl-root .bp-row').length===4,'pipeline list view has 4 rows');
 w.plView('3d');
 const runs=ev("scopedBorrows().map(b=>plRunStatus(plStages(b)))");ok(runs.length>0&&runs.every(x=>['passed','failed','running','queued','canceled','skipped'].includes(x)),'every borrow maps to a valid pipeline status');
 const od=ev("scopedBorrows().filter(b=>isOutstandingOverdue(b)).map(b=>plRunStatus(plStages(b)))");ok(od.every(x=>x==='failed'),'overdue loans show as problem');
