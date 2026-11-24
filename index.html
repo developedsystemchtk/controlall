@@ -339,6 +339,21 @@
     .bp-inline { position:static; width:auto; margin-left:8px; padding:1px 7px; font-style:normal; font-size:10px; vertical-align:middle; animation:none; display:inline-flex; }
     .bp-row.is-here { box-shadow:inset 3px 0 0 var(--bp-blue); } .bp-row.is-here[data-status=failed] { box-shadow:inset 3px 0 0 var(--bp-red); } .bp-row.is-here[data-status=passed] { box-shadow:inset 3px 0 0 var(--bp-green); }
     @media (prefers-reduced-motion: reduce) { .bp-flow, .bp-block, .bp-station, .bp-roof, .bp-sicon, .bp-here, .bp-here i, .bp-sstate svg, .bp-rs svg { animation:none !important; } }
+
+    /* public scan + tracker card */
+    @keyframes pub-belt { to { background-position: 80px 0, 80px 0; } }
+    @keyframes pub-in { from { opacity:0; transform:translateY(16px); } }
+    @keyframes pub-scanline { 0%,100% { top:8%; } 50% { top:88%; } }
+    .pub-belt { background-color:rgba(147,51,234,.07); background-image:repeating-linear-gradient(45deg,transparent,transparent 25px,rgba(147,51,234,.10) 25px,rgba(147,51,234,.10) 50px),repeating-linear-gradient(-45deg,transparent,transparent 25px,rgba(147,51,234,.10) 25px,rgba(147,51,234,.10) 50px); background-size:80px 80px; animation:pub-belt 2.4s linear infinite; }
+    html.dark .pub-belt { background-color:rgba(192,132,252,.08); background-image:repeating-linear-gradient(45deg,transparent,transparent 25px,rgba(192,132,252,.12) 25px,rgba(192,132,252,.12) 50px),repeating-linear-gradient(-45deg,transparent,transparent 25px,rgba(192,132,252,.12) 25px,rgba(192,132,252,.12) 50px); }
+    .pub-card .pub-in { animation:pub-in .55s cubic-bezier(.2,.7,.1,1) backwards; animation-delay:calc(var(--i,0) * 90ms); }
+    .pub-frame { position:absolute; inset:14%; pointer-events:none; }
+    .pub-frame span { position:absolute; width:26px; height:26px; border:3px solid #fff; border-radius:6px; filter:drop-shadow(0 0 3px rgba(0,0,0,.5)); }
+    .pub-frame span:nth-child(1) { top:0; left:0; border-right:0; border-bottom:0; } .pub-frame span:nth-child(2) { top:0; right:0; border-left:0; border-bottom:0; }
+    .pub-frame span:nth-child(3) { bottom:0; left:0; border-right:0; border-top:0; } .pub-frame span:nth-child(4) { bottom:0; right:0; border-left:0; border-top:0; }
+    .pub-frame i { position:absolute; left:4%; right:4%; height:2px; background:linear-gradient(90deg,transparent,#c084fc,transparent); box-shadow:0 0 10px #c084fc; animation:pub-scanline 2.2s ease-in-out infinite; }
+    @media (prefers-reduced-motion: reduce) { .pub-belt, .pub-frame i, .pub-card .pub-in { animation:none !important; } }
+    @media print { #pub-scan { display:none !important; } }
 </style>
 </head>
 <body class="bg-zinc-50 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100 antialiased selection:bg-brand-100 selection:text-brand-700">
@@ -347,9 +362,23 @@
   
   
   <div id="auth-screen" class="min-h-screen flex items-center justify-center p-4 bg-grid-pattern relative overflow-hidden">
-    <div class="w-full max-w-md bg-white dark:bg-zinc-900 border hairline rounded-xl shadow-sm p-7 sm:p-8 relative z-10">
+    <div class="w-full max-w-4xl bg-white dark:bg-zinc-900 border hairline rounded-2xl shadow-xl overflow-hidden relative z-10 flex">
+      <!-- ฝั่งซ้าย: แผนที่จุดเคลื่อนไหว (เครื่องมือเคลื่อนย้ายระหว่างหน่วยงาน) -->
+      <div class="hidden md:block w-1/2 relative overflow-hidden border-r hairline bg-gradient-to-br from-brand-50 to-brand-100 dark:from-zinc-900 dark:to-brand-700/20" aria-hidden="true">
+        <canvas id="auth-map" class="absolute inset-0 w-full h-full"></canvas>
+        <div class="absolute inset-0 flex flex-col items-center justify-center p-8 text-center z-10">
+          <div id="auth-logo-box-2" class="w-14 h-14 rounded-full bg-gradient-to-br from-brand-500 to-brand-700 text-white flex items-center justify-center shadow-lg overflow-hidden mb-5">
+            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+          </div>
+          <h2 id="auth-app-title-2" class="text-2xl font-bold text-brand-700 dark:text-brand-400 mb-2">ระบบยืม-คืนครุภัณฑ์</h2>
+          <p id="auth-app-subtitle-2" class="text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">โรงพยาบาลสันทราย</p>
+          <p class="text-xs text-zinc-500 dark:text-zinc-400 max-w-xs leading-relaxed">รู้ทันทีว่าครุภัณฑ์อยู่ที่ไหน ใครยืมอยู่ และต้องคืนเมื่อไร</p>
+        </div>
+      </div>
+      <!-- ฝั่งขวา: เข้าสู่ระบบ -->
+      <div class="w-full md:w-1/2 p-7 sm:p-10 flex flex-col justify-center min-w-0">
       
-      <div class="flex items-center gap-3 mb-6">
+      <div class="flex items-center gap-3 mb-6 md:hidden">
         <div id="auth-logo-box" class="w-11 h-11 rounded-lg bg-brand-600 text-white flex items-center justify-center shadow-sm overflow-hidden shrink-0">
           <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
         </div>
@@ -360,6 +389,11 @@
       </div>
 
       
+      <button type="button" id="pub-scan-btn" onclick="openPublicScan()" class="w-full mb-5 flex items-center gap-3 p-3 text-left rounded-xl border border-brand-200 dark:border-brand-500/30 bg-brand-50 dark:bg-brand-500/10 hover:bg-brand-100 dark:hover:bg-brand-500/20 transition">
+        <span class="w-10 h-10 rounded-lg bg-brand-600 text-white flex items-center justify-center shrink-0"><i data-lucide="scan-line" class="w-5 h-5"></i></span>
+        <span class="min-w-0"><b class="block text-sm font-semibold text-brand-700 dark:text-brand-100">สแกน QR ดูข้อมูลครุภัณฑ์</b><small class="block text-xs text-zinc-500 dark:text-zinc-400">ดูสถานะและรายละเอียดได้ทันที ไม่ต้องเข้าสู่ระบบ</small></span>
+      </button>
+
       <div class="grid grid-cols-2 p-1 bg-zinc-100 dark:bg-zinc-800/80 rounded-lg mb-6 text-sm font-medium">
         <button id="tab-login-btn" type="button" onclick="switchAuthTab('login')" class="py-1.5 rounded-md bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white shadow-xs transition">เข้าสู่ระบบ</button>
         <button id="tab-reg-btn" type="button" onclick="switchAuthTab('register')" class="py-1.5 rounded-md text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200 transition">ลงทะเบียนผู้ยืม</button>
@@ -437,12 +471,24 @@
         <span class="text-[11px] font-normal text-zinc-400">(สำหรับนำเสนอ)</span>
       </button>
       <p class="mt-6 text-center text-[11px] leading-relaxed text-zinc-400">พัฒนาโดย นายจันทกรณ์ จีกัน · กลุ่มงานพัฒนาคุณภาพบริการและมาตรฐาน<br/>โรงพยาบาลสันทราย · <a class="underline hover:text-brand-600" href="https://github.com/sireetornwasansai/HRsansaihospital/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a></p>
+      </div>
     </div>
   </div>
 
   
   
   
+  <!-- สแกน QR / ดูข้อมูลครุภัณฑ์โดยไม่ต้องล็อกอิน -->
+  <div id="pub-scan" class="hidden fixed inset-0 z-[60] overflow-y-auto bg-zinc-50/95 dark:bg-zinc-950/95 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="pub-title">
+    <div class="min-h-full flex flex-col items-center p-4 sm:p-6">
+      <div class="w-full max-w-sm flex items-start justify-between gap-3 mb-4">
+        <div><h2 id="pub-title" class="text-lg font-semibold text-zinc-900 dark:text-white">ข้อมูลครุภัณฑ์</h2><p class="text-xs text-zinc-500">ดูได้ทันที ไม่ต้องเข้าสู่ระบบ</p></div>
+        <button type="button" onclick="closePublicScan()" class="p-2 -mr-2 rounded-lg text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800" aria-label="ปิด"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <div id="pub-body" class="w-full max-w-sm"></div>
+    </div>
+  </div>
+
   <div id="app-shell" class="hidden min-h-screen min-h-[100dvh] flex bg-zinc-50 dark:bg-zinc-950">
 
     
@@ -918,6 +964,7 @@
     // ชื่อฟังก์ชันที่หน้าเว็บเรียก -> RPC บน Supabase (ทุกตัวตรวจ token/สิทธิ์ที่ฝั่งฐานข้อมูล)
     const RPC_MAP = {
       getPublicBranding:  { rpc: 'rpc_get_public_branding',   auth: false, params: () => ({}) },
+      publicAssetLookup:  { rpc: 'rpc_public_asset_lookup',   auth: false, params: (code) => ({ p_code: String(code || '') }) },
       loginUser:          { rpc: 'rpc_login_user',            auth: false, params: (u, p, remember) => ({ p_username: u, p_password: p, p_remember: remember !== false }) },
       registerUser:       { rpc: 'rpc_register_user',         auth: false, params: (payload) => ({ p_payload: payload }) },
       logout:             { rpc: 'rpc_logout',                auth: true,  params: () => ({}) },
@@ -1090,6 +1137,9 @@
       const authSub = document.getElementById('auth-app-subtitle');
       const authLogo = document.getElementById('auth-logo-box');
       if (authTitle) authTitle.textContent = appTitle;
+      const t2 = document.getElementById('auth-app-title-2'), s2 = document.getElementById('auth-app-subtitle-2'), l2 = document.getElementById('auth-logo-box-2');
+      if (t2) t2.textContent = appTitle; if (s2) s2.textContent = appSub;
+      if (l2) l2.innerHTML = logoUrl ? `<img src="${esc(logoUrl)}" alt="Logo" class="w-full h-full object-contain bg-white p-1" />` : fallbackBoxSvg5.replace('w-5 h-5', 'w-6 h-6');
       if (authSub) authSub.textContent = appSub;
       if (authLogo) {
         authLogo.innerHTML = logoUrl
@@ -1143,6 +1193,8 @@
         }
       }
       refreshIcons();
+      initAuthMap();
+      try { const dl = new URLSearchParams(location.search).get('asset'); if (dl) openPublicScan(dl); } catch (e) {}
     });
 
     window.addEventListener('unhandledrejection', (ev) => {
@@ -2152,6 +2204,236 @@
     }
     setTimeout(initRidgeFooter, 0);
 
+
+    // ---------- สแกน QR โดยไม่ต้องล็อกอิน + การ์ดข้อมูลครุภัณฑ์ ----------
+    // QR ที่พิมพ์ใหม่เป็นลิงก์ ?asset=รหัส : กล้องมือถือเปิดเว็บได้เลย ส่วน QR เก่า (รหัสล้วน) ยังสแกนได้ตามปกติ
+    function assetQrText(a) {
+      const code = a.QRCodeValue || a.AssetCode;
+      try { if (/^https?:$/.test(location.protocol)) return location.origin + location.pathname + '?asset=' + encodeURIComponent(a.AssetCode || code); } catch (e) {}
+      return code;
+    }
+    function parseScannedCode(text) {
+      const t = String(text || '').trim();
+      const m = t.match(/[?&#]asset=([^&#\s]+)/);
+      if (m) { try { return decodeURIComponent(m[1]); } catch (e) { return m[1]; } }
+      return t;
+    }
+    const PUB = { stream: null, timer: null, code: '', detector: null };
+    const PUB_STATUS = {
+      'พร้อมให้ยืม': { tone: 'text-emerald-600 dark:text-emerald-400', hint: 'ว่าง สามารถขอยืมได้' },
+      'ถูกยืม': { tone: 'text-sky-600 dark:text-sky-400', hint: 'กำลังมีผู้ยืมใช้งาน' },
+      'จองแล้ว': { tone: 'text-brand-600 dark:text-brand-400', hint: 'มีผู้จองไว้แล้ว' },
+      'ส่งซ่อม': { tone: 'text-amber-600 dark:text-amber-400', hint: 'อยู่ระหว่างซ่อมบำรุง' },
+      'รอตัดจำหน่าย': { tone: 'text-zinc-500', hint: 'รอตัดจำหน่าย' },
+      'ตัดจำหน่าย': { tone: 'text-zinc-500', hint: 'ตัดจำหน่ายแล้ว' }
+    };
+
+    function openPublicScan(code) {
+      const ov = document.getElementById('pub-scan'); if (!ov) return;
+      ov.classList.remove('hidden'); document.body.style.overflow = 'hidden';
+      if (code) pubLookup(code); else pubShowScanner();
+    }
+    function closePublicScan() {
+      pubStopCamera();
+      const ov = document.getElementById('pub-scan'); if (ov) ov.classList.add('hidden');
+      document.body.style.overflow = '';
+      try { if (/[?&]asset=/.test(location.search)) history.replaceState(null, '', location.pathname); } catch (e) {}
+    }
+    function pubStopCamera() {
+      if (PUB.timer) { clearInterval(PUB.timer); PUB.timer = null; }
+      if (PUB.stream) { try { PUB.stream.getTracks().forEach(t => t.stop()); } catch (e) {} PUB.stream = null; }
+    }
+
+    function pubShowScanner() {
+      const body = document.getElementById('pub-body'); if (!body) return;
+      pubStopCamera();
+      body.innerHTML = `
+        <div class="rounded-3xl border hairline bg-white dark:bg-zinc-900 shadow-lg overflow-hidden">
+          <div id="pub-cam" class="pub-cam relative aspect-square bg-zinc-950">
+            <video id="pub-video" class="absolute inset-0 w-full h-full object-cover" autoplay playsinline muted></video>
+            <div class="pub-frame" aria-hidden="true"><span></span><span></span><span></span><span></span><i></i></div>
+            <div id="pub-cam-msg" class="absolute inset-x-0 bottom-0 p-3 text-center text-xs text-white bg-gradient-to-t from-black/70 to-transparent">กำลังเปิดกล้อง… กรุณากด “อนุญาต”</div>
+          </div>
+          <div class="p-4 space-y-3">
+            <p class="text-sm text-zinc-600 dark:text-zinc-300">ส่อง QR Code ที่ติดบนครุภัณฑ์ ระบบจะแสดงข้อมูลให้ทันที</p>
+            <form onsubmit="event.preventDefault(); pubLookup(document.getElementById('pub-code').value)" class="flex gap-2">
+              <input id="pub-code" type="text" autocomplete="off" placeholder="หรือพิมพ์รหัสครุภัณฑ์ เช่น AST-001" class="flex-1 min-w-0 px-3 py-2 text-sm bg-white dark:bg-zinc-950 border hairline rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500/40" />
+              <button type="submit" class="px-4 py-2 text-sm font-medium rounded-lg bg-brand-600 hover:bg-brand-700 text-white">ดูข้อมูล</button>
+            </form>
+            <label class="flex items-center justify-center gap-2 text-xs text-brand-700 dark:text-brand-400 cursor-pointer hover:underline">
+              <i data-lucide="image-up" class="w-4 h-4"></i> สแกนจากรูปภาพ QR
+              <input type="file" accept="image/*" class="hidden" onchange="pubScanFile(this)" />
+            </label>
+          </div>
+        </div>`;
+      refreshIcons(); pubStartCamera();
+    }
+
+    async function pubStartCamera() {
+      const msg = document.getElementById('pub-cam-msg'), video = document.getElementById('pub-video');
+      const fail = t => { if (msg) msg.textContent = t; };
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return fail('เบราว์เซอร์นี้เปิดกล้องไม่ได้ — พิมพ์รหัสหรือเลือกรูปภาพแทน');
+      try {
+        let stream;
+        try { stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' } } }); }
+        catch (e1) { stream = await navigator.mediaDevices.getUserMedia({ video: true }); }
+        if (!document.getElementById('pub-video')) { stream.getTracks().forEach(t => t.stop()); return; }
+        PUB.stream = stream; video.srcObject = stream; try { await video.play(); } catch (e) {}
+        if (msg) msg.textContent = 'ส่อง QR Code ให้อยู่ในกรอบ';
+        if (!PUB.detector && typeof BarcodeDetector !== 'undefined') { try { PUB.detector = new BarcodeDetector({ formats: ['qr_code'] }); } catch (e) {} }
+        const cv = document.createElement('canvas'), cx = cv.getContext('2d', { willReadFrequently: true });
+        let busy = false;
+        PUB.timer = setInterval(async () => {
+          if (busy || !video.videoWidth) return; busy = true;
+          try {
+            let found = '';
+            if (PUB.detector) { const r = await PUB.detector.detect(video); if (r && r[0]) found = r[0].rawValue; }
+            else if (typeof jsQR !== 'undefined') {
+              const w = Math.min(640, video.videoWidth), h = Math.round(w * video.videoHeight / video.videoWidth);
+              cv.width = w; cv.height = h; cx.drawImage(video, 0, 0, w, h);
+              const r = jsQR(cx.getImageData(0, 0, w, h).data, w, h, { inversionAttempts: 'dontInvert' }); if (r) found = r.data;
+            }
+            if (found) { pubStopCamera(); pubLookup(found); }
+          } catch (e) {} finally { busy = false; }
+        }, 250);
+      } catch (e) {
+        fail(e && e.name === 'NotAllowedError' ? 'ยังไม่ได้อนุญาตใช้กล้อง — พิมพ์รหัสหรือเลือกรูปภาพแทนได้' : 'เปิดกล้องไม่สำเร็จ — พิมพ์รหัสหรือเลือกรูปภาพแทนได้');
+      }
+    }
+
+    function pubScanFile(input) {
+      const f = input.files && input.files[0]; if (!f) return;
+      const img = new Image(), url = URL.createObjectURL(f);
+      img.onload = async () => {
+        const cv = document.createElement('canvas'); cv.width = img.width; cv.height = img.height;
+        const cx = cv.getContext('2d'); cx.drawImage(img, 0, 0); URL.revokeObjectURL(url);
+        let found = '';
+        try {
+          if (typeof BarcodeDetector !== 'undefined') { const r = await new BarcodeDetector({ formats: ['qr_code'] }).detect(cv); if (r && r[0]) found = r[0].rawValue; }
+          if (!found && typeof jsQR !== 'undefined') { const r = jsQR(cx.getImageData(0, 0, cv.width, cv.height).data, cv.width, cv.height); if (r) found = r.data; }
+        } catch (e) {}
+        if (found) pubLookup(found); else { const m = document.getElementById('pub-cam-msg'); if (m) m.textContent = 'อ่าน QR จากรูปนี้ไม่ได้ ลองถ่ายให้ชัดขึ้น หรือพิมพ์รหัสแทน'; }
+      };
+      img.onerror = () => URL.revokeObjectURL(url); img.src = url; input.value = '';
+    }
+
+    async function pubLookup(raw) {
+      const code = parseScannedCode(raw); if (!code) return;
+      const body = document.getElementById('pub-body'); if (!body) return;
+      pubStopCamera(); PUB.code = code;
+      body.innerHTML = '<div class="rounded-3xl border hairline bg-white dark:bg-zinc-900 shadow-lg p-10 text-center text-sm text-zinc-500"><div class="mx-auto mb-3 w-6 h-6 rounded-full border-2 border-brand-500 border-t-transparent animate-spin"></div>กำลังค้นหา…</div>';
+      let res = null, err = '';
+      try { res = await callBackend('publicAssetLookup', code); }
+      catch (e) { err = String(e && e.message || e); }
+      if (res && res.ok) return pubRenderCard(res);
+      const missing = /404|Could not find|PGRST202|rpc_public_asset_lookup/i.test(err);
+      const text = missing ? 'ระบบยังไม่เปิดใช้การดูข้อมูลแบบไม่ล็อกอินบนเซิร์ฟเวอร์ (ผู้ดูแลต้องรันไฟล์ supabase/002_public_asset_lookup.sql ก่อน)' : (err || (res && res.message) || 'ไม่พบครุภัณฑ์รหัสนี้ในระบบ');
+      body.innerHTML = `
+        <div class="rounded-3xl border hairline bg-white dark:bg-zinc-900 shadow-lg p-7 text-center">
+          <div class="mx-auto mb-3 w-12 h-12 rounded-full bg-rose-50 dark:bg-rose-500/10 text-rose-500 flex items-center justify-center"><i data-lucide="search-x" class="w-6 h-6"></i></div>
+          <h3 class="font-semibold text-zinc-900 dark:text-white mb-1">ไม่พบข้อมูล</h3>
+          <p class="text-sm text-zinc-500 mb-1">${esc(text)}</p>
+          ${missing ? '' : `<p class="text-xs text-zinc-400 font-mono break-all">${esc(code)}</p>`}
+          <button type="button" onclick="pubShowScanner()" class="mt-5 w-full py-2.5 text-sm font-medium rounded-lg bg-brand-600 hover:bg-brand-700 text-white">สแกนอีกครั้ง</button>
+        </div>`;
+      refreshIcons();
+    }
+
+    function pubRenderCard(res) {
+      const a = res.asset || {}, b = res.borrow, body = document.getElementById('pub-body');
+      const st = PUB_STATUS[a.Status] || { tone: 'text-zinc-700 dark:text-zinc-200', hint: '' };
+      const authed = !!state.user;
+      const hero = a.ImageUrl
+        ? `<img src="${esc(a.ImageUrl)}" alt="${esc(a.AssetName)}" class="relative z-10 max-h-40 max-w-[70%] object-contain drop-shadow-lg rounded-lg" />`
+        : `<div class="relative z-10 w-20 h-20 rounded-2xl bg-white/80 dark:bg-zinc-800/80 shadow flex items-center justify-center text-brand-600"><i data-lucide="package" class="w-10 h-10"></i></div>`;
+      const row = (k, v) => v ? `<div class="flex justify-between gap-4 py-2 border-b hairline last:border-0"><dt class="text-zinc-500 shrink-0">${k}</dt><dd class="text-right font-medium text-zinc-800 dark:text-zinc-100 break-words min-w-0">${v}</dd></div>` : '';
+      body.innerHTML = `
+        <article class="pub-card rounded-3xl border hairline bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 shadow-lg overflow-hidden">
+          <div class="p-4">
+            <button type="button" onclick="pubToggleFull(this)" aria-expanded="false" aria-controls="pub-full" class="pub-in w-full flex items-center justify-center gap-2 rounded-full bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200/70 dark:hover:bg-zinc-700 px-4 py-2 text-sm text-zinc-600 dark:text-zinc-300 transition">
+              <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-500"></i><span>ดูรายละเอียดทั้งหมด</span><i data-lucide="chevron-down" class="w-4 h-4 pub-chev transition-transform"></i>
+            </button>
+          </div>
+          <div class="pub-in pub-belt relative h-48 flex items-center justify-center overflow-hidden" style="--i:1">${hero}</div>
+          <div class="p-6">
+            <div class="pub-in flex items-center gap-2 text-sm font-medium text-zinc-500 dark:text-zinc-400" style="--i:2"><i data-lucide="building-2" class="w-4 h-4"></i><span>${esc(a.DepartmentName || '-')}${a.Location ? ' · ' + esc(a.Location) : ''}</span></div>
+            <h3 class="pub-in mt-2 text-3xl font-bold tracking-tight ${st.tone}" style="--i:3">${esc(a.Status || '-')}</h3>
+            <p class="pub-in text-sm text-zinc-500 mt-1" style="--i:3">${esc(st.hint)}${b && b.BorrowerDept ? ` · ผู้ยืม: ${esc(b.BorrowerDept)}${b.DueDate ? ' · ครบกำหนดคืน ' + esc(fmtDate(b.DueDate)) : ''}` : ''}</p>
+            <div class="mt-6 flex items-end justify-between gap-4">
+              <div class="pub-in space-y-1 min-w-0" style="--i:4">
+                <p class="text-xs text-zinc-500">รหัสครุภัณฑ์</p>
+                <p class="font-mono text-sm break-all">${esc(a.AssetCode || '')}</p>
+                <p class="text-base font-semibold leading-snug">${esc(a.AssetName || '')}</p>
+                <p class="text-xs text-zinc-500">อัปเดตล่าสุด ${esc(fmtDateTime(a.UpdatedAt))}</p>
+              </div>
+              <div id="pub-qr" class="pub-in rounded-lg border hairline p-1 shrink-0 bg-white" style="--i:5"></div>
+            </div>
+            <dl id="pub-full" class="hidden mt-5 text-sm">${row('หมวดหมู่', esc(a.Category))}${row('ยี่ห้อ / รุ่น', esc(a.BrandModel))}${row('Serial No.', a.SerialNo ? `<span class="font-mono">${esc(a.SerialNo)}</span>` : '')}${row('สภาพ', esc(a.Condition))}${row('วันที่ได้มา', a.PurchaseDate ? esc(fmtDate(a.PurchaseDate)) : '')}${row('หน่วยงานเจ้าของ', esc(a.DepartmentName))}${row('ที่ตั้ง', esc(a.Location))}${b ? row('สถานะการยืม', esc(b.Status)) + row('หน่วยงานผู้ยืม', esc(b.BorrowerDept)) + row('กำหนดคืน', b.DueDate ? esc(fmtDate(b.DueDate)) : '') : ''}</dl>
+          </div>
+          <div class="px-6 pb-6 grid gap-2">
+            ${authed
+              ? `<button type="button" onclick="pubOpenInApp()" class="w-full py-2.5 text-sm font-medium rounded-lg bg-brand-600 hover:bg-brand-700 text-white">เปิดในระบบ (ขอยืม / จัดการ)</button>`
+              : `<button type="button" onclick="pubGoLogin()" class="w-full py-2.5 text-sm font-medium rounded-lg bg-brand-600 hover:bg-brand-700 text-white">${a.Status === 'พร้อมให้ยืม' ? 'เข้าสู่ระบบเพื่อขอยืม' : 'เข้าสู่ระบบ'}</button>`}
+            <button type="button" onclick="pubShowScanner()" class="w-full py-2.5 text-sm font-medium rounded-lg border hairline hover:bg-zinc-50 dark:hover:bg-zinc-800">สแกนชิ้นอื่น</button>
+          </div>
+        </article>`;
+      const box = document.getElementById('pub-qr');
+      if (box && typeof QRCode !== 'undefined') { try { new QRCode(box, { text: assetQrText(a), width: 64, height: 64 }); } catch (e) {} }
+      refreshIcons();
+    }
+    function pubToggleFull(btn) {
+      const f = document.getElementById('pub-full'); if (!f) return;
+      const open = f.classList.toggle('hidden') === false;
+      btn.setAttribute('aria-expanded', open);
+      btn.querySelector('span').textContent = open ? 'ซ่อนรายละเอียด' : 'ดูรายละเอียดทั้งหมด';
+      const ch = btn.querySelector('.pub-chev'); if (ch) ch.style.transform = open ? 'rotate(180deg)' : '';
+    }
+    function pubGoLogin() { closePublicScan(); const u = document.getElementById('login-username'); if (u) u.focus(); }
+    function pubOpenInApp() { const code = PUB.code; closePublicScan(); navigate('scanner'); setTimeout(() => lookupQRCode(code), 120); }
+
+    // ---------- แผนที่จุดเคลื่อนไหวบนหน้าล็อกอิน ----------
+    function initAuthMap() {
+      const cv = document.getElementById('auth-map'); if (!cv || cv._on) return; cv._on = true;
+      const ctx = cv.getContext && cv.getContext('2d'); if (!ctx) return;
+      const reduced = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+      let W = 0, H = 0, dots = [], raf = 0, t0 = performance.now();
+      // จุดสีม่วงกระจายเป็นกลุ่มอาคาร ไม่ใช่แผนที่โลก; เส้นทางคือการเคลื่อนย้ายครุภัณฑ์ระหว่างหน่วยงาน
+      const nodes = [[.22, .28], [.62, .2], [.78, .52], [.4, .62], [.18, .74], [.7, .8]];
+      const routes = [[0, 1, 0], [1, 2, 1.5], [0, 3, 3], [3, 4, 4.5], [2, 5, 6], [3, 5, 7.5]];
+      const col = () => document.documentElement.classList.contains('dark') ? [192, 132, 252] : [126, 34, 206];
+      const build = () => {
+        const r = cv.getBoundingClientRect(); W = Math.round(r.width); H = Math.round(r.height); if (!W || !H) return;
+        const d = Math.min(2, window.devicePixelRatio || 1); cv.width = W * d; cv.height = H * d; ctx.setTransform(d, 0, 0, d, 0, 0);
+        dots = []; let seed = 5; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+        for (let x = 8; x < W; x += 12) for (let y = 8; y < H; y += 12) {
+          const dx = (x / W - .5) / .55, dy = (y / H - .5) / .58, dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 1 && rnd() > .25 + dist * .35) dots.push([x, y, (rnd() * .5 + .2) * (1.1 - dist)]);
+        }
+        draw(performance.now());
+      };
+      const draw = now => {
+        if (!W) return; const c = col(), rgb = a => `rgba(${c[0]},${c[1]},${c[2]},${a})`;
+        ctx.clearRect(0, 0, W, H);
+        dots.forEach(([x, y, o]) => { ctx.beginPath(); ctx.arc(x, y, 1.1, 0, 6.2832); ctx.fillStyle = rgb(o); ctx.fill(); });
+        const T = reduced ? 99 : ((now - t0) / 1000) % 15;
+        routes.forEach(([a, b, delay]) => {
+          const el = T - delay; if (el <= 0) return;
+          const pr = Math.min(el / 3, 1), A = nodes[a], B = nodes[b], x0 = A[0] * W, y0 = A[1] * H, x1 = B[0] * W, y1 = B[1] * H, x = x0 + (x1 - x0) * pr, y = y0 + (y1 - y0) * pr;
+          ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x, y); ctx.strokeStyle = rgb(.7); ctx.lineWidth = 1.4; ctx.stroke();
+          ctx.beginPath(); ctx.arc(x0, y0, 3, 0, 6.2832); ctx.fillStyle = rgb(1); ctx.fill();
+          if (pr < 1) { ctx.beginPath(); ctx.arc(x, y, 6, 0, 6.2832); ctx.fillStyle = rgb(.3); ctx.fill(); ctx.beginPath(); ctx.arc(x, y, 3, 0, 6.2832); ctx.fillStyle = rgb(1); ctx.fill(); }
+          else { ctx.beginPath(); ctx.arc(x1, y1, 3, 0, 6.2832); ctx.fillStyle = rgb(1); ctx.fill(); }
+        });
+      };
+      const loop = now => {
+        raf = 0; const shown = !document.getElementById('auth-screen').classList.contains('hidden');
+        if (shown) draw(now);
+        if (!reduced) raf = requestAnimationFrame(loop);
+      };
+      if (window.ResizeObserver) new ResizeObserver(build).observe(cv); build();
+      if (!reduced) raf = requestAnimationFrame(loop);
+    }
+
     function renderDashboardCharts() {
       if (typeof Chart === 'undefined') return;
       const isDark = document.documentElement.classList.contains('dark');
@@ -2369,7 +2651,7 @@
         const box = document.getElementById('detail-qr-box');
         if (box && typeof QRCode !== 'undefined') {
           box.innerHTML = '';
-          new QRCode(box, { text: a.QRCodeValue || a.AssetCode, width: 110, height: 110 });
+          new QRCode(box, { text: assetQrText(a), width: 110, height: 110 });
         }
       }, 40);
     }
@@ -2738,6 +3020,7 @@
     }
 
     function lookupQRCode(code) {
+      code = parseScannedCode(code);
       const q = String(code || '').trim().toLowerCase();
       const panel = document.getElementById('qr-result-panel');
       if (!q || !panel) return;
@@ -5089,7 +5372,7 @@
           const el = document.getElementById(`stk-qr-${idx}`);
           if (el && typeof QRCode !== 'undefined') {
             el.innerHTML = '';
-            new QRCode(el, { text: a.QRCodeValue || a.AssetCode, width: 64, height: 64 });
+            new QRCode(el, { text: assetQrText(a), width: 64, height: 64 });
           }
         });
       }, 50);
@@ -5313,6 +5596,15 @@
           const db = demoLoad();
           const actor = state.user;
           try {
+            if (fnName === 'publicAssetLookup') {
+              const q = String(args[0] || '').trim().toLowerCase();
+              const a = db.assets.find(x => [x.AssetCode, x.QRCodeValue, x.AssetID].some(v => String(v || '').toLowerCase() === q));
+              if (!a) return resolve({ ok: false, code: 'not_found', message: 'ไม่พบครุภัณฑ์รหัสนี้ในระบบ' });
+              const b = db.borrows.find(x => x.AssetID === a.AssetID && (x.Status === 'กำลังยืม' || x.Status === 'อนุมัติแล้ว'));
+              return resolve({ ok: true,
+                asset: { AssetCode: a.AssetCode, AssetName: a.AssetName, Category: a.Category, BrandModel: a.BrandModel, SerialNo: a.SerialNo, DepartmentName: a.DepartmentName, Location: a.Location, PurchaseDate: a.PurchaseDate, Condition: a.Condition, Status: a.Status, ImageUrl: a.ImageUrl || '', UpdatedAt: a.UpdatedAt },
+                borrow: b ? { Status: b.Status, BorrowerDept: b.BorrowerDept, DueDate: b.DueDate } : null });
+            }
             if (fnName === 'getPublicBranding') {
               return resolve({ ok: true, settings: db.settings, departments: db.departments.filter(d => d.Status === 'Active') });
             }
