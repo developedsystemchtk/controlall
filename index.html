@@ -41,6 +41,7 @@
 
   
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.395.0/dist/umd/lucide.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lottie-web@5.12.2/build/player/lottie_light.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/l10n/th.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.css" />
@@ -365,12 +366,13 @@
     <div class="w-full max-w-4xl bg-white dark:bg-zinc-900 border hairline rounded-2xl shadow-xl overflow-hidden relative z-10 flex">
       <!-- ฝั่งซ้าย: แผนที่จุดเคลื่อนไหว (เครื่องมือเคลื่อนย้ายระหว่างหน่วยงาน) -->
       <div class="hidden md:block w-1/2 relative overflow-hidden border-r hairline bg-gradient-to-br from-brand-50 to-brand-100 dark:from-zinc-900 dark:to-brand-700/20" aria-hidden="true">
-        <canvas id="auth-map" class="absolute inset-0 w-full h-full"></canvas>
-        <div class="absolute inset-0 flex flex-col items-center justify-center p-8 text-center z-10">
-          <div id="auth-logo-box-2" class="w-14 h-14 rounded-full bg-gradient-to-br from-brand-500 to-brand-700 text-white flex items-center justify-center shadow-lg overflow-hidden mb-5">
-            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+        <canvas id="auth-map" class="absolute inset-0 w-full h-full opacity-60"></canvas>
+        <div class="absolute inset-0 flex flex-col items-center justify-center px-8 py-6 text-center z-10">
+          <div id="auth-anim" class="w-full max-w-[290px] aspect-square -mb-2" aria-hidden="true"></div>
+          <div id="auth-logo-box-2" class="w-9 h-9 rounded-full bg-gradient-to-br from-brand-500 to-brand-700 text-white flex items-center justify-center shadow-lg overflow-hidden mb-3">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
           </div>
-          <h2 id="auth-app-title-2" class="text-2xl font-bold text-brand-700 dark:text-brand-400 mb-2">ระบบยืม-คืนครุภัณฑ์</h2>
+          <h2 id="auth-app-title-2" class="text-xl font-bold text-brand-700 dark:text-brand-400 mb-1">ระบบยืม-คืนครุภัณฑ์</h2>
           <p id="auth-app-subtitle-2" class="text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">โรงพยาบาลสันทราย</p>
           <p class="text-xs text-zinc-500 dark:text-zinc-400 max-w-xs leading-relaxed">รู้ทันทีว่าครุภัณฑ์อยู่ที่ไหน ใครยืมอยู่ และต้องคืนเมื่อไร</p>
         </div>
@@ -1194,6 +1196,7 @@
       }
       refreshIcons();
       initAuthMap();
+      initLoginAnim();
       try { const dl = new URLSearchParams(location.search).get('asset'); if (dl) openPublicScan(dl); } catch (e) {}
     });
 
@@ -2392,6 +2395,19 @@
     function pubOpenInApp() { const code = PUB.code; closePublicScan(); navigate('scanner'); setTimeout(() => lookupQRCode(code), 120); }
 
     // ---------- แผนที่จุดเคลื่อนไหวบนหน้าล็อกอิน ----------
+    function initLoginAnim() {
+      const box = document.getElementById('auth-anim'); if (!box || box._on || typeof lottie === 'undefined') return; box._on = true;
+      const reduced = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+      let anim;
+      try {
+        anim = lottie.loadAnimation({ container: box, renderer: 'svg', loop: true, autoplay: !reduced, path: 'assets/login-analysis.json', rendererSettings: { preserveAspectRatio: 'xMidYMid meet' } });
+      } catch (e) { return; }
+      if (reduced) anim.addEventListener('DOMLoaded', () => anim.goToAndStop(135, true));
+      // หยุดเล่นเมื่อเข้าสู่ระบบแล้ว (หน้าล็อกอินถูกซ่อน) เพื่อไม่กินเครื่องโดยเปล่าประโยชน์
+      const screen = document.getElementById('auth-screen');
+      if (screen && window.MutationObserver && !reduced) new MutationObserver(() => { screen.classList.contains('hidden') ? anim.pause() : anim.play(); }).observe(screen, { attributes: true, attributeFilter: ['class'] });
+    }
+
     function initAuthMap() {
       const cv = document.getElementById('auth-map'); if (!cv || cv._on) return; cv._on = true;
       const ctx = cv.getContext && cv.getContext('2d'); if (!ctx) return;

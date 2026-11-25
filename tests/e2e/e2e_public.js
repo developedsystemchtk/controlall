@@ -1,13 +1,14 @@
 const fs=require('fs'),path=require('path');const {JSDOM,VirtualConsole}=require('jsdom');
 const html=fs.readFileSync(path.join(__dirname,'..','..','index.html'),'utf8');
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));let failed=0;const ok=(c,l,x='')=>{if(c)console.log('pass:',l);else{failed++;console.log('FAIL:',l,x)}};
-async function boot(url,rpc){
+async function boot(url,rpc,extra){
   const errors=[],calls=[];const vc=new VirtualConsole();vc.on('jsdomError',e=>{if(!/tailwind is not defined|Not implemented: HTMLCanvasElement/.test(e.message))errors.push(e.message)});
   const dom=new JSDOM(html,{url,runScripts:'dangerously',pretendToBeVisual:true,virtualConsole:vc,beforeParse(w){
     w.APP_CONFIG={SUPABASE_URL:'http://127.0.0.1:1',SUPABASE_KEY:'k'};w.lucide={createIcons(){}};w.alert=()=>{};
     w.fetch=(u,o)=>{calls.push({u,body:o&&o.body});if(/rpc_public_asset_lookup/.test(u))return rpc(JSON.parse(o.body));return Promise.reject(new Error('offline'))};
     w.matchMedia=()=>({matches:false,addListener(){},removeListener(){},addEventListener(){},removeEventListener(){}});
     w.IntersectionObserver=w.ResizeObserver=class{observe(){}unobserve(){}disconnect(){}};
+    if(extra)extra(w);
     w.addEventListener('error',e=>{if(!/tailwind/.test(e.message))errors.push(e.message)});}});
   await sleep(350);return {w:dom.window,errors,calls,$:id=>dom.window.document.getElementById(id),ev:c=>dom.window.eval(c)};
 }
@@ -52,5 +53,9 @@ const ASSET={ok:true,asset:{AssetCode:'AST-001',AssetName:'เครื่อง
   ok(r.ok&&r.asset&&!('Price' in r.asset)&&!('Notes' in r.asset),'demo lookup returns the same safe field set');
   const bor=await t.ev("(async()=>{const b=state.data.borrows.find(x=>x.Status==='กำลังยืม');const a=state.data.assets.find(x=>x.AssetID===b.AssetID);return callBackend('publicAssetLookup',a.AssetCode)})()");
   ok(bor.borrow&&bor.borrow.BorrowerDept&&!('BorrowerName' in bor.borrow),'demo: borrower name is never exposed, only department');
+  const la=[];t=await boot('http://localhost:8080/',()=>Promise.reject(new Error('x')),w=>{w.lottie={loadAnimation:o=>{la.push(o);return{addEventListener(){},goToAndStop(){},play(){},pause(){}}}}});
+  ok(la.length===1&&la[0].path==='assets/login-analysis.json'&&la[0].container.id==='auth-anim'&&la[0].renderer==='svg'&&la[0].loop===true,'login animation loads the Lottie file into the left panel');
+  const fs2=require('fs');const j=JSON.parse(fs2.readFileSync(path.join(__dirname,'..','..','assets','login-analysis.json'),'utf8'));ok(j.w===964&&j.layers.length>0&&(j.op-j.ip)/j.fr===6,'animation asset is valid Lottie JSON (6s)');
+  t=await boot('http://localhost:8080/',()=>Promise.reject(new Error('x')));ok(!!t.$('auth-anim')&&t.errors.length===0,'page works when the animation library is unavailable');
   console.log(failed?failed+' FAILED':'PUBLIC E2E ALL PASSED');process.exit(failed?1:0);
 })().catch(e=>{console.error('CRASH',e);process.exit(2)});
