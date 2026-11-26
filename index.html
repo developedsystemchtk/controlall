@@ -705,7 +705,46 @@
       }
     };
 
+    // ---------- หน้าจอ loading (Lottie: คนกับหุ่นยนต์ทำงานด้วยกัน) ----------
+    let _ldAnim = null, _ldCount = 0;
+    function _ldEnsure() {
+      let el = document.getElementById('app-loading');
+      if (el) return el;
+      el = document.createElement('div');
+      el.id = 'app-loading';
+      el.setAttribute('role', 'status');
+      el.setAttribute('aria-live', 'polite');
+      el.className = 'hidden fixed inset-0 z-[10000] items-center justify-center p-4 bg-zinc-950/50 backdrop-blur-sm';
+      el.innerHTML = '<div class="w-full max-w-sm bg-white dark:bg-zinc-900 border hairline rounded-2xl shadow-xl px-6 pt-4 pb-6 text-center">' +
+        '<div id="app-loading-anim" class="w-full aspect-[1072/574]" aria-hidden="true"></div>' +
+        '<p id="app-loading-text" class="mt-1 text-sm font-medium text-zinc-700 dark:text-zinc-200"></p></div>';
+      document.body.appendChild(el);
+      return el;
+    }
+    function _ldPlay() {
+      if (typeof lottie === 'undefined') return;
+      const box = document.getElementById('app-loading-anim'); if (!box) return;
+      const reduced = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!_ldAnim) {
+        try {
+          _ldAnim = lottie.loadAnimation({ container: box, renderer: 'svg', loop: true, autoplay: !reduced, path: 'assets/loading-workplace.json', rendererSettings: { preserveAspectRatio: 'xMidYMid meet' } });
+        } catch (e) { return; }
+      } else if (!reduced) { _ldAnim.play(); }
+    }
+    function showAppLoading(text) {
+      const el = _ldEnsure();
+      document.getElementById('app-loading-text').textContent = text || '';
+      el.classList.remove('hidden'); el.classList.add('flex');
+      _ldPlay();
+    }
+    function hideAppLoading() {
+      const el = document.getElementById('app-loading'); if (!el) return;
+      el.classList.add('hidden'); el.classList.remove('flex');
+      if (_ldAnim) _ldAnim.pause();
+    }
+
     function closeLoading() {
+      hideAppLoading();
       try {
         if (typeof Swal !== 'undefined') Swal.close();
       } catch (e) {}
@@ -771,15 +810,7 @@
     }
 
     function uiLoading(text = 'กำลังดำเนินการ...') {
-      if (typeof Swal !== 'undefined') {
-        Swal.fire({
-          title: text,
-          allowOutsideClick: false,
-          showConfirmButton: false,
-          customClass: { popup: 'border hairline rounded-xl' },
-          didOpen: () => Swal.showLoading()
-        });
-      }
+      showAppLoading(text);
     }
 
     
@@ -2400,9 +2431,9 @@
       const reduced = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
       let anim;
       try {
-        anim = lottie.loadAnimation({ container: box, renderer: 'svg', loop: true, autoplay: !reduced, path: 'assets/login-analysis.json', rendererSettings: { preserveAspectRatio: 'xMidYMid meet' } });
+        anim = lottie.loadAnimation({ container: box, renderer: 'svg', loop: true, autoplay: !reduced, path: 'assets/login-progress.json', rendererSettings: { preserveAspectRatio: 'xMidYMid meet' } });
       } catch (e) { return; }
-      if (reduced) anim.addEventListener('DOMLoaded', () => anim.goToAndStop(135, true));
+      if (reduced) anim.addEventListener('DOMLoaded', () => anim.goToAndStop(179, true));
       // หยุดเล่นเมื่อเข้าสู่ระบบแล้ว (หน้าล็อกอินถูกซ่อน) เพื่อไม่กินเครื่องโดยเปล่าประโยชน์
       const screen = document.getElementById('auth-screen');
       if (screen && window.MutationObserver && !reduced) new MutationObserver(() => { screen.classList.contains('hidden') ? anim.pause() : anim.play(); }).observe(screen, { attributes: true, attributeFilter: ['class'] });

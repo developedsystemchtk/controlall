@@ -54,8 +54,8 @@ const ASSET={ok:true,asset:{AssetCode:'AST-001',AssetName:'เครื่อง
   const bor=await t.ev("(async()=>{const b=state.data.borrows.find(x=>x.Status==='กำลังยืม');const a=state.data.assets.find(x=>x.AssetID===b.AssetID);return callBackend('publicAssetLookup',a.AssetCode)})()");
   ok(bor.borrow&&bor.borrow.BorrowerDept&&!('BorrowerName' in bor.borrow),'demo: borrower name is never exposed, only department');
   const la=[];t=await boot('http://localhost:8080/',()=>Promise.reject(new Error('x')),w=>{w.lottie={loadAnimation:o=>{la.push(o);return{addEventListener(){},goToAndStop(){},play(){},pause(){}}}}});
-  ok(la.length===1&&la[0].path==='assets/login-analysis.json'&&la[0].container.id==='auth-anim'&&la[0].renderer==='svg'&&la[0].loop===true,'login animation loads the Lottie file into the left panel');
-  const fs2=require('fs');const j=JSON.parse(fs2.readFileSync(path.join(__dirname,'..','..','assets','login-analysis.json'),'utf8'));ok(j.w===964&&j.layers.length>0&&(j.op-j.ip)/j.fr===6,'animation asset is valid Lottie JSON (6s)');
+  ok(la.length===1&&la[0].path==='assets/login-progress.json'&&la[0].container.id==='auth-anim'&&la[0].renderer==='svg'&&la[0].loop===true,'login animation loads the Lottie file into the left panel');
+  const fs2=require('fs');const j=JSON.parse(fs2.readFileSync(path.join(__dirname,'..','..','assets','login-progress.json'),'utf8'));ok(j.w===1080&&j.layers.length>0&&(j.op-j.ip)/j.fr===6,'animation asset is valid Lottie JSON (6s)');
   t=await boot('http://localhost:8080/',()=>Promise.reject(new Error('x')));ok(!!t.$('auth-anim')&&t.errors.length===0,'page works when the animation library is unavailable');
   console.log(failed?failed+' FAILED':'PUBLIC E2E ALL PASSED');process.exit(failed?1:0);
 })().catch(e=>{console.error('CRASH',e);process.exit(2)});
